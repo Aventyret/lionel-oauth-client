@@ -8,5 +8,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Aventyret/lionel-oauth-client.git"
-  }
+  },
+  "browser": "index.umd.js",
+  "main": "index.cjs.js",
+  "module": "index.ejs.js"
 }
