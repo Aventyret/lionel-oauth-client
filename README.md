@@ -1,2 +1,2 @@
-# lionel-oauth-client
-oAyu
+# Lionel oAuth Client
+
