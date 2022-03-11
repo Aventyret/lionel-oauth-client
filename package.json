@@ -11,5 +11,8 @@
   },
   "browser": "index.umd.js",
   "main": "index.cjs.js",
-  "module": "index.ejs.js"
+  "module": "index.ejs.js",
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  }
 }
