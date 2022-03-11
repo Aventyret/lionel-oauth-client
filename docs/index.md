@@ -1,7 +1,7 @@
 ---
 home: true
-# heroImage: /logo.png
-# heroAlt: Logo image
+heroImage: /lionel-logo.svg
+heroAlt: Lionel oAuth Client logo
 heroText: Lionel oAuth Client
 tagline: Is it me you're looking for?
 actionText: Get Started
