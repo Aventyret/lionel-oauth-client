@@ -24,8 +24,8 @@ const buildConfig = ({ outputFile, format, exports = null }) => {
     input: 'src/index.ts',
     output: [
       {
-        name: moduleName,
-        file: pkg.browser,
+        name: moduleName.replace(/-/g, ''),
+        file: outputFile,
         format,
         sourcemap: 'inline',
         banner,
@@ -86,7 +86,7 @@ const commonJsBuildConfig = buildConfig({
 });
 
 export default [
-//  browserBuildConfig,
+  browserBuildConfig,
   esBuildConfig,
-//  commonJsBuildConfig
+  commonJsBuildConfig
 ];

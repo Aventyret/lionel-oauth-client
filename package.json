@@ -11,7 +11,8 @@
     "url": "git+https://github.com/Aventyret/lionel-oauth-client.git"
   },
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
   },
   "browser": "dist/index.umd.js",
   "main": "dist/index.cjs.js",
