@@ -667,10 +667,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "lionel-oauth-client-example-vanilla-ts@workspace:."
   dependencies:
+    lionel-oauth-client: ^0.0.5
     typescript: ^4.5.4
     vite: ^2.8.0
   languageName: unknown
   linkType: soft
+
+"lionel-oauth-client@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "lionel-oauth-client@npm:0.0.5"
+  checksum: ca6f1d2bc9b3def31f22b389799a4c0c40ce04e87aec591a8aa3814b8fe3e6dbb56c5d4a9b15446efb5eae9b827f12a1c931bc69e965152d2cd165229bfb024a
+  languageName: node
+  linkType: hard
 
 "lru-cache@npm:^6.0.0":
   version: 6.0.0

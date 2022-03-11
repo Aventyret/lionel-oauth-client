@@ -1,3 +1,4 @@
+// Change this to `import lionel from 'lionel'` in the wild
 import lionel from '../../../src/'
 
 console.log({ lionel })

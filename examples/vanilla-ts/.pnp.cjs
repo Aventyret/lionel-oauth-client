@@ -33,6 +33,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {\
           "packageLocation": "./",\
           "packageDependencies": [\
+            ["lionel-oauth-client", "npm:0.0.5"],\
             ["typescript", "patch:typescript@npm%3A4.6.2#~builtin<compat/typescript>::version=4.6.2&hash=bda367"],\
             ["vite", "virtual:57599593eae73cf156f2d5006da055539bac566ebb290d13beffeb626223348d7dc0ef0bec26410b68c5d8187fc6881e11b710b2ac5723c53908fbd51425d357#npm:2.8.6"]\
           ],\
@@ -772,11 +773,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["lionel-oauth-client", [\
+        ["npm:0.0.5", {\
+          "packageLocation": "./.yarn/cache/lionel-oauth-client-npm-0.0.5-5ee8b87b70-ca6f1d2bc9.zip/node_modules/lionel-oauth-client/",\
+          "packageDependencies": [\
+            ["lionel-oauth-client", "npm:0.0.5"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["lionel-oauth-client-example-vanilla-ts", [\
         ["workspace:.", {\
           "packageLocation": "./",\
           "packageDependencies": [\
             ["lionel-oauth-client-example-vanilla-ts", "workspace:."],\
+            ["lionel-oauth-client", "npm:0.0.5"],\
             ["typescript", "patch:typescript@npm%3A4.6.2#~builtin<compat/typescript>::version=4.6.2&hash=bda367"],\
             ["vite", "virtual:57599593eae73cf156f2d5006da055539bac566ebb290d13beffeb626223348d7dc0ef0bec26410b68c5d8187fc6881e11b710b2ac5723c53908fbd51425d357#npm:2.8.6"]\
           ],\
