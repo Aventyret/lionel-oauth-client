@@ -5,9 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
-    "prebuild": "cd ../../ && yarn && yarn build",
-    "predev": "yarn prebuild"
+    "preview": "vite preview"
   },
   "devDependencies": {
     "typescript": "^4.5.4",
