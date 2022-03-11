@@ -10,4 +10,6 @@
 !.yarn/cache
 #.pnp.*
 
+.DS_Store
+
 dist
