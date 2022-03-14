@@ -31,8 +31,8 @@
       "prettier --write"
     ],
     "*.ts?(x)": [
-      "eslint",
-      "prettier --parser=typescript --write"
+      "prettier --parser=typescript --write",
+      "eslint"
     ]
   },
   "devDependencies": {
