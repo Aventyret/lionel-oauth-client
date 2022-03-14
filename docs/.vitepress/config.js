@@ -1,6 +1,7 @@
 import { defineConfig } from "vitepress";
 
 export default defineConfig({
+  base: "/lionel-oauth-client/",
   title: "Lionel oAuth Client",
   description: "An oAuth client with OpenID support.",
   head: [
@@ -9,7 +10,6 @@ export default defineConfig({
   themeConfig: {
     repo: "Aventyret/lionel-oauth-client",
     logo: "/lionel-logo.svg",
-    base: "/lionel-oauth-client/",
 
     nav: [
       { text: "Guide", link: "/guide/" },
