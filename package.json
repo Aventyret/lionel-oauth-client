@@ -17,11 +17,24 @@
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
     "tag": "./tag.sh",
-    "lint": "eslint --ext .ts src/**/*.ts"
+    "lint": "eslint --ext .ts src/**/*.ts",
+    "postinstall": "husky install",
+    "prepack": "pinst --disable",
+    "postpack": "pinst --enable",
+    "pre-commit": "lint-staged"
   },
   "browser": "dist/index.umd.js",
   "main": "dist/index.cjs.js",
   "module": "dist/index.ejs.js",
+  "lint-staged": {
+    "*.js": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "eslint",
+      "prettier --parser=typescript --write"
+    ]
+  },
   "devDependencies": {
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
@@ -34,6 +47,9 @@
     "eslint": "^8.11.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.3.5",
+    "pinst": "^3.0.0",
     "prettier": "^2.5.1",
     "rollup": "^2.70.0",
     "rollup-plugin-terser": "^7.0.2",
