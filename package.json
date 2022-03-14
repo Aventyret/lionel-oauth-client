@@ -16,7 +16,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:serve": "vitepress serve docs",
-    "postversion": "./postversion.sh"
+    "tag": "./tag.sh"
   },
   "browser": "dist/index.umd.js",
   "main": "dist/index.cjs.js",
