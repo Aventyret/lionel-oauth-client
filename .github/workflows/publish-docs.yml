@@ -20,6 +20,8 @@ jobs:
       - run: cd docs/.vitepress/dist
       - run: git init
       - run: git add -A
+      - run: git config --global user.email "lionel-bot@aventyret.com"
+      - run: git config --global user.name "Lionel CI bot"
       - run: git commit -m "Publish docs"
       - run: "git push -f git@github.com:$GITHUB_REPOSITORY.git main:gh-pages"
       - run: cd -
