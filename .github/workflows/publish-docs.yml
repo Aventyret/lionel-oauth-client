@@ -8,16 +8,6 @@ on:
     types: [created]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 16
-      - run: yarn
-      - run: yarn docs:build
-
   publish-docs:
     needs: build
     runs-on: ubuntu-latest
@@ -26,6 +16,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16
+      - run: yarn
+      - run: yarn docs:build
       - run: cd docs/.vitepress/dist
       - run: git init
       - run: git add -A
