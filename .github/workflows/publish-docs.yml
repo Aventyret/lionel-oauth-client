@@ -18,7 +18,7 @@ jobs:
       - run: yarn
       - run: yarn docs:build
       - run: cd docs/.vitepress/dist
-      - run: git init
+      - run: git init -b main
       - run: git add -A
       - run: git config --global user.email "lionel-bot@aventyret.com"
       - run: git config --global user.name "Lionel CI bot"
