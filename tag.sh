@@ -1,14 +1,10 @@
-PACKAGE_VERSION=$(cat package.json \
-  | grep version \
-  | head -1 \
-  | awk -F: '{ print $2 }' \
-  | sed 's/[",]//g')
+PACKAGE_VERSION="v$(node -pe "require('./package.json')['version']")"
 
 git add .
-git commit -m "v$PACKAGE_VERSION"
+git commit -m "${PACKAGE_VERSION}"
 git push
 
-git tag "v$PACKAGE_VERSION"
+git tag "${PACKAGE_VERSION}"
 git push --tags
 
 echo "Created tag $PACKAGE_VERSION"
