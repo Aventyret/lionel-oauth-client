@@ -9,8 +9,7 @@ export default defineConfig({
   themeConfig: {
     repo: "Aventyret/lionel-oauth-client",
     logo: "/lionel-logo.svg",
-    docsDir: "docs",
-    docsBranch: "main",
+    base: "/lionel-oauth-client/",
 
     nav: [
       { text: "Guide", link: "/guide/" },
