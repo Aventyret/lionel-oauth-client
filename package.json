@@ -2,7 +2,7 @@
   "name": "lionel-oauth-client",
   "description": "oAuth client with OpenID support.",
   "author": "Äventyret Sweden AB",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "license": "MIT",
   "packageManager": "yarn@3.2.0",
   "homepage": "https://github.com/Aventyret/lionel-oauth-client#readme",
