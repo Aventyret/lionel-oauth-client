@@ -18,9 +18,10 @@ jobs:
       - run: yarn
       - run: yarn docs:build
       - run: cd docs/.vitepress/dist
+      - run: pwd #check if cd works as intended
       - run: git init -b main
       - run: git add -A
       - run: git config --global user.email "lionel-bot@aventyret.com"
       - run: git config --global user.name "Lionel CI bot"
       - run: git commit -m "Publish docs"
-      - run: "git push -f git@github.com:$GITHUB_REPOSITORY.git HEAD:gh-pages"
+      - run: 'git push -f git@github.com:$GITHUB_REPOSITORY.git HEAD:gh-pages'
