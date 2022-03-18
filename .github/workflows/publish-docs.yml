@@ -9,9 +9,10 @@ jobs:
   publish-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
+      - uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-key: ${{ secrets.LIONEL_BOT_SSH }}
+          ssh-private-key: ${{ secrets.LIONEL_BOT_SSH }}
       - uses: actions/setup-node@v2
         with:
           node-version: 16
@@ -28,4 +29,4 @@ jobs:
           git config --global user.email "lionel-bot@aventyret.com"
           git config --global user.name "lionel-bot"
           git commit -m "Publish docs"
-          git push -f https://lionel-bot:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git HEAD:gh-pages
+          git push -f git@github.com:$GITHUB_REPOSITORY.git HEAD:gh-pages
