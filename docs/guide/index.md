@@ -1,5 +1,7 @@
 # Getting Started
 
+Lionel oAuth Client is a work in progress – not ready for production.
+
 ## Overview
 
 Write a description as to why this is good.
