@@ -26,6 +26,6 @@ jobs:
           git init -b main
           git add -A
           git config --global user.email "lionel-bot@aventyret.com"
-          git config --global user.name "Lionel CI bot"
+          git config --global user.name "lionel-bot"
           git commit -m "Publish docs"
-          git push -f git@github.com:$GITHUB_REPOSITORY.git HEAD:gh-pages
+          git push -f https://lionel-bot:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git HEAD:gh-pages
