@@ -15,13 +15,17 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16
-      - run: yarn
-      - run: yarn docs:build
-      - run: cd docs/.vitepress/dist
-      - run: pwd #check if cd works as intended
-      - run: git init -b main
-      - run: git add -A
-      - run: git config --global user.email "lionel-bot@aventyret.com"
-      - run: git config --global user.name "Lionel CI bot"
-      - run: git commit -m "Publish docs"
-      - run: 'git push -f git@github.com:$GITHUB_REPOSITORY.git HEAD:gh-pages'
+      - name: 'Build docs'
+        run: |
+          yarn
+          yarn docs:build
+      - name: 'Push docs to gh-pages branch'
+        working-directory: ./docs/.vitepress/dist
+        run: |
+          pwd
+          git init -b main
+          git add -A
+          git config --global user.email "lionel-bot@aventyret.com"
+          git config --global user.name "Lionel CI bot"
+          git commit -m "Publish docs"
+          git push -f git@github.com:$GITHUB_REPOSITORY.git HEAD:gh-pages
