@@ -26,6 +26,7 @@
   "browser": "dist/index.umd.js",
   "main": "dist/index.cjs.js",
   "module": "dist/index.ejs.js",
+  "typings": "index.d.ts",
   "lint-staged": {
     "*.js": [
       "prettier --write"
