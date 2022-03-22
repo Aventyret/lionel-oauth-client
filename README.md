@@ -1,4 +1,4 @@
-# Lionel oAuth Client [![npm](https://img.shields.io/npm/v/lionel-oauth-client.svg)](https://www.npmjs.com/package/lionel-oauth-client) [![build status](https://github.com/Aventyret/lionel-oauth-client/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Aventyret/lionel-oauth-client/actions/workflows/ci.yml)
+# Lionel oAuth Client [![npm](https://img.shields.io/npm/v/lionel-oauth-client.svg)](https://www.npmjs.com/package/lionel-oauth-client) [![build status](https://github.com/Aventyret/lionel-oauth-client/actions/workflows/build-and-test.yml/badge.svg?branch=main)](https://github.com/Aventyret/lionel-oauth-client/actions/workflows/build-and-test.yml)
 
 oAuth client with OpenID support for browser based applications.
 
