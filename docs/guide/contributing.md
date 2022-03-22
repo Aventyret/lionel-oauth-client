@@ -27,3 +27,7 @@ Build code with watch:
 ```
 yarn dev
 ```
+
+## Naming branches
+
+A branch should be called what it does or what it is, e.g. _you created a random number function so the branch could be called `add-random-number-function`_. Keep it simple, understandable, and somewhat short.
