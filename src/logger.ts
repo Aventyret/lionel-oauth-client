@@ -1,7 +1,21 @@
-const log = (message: any): void => {
-  console.log(message)
+import { OauthClientConfig } from './createOauthClient'
+
+type LogMessage = string | number | object
+
+export interface Logger {
+  log: (message: LogMessage) => void
 }
 
-export default {
-  log
+const log = (message: LogMessage): void => {
+  console.log('Lionel log:', message)
+}
+
+export default (config: OauthClientConfig): Logger => {
+  return {
+    log: (message: LogMessage) => {
+      if (config.debug) {
+        log(message)
+      }
+    }
+  }
 }

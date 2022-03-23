@@ -36,7 +36,7 @@ import { createOauthClient } from 'lionel-oauth-client'
 const oAuthClient = createOauthClient({
   issuer, // Required, e.g. issuer: 'https://sso.example.com'
   clientId, // Required, e.g. clientId: 'example_app'
-  redirectUri, // Required, e.g. clientId: 'http://localhost:3000/oauth-callback.html'
+  redirectUri, // Required, e.g. clientId: 'http://localhost:3001/oauth-callback.html'
   scope, // Optional
   authorizationEndpoint, // Optional, defaults to '/authorize'
   tokenEndpoint, // Optional, defaults to '/token'
