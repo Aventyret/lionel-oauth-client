@@ -37,6 +37,13 @@ describe('createStorageModule', (): void => {
     expect(sessionStorageModule.storage).toBeInstanceOf(Storage)
   })
 
+  it('should throw an error when creating a StorageModule instance with an unsupported type', () => {
+    //@ts-expect-error test to see if an error is thrown when providing an unsupported `type`
+    expect(() => createStorageModule('fail')).toThrow(
+      'Not a valid storage type'
+    )
+  })
+
   it('should set and get value to allowed key', (): void => {
     const module = createStorageModule()
     const value = '1337'
@@ -62,5 +69,15 @@ describe('createStorageModule', (): void => {
     module.set('idToken', '1337')
     module.clear()
     expect(() => module.get('idToken')).toThrow('Value not set')
+  })
+
+  it('should throw an error when trying to get, set or remove using a unsupported key', () => {
+    const module = createStorageModule()
+    //@ts-expect-error throws error on `get` when using unsupported key
+    expect(() => module.get('fail')).toThrow('Invalid storage key')
+    //@ts-expect-error throws error on `set` when using unsupported key
+    expect(() => module.set('fail')).toThrow('Invalid storage key')
+    //@ts-expect-error throws error on `remove` when using unsupported key
+    expect(() => module.remove('fail')).toThrow('Invalid storage key')
   })
 })
