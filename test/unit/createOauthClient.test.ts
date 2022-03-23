@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 
-import createOauthClient from '../../src/createOauthClient'
+import createOauthClient, { OauthClient } from '../../src/createOauthClient'
 import { oauthConfig } from './test-config'
 
 describe('createOauthClient', (): void => {
   test('returns an object when using a valid config', (): void => {
-    const oauthClient: object = createOauthClient(oauthConfig)
+    const oauthClient: OauthClient = createOauthClient(oauthConfig)
     expect(typeof oauthClient).toBe('object')
   })
   test('throws an error if issuer is missing', (): void => {
