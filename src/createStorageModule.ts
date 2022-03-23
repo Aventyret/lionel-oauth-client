@@ -12,30 +12,33 @@ export interface StorageModule {
   clear: () => void
 }
 
-const invalidKey = (key: StorageKey) => !storageKeys.includes(key)
+const invalidKey = (key: StorageKey) => {
+  if (storageKeys.includes(key)) return
+  throw Error('Invalid storage key')
+}
 
 export const createStorageModule = (
   type: StorageModuleType = 'local'
 ): StorageModule => {
   if (!storageModuleTypes.includes(type))
-    throw new Error('Not a valid storage type')
+    throw Error('Not a valid storage type')
 
   const storage = 'session' ? sessionStorage : localStorage
 
   const set = (key: StorageKey, value: string) => {
-    if (invalidKey(key)) throw new Error('Invalid storage key')
+    invalidKey(key)
     storage.setItem(key, value)
   }
 
   const get = (key: StorageKey) => {
-    if (invalidKey(key)) throw new Error('Invalid storage key')
+    invalidKey(key)
     const value = storage.getItem(key)
-    if (!value) throw new Error('Value not set')
+    if (!value) throw Error('Value not set')
     return value
   }
 
   const remove = (key: StorageKey) => {
-    if (invalidKey(key)) throw new Error('Invalid storage key')
+    invalidKey(key)
     storage.removeItem(key)
   }
 
