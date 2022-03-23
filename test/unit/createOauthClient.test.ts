@@ -1,4 +1,8 @@
-import { createOauthClient } from '../../src'
+/**
+ * @jest-environment jsdom
+ */
+
+import createOauthClient from '../../src/createOauthClient'
 import { oauthConfig } from './test-config'
 
 describe('createOauthClient', (): void => {
