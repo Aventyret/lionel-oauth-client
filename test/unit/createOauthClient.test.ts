@@ -10,6 +10,17 @@ describe('createOauthClient', (): void => {
     const oauthClient: OauthClient = createOauthClient(oauthConfig)
     expect(typeof oauthClient).toBe('object')
   })
+  test('sets correct config attributes, icluding defaults', (): void => {
+    const oauthClient: OauthClient = createOauthClient(oauthConfig)
+    const clientConfig = oauthClient.getConfig()
+    expect(clientConfig.issuer).toBe(oauthConfig.issuer)
+    expect(clientConfig.clientId).toBe(oauthConfig.clientId)
+    expect(clientConfig.redirectUri).toBe(oauthConfig.redirectUri)
+    expect(clientConfig.scope).toBe(oauthConfig.scope)
+    expect(clientConfig.authorizationEndpoint).toBe('/authorize')
+    expect(clientConfig.tokenEndpoint).toBe('/token')
+    expect(clientConfig.debug).toBe(false)
+  })
   test('throws an error if issuer is missing', (): void => {
     const invalidConfig = {
       ...oauthConfig,
