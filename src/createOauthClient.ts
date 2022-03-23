@@ -19,6 +19,7 @@ export interface OauthClient {
   signIn: () => void
   handleCallback: () => void
   getAccessToken: () => string
+  getConfig: () => OauthClientConfig
 }
 
 const requiredOauthClientAttributes = <const>[
@@ -57,6 +58,7 @@ export default (configArg: OauthClientConfig): OauthClient => {
   return {
     signIn: (): void => signIn(config, storageModule, logger),
     handleCallback: (): void => handleCallback(config, storageModule, logger),
-    getAccessToken: (): string => getAccessToken(storageModule, logger)
+    getAccessToken: (): string => getAccessToken(storageModule, logger),
+    getConfig: (): OauthClientConfig => config
   }
 }
