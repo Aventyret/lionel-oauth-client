@@ -1,5 +1,5 @@
-import logger from './logger'
+import { default as createOauthClient } from './createOauthClient'
 
-logger.log('Hello. Is it me you are looking for?')
-
-export default {}
+export default {
+  createOauthClient
+}
