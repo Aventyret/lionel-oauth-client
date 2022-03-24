@@ -21,7 +21,8 @@
     "postinstall": "husky install",
     "pre-commit": "lint-staged",
     "test": "yarn test:unit",
-    "test:unit": "jest"
+    "test:unit": "jest",
+    "test:e2e": "playwright test --config=playwright.config.ts"
   },
   "browser": "dist/index.umd.js",
   "main": "dist/index.cjs.js",
@@ -39,6 +40,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
+    "@playwright/test": "^1.20.1",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-commonjs": "^21.0.2",
     "@rollup/plugin-node-resolve": "^13.1.3",
