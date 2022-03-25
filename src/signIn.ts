@@ -1,5 +1,8 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
+import getRandomString from './getRandomString'
+import createState from './createState'
+import createCodeChallenge from './createCodeChallenge'
 import { Logger } from './logger'
 
 const getAuthorizeUri = (
@@ -7,25 +10,32 @@ const getAuthorizeUri = (
   state: string,
   codeChallenge: string
 ): string => {
-  let uri = `${oauthClientConfig.issuer}${oauthClientConfig.authorizationEndpoint}`
-  uri += `?client_id=${oauthClientConfig.clientId}`
-  uri += `&redirect_uri=${oauthClientConfig.redirectUri}`
-  uri += `&redirect_uri=${oauthClientConfig.redirectUri}`
-  uri += `&scope=${oauthClientConfig.scope}`
-  uri += '&response_type=code'
-  uri += '&response_mode=fragment'
-  uri += `&state=${state}`
-  uri += `&code_challenge=${codeChallenge}`
-  uri += '&code_challenge_method=S256'
-  return uri
+  const uri = `${oauthClientConfig.issuer}${oauthClientConfig.authorizationEndpoint}`
+  const queryParams = [
+    `client_id=${oauthClientConfig.clientId}`,
+    `redirect_uri=${oauthClientConfig.redirectUri}`,
+    `redirect_uri=${oauthClientConfig.redirectUri}`,
+    `scope=${oauthClientConfig.scope}`,
+    'response_type=code',
+    'response_mode=fragment',
+    `state=${state}`,
+    `code_challenge=${codeChallenge}`,
+    'code_challenge_method=S256'
+  ]
+  return `${uri}?${queryParams.join('&')}`
 }
 
-export default (
+export default async (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
   logger: Logger
-): void => {
+): Promise<void> => {
   logger.log('Sign In')
   logger.log({ oauthClientConfig, storageModule })
-  location.assign(getAuthorizeUri(oauthClientConfig, '', ''))
+  const state = createState()
+  storageModule.set('state', state)
+  const codeVerifier = getRandomString(43)
+  storageModule.set('codeVerifier', codeVerifier)
+  const codeChallenge = await createCodeChallenge(codeVerifier)
+  location.assign(getAuthorizeUri(oauthClientConfig, state, codeChallenge))
 }

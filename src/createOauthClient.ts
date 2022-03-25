@@ -56,7 +56,7 @@ export default (configArg: OauthClientConfig): OauthClient => {
   logger.log({ config })
 
   return {
-    signIn: (): void => signIn(config, storageModule, logger),
+    signIn: async (): Promise<void> => signIn(config, storageModule, logger),
     handleCallback: (): void => handleCallback(config, storageModule, logger),
     getAccessToken: (): string => getAccessToken(storageModule, logger),
     getConfig: (): OauthClientConfig => config
