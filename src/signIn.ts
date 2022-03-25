@@ -1,7 +1,7 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import createState from './createState'
-import createCodeChallenge from './createCodeChallenge'
+import { createCodeChallenge } from './codeChallenge'
 import { Logger } from './logger'
 
 const getAuthorizeUri = (

@@ -5,7 +5,7 @@ interface CodeChallengeData {
   challenge: string
 }
 
-export default async (): Promise<CodeChallengeData> => {
+export const createCodeChallenge = async (): Promise<CodeChallengeData> => {
   return new Promise((resolve, reject) => {
     getPkce(
       43,
