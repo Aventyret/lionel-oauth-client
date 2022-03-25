@@ -1,6 +1,8 @@
 // playwright.config.ts
 import { PlaywrightTestConfig, devices } from '@playwright/test'
 
+const PORT = 3002
+
 const config: PlaywrightTestConfig = {
   testDir: 'test/e2e',
   testIgnore: '**/unit/**',
@@ -22,6 +24,12 @@ const config: PlaywrightTestConfig = {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] }
     }
-  ]
+  ],
+  webServer: {
+    command: `yarn serve:e2e -p ${PORT}`,
+    port: PORT,
+    timeout: 120 * 1000
+    // reuseExistingServer: !process.env.CI
+  }
 }
 export default config
