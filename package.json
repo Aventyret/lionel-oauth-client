@@ -22,7 +22,8 @@
     "pre-commit": "lint-staged",
     "test": "yarn test:unit",
     "test:unit": "jest",
-    "test:e2e": "playwright test --config=playwright.config.ts"
+    "test:e2e": "playwright test --config=playwright.config.ts",
+    "serve:e2e": "serve ./"
   },
   "browser": "dist/index.umd.js",
   "main": "dist/index.cjs.js",
@@ -60,6 +61,7 @@
     "rollup-plugin-livereload": "^2.0.5",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-terser": "^7.0.2",
+    "serve": "^13.0.2",
     "ts-jest": "^27.1.3",
     "tslib": "^2.3.1",
     "typescript": "^4.6.2",
