@@ -1,6 +1,5 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
-import getRandomString from './getRandomString'
 import createState from './createState'
 import createCodeChallenge from './createCodeChallenge'
 import { Logger } from './logger'
@@ -13,8 +12,7 @@ const getAuthorizeUri = (
   const uri = `${oauthClientConfig.issuer}${oauthClientConfig.authorizationEndpoint}`
   const queryParams = [
     `client_id=${oauthClientConfig.clientId}`,
-    `redirect_uri=${oauthClientConfig.redirectUri}`,
-    `redirect_uri=${oauthClientConfig.redirectUri}`,
+    `redirect_uri=${encodeURIComponent(oauthClientConfig.redirectUri)}`,
     `scope=${oauthClientConfig.scope}`,
     'response_type=code',
     'response_mode=fragment',
@@ -34,8 +32,7 @@ export default async (
   logger.log({ oauthClientConfig, storageModule })
   const state = createState()
   storageModule.set('state', state)
-  const codeVerifier = getRandomString(43)
-  storageModule.set('codeVerifier', codeVerifier)
-  const codeChallenge = await createCodeChallenge(codeVerifier)
-  location.assign(getAuthorizeUri(oauthClientConfig, state, codeChallenge))
+  const { verifier, challenge } = await createCodeChallenge()
+  storageModule.set('codeVerifier', verifier)
+  location.assign(getAuthorizeUri(oauthClientConfig, state, challenge))
 }

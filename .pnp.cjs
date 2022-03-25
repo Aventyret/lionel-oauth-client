@@ -48,6 +48,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["husky", "npm:7.0.4"],\
             ["jest", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:27.5.1"],\
             ["lint-staged", "npm:12.3.5"],\
+            ["oauth-pkce", "npm:0.0.6"],\
             ["pinst", "npm:3.0.0"],\
             ["prettier", "npm:2.5.1"],\
             ["rollup", "npm:2.70.0"],\
@@ -7313,6 +7314,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["husky", "npm:7.0.4"],\
             ["jest", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:27.5.1"],\
             ["lint-staged", "npm:12.3.5"],\
+            ["oauth-pkce", "npm:0.0.6"],\
             ["pinst", "npm:3.0.0"],\
             ["prettier", "npm:2.5.1"],\
             ["rollup", "npm:2.70.0"],\
@@ -7815,6 +7817,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/nwsapi-npm-2.2.0-8f05590043-5ef4a9bc0c.zip/node_modules/nwsapi/",\
           "packageDependencies": [\
             ["nwsapi", "npm:2.2.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["oauth-pkce", [\
+        ["npm:0.0.6", {\
+          "packageLocation": "./.yarn/cache/oauth-pkce-npm-0.0.6-f31739fd84-d33e9c36cb.zip/node_modules/oauth-pkce/",\
+          "packageDependencies": [\
+            ["oauth-pkce", "npm:0.0.6"]\
           ],\
           "linkType": "HARD"\
         }]\
