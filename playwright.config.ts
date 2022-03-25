@@ -1,4 +1,4 @@
-// playwright.config.ts
+// https://playwright.dev/
 import { PlaywrightTestConfig, devices } from '@playwright/test'
 
 const PORT = 3002
