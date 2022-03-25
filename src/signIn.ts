@@ -4,7 +4,7 @@ import createState from './createState'
 import { createCodeChallenge } from './codeChallenge'
 import { Logger } from './logger'
 
-const getAuthorizeUri = (
+export const getAuthorizeUri = (
   oauthClientConfig: OauthClientConfig,
   state: string,
   codeChallenge: string

@@ -14,6 +14,11 @@ beforeAll(() => {
       }
     }
   })
+  Object.defineProperty(window, 'location', {
+    value: {
+      assign: jest.fn()
+    }
+  })
 })
 
 beforeEach(() => {
