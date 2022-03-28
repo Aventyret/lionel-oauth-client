@@ -24,5 +24,6 @@ describe('parseJwt', (): void => {
     expect(parsedAccessToken.payload.nbf).toBe(
       mockAccessToken.decodedPayload.nbf
     )
+    expect(parsedAccessToken.signature.length).toBeGreaterThan(0)
   })
 })
