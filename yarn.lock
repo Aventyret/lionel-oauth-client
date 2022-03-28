@@ -5701,6 +5701,7 @@ __metadata:
     husky: ^7.0.4
     jest: ^27.5.1
     lint-staged: ^12.3.5
+    oauth-pkce: ^0.0.6
     pinst: ^3.0.0
     prettier: ^2.5.1
     rollup: ^2.70.0
@@ -6201,6 +6202,13 @@ __metadata:
   version: 2.2.0
   resolution: "nwsapi@npm:2.2.0"
   checksum: 5ef4a9bc0c1a5b7f2e014aa6a4b359a257503b796618ed1ef0eb852098f77e772305bb0e92856e4bbfa3e6c75da48c0113505c76f144555ff38867229c2400a7
+  languageName: node
+  linkType: hard
+
+"oauth-pkce@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "oauth-pkce@npm:0.0.6"
+  checksum: d33e9c36cb0a375c3bcb191bd5df1d3fb0b1bbdbebd350b7493db9d06e5f6ef1cd2d415f44a6df5f45b2ed9654f2d9bb9040b9dbeae938a9feea03e0865e29ef
   languageName: node
   linkType: hard
 
