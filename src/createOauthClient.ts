@@ -12,6 +12,8 @@ export interface OauthClientConfig {
   authorizationEndpoint?: string
   tokenEndpoint?: string
   tokenStorage?: StorageModuleType
+  tokenLeewaySeconds?: number
+  authenticationMaxAgeSeconds?: number
   debug?: boolean
 }
 
@@ -43,6 +45,7 @@ const getOauthClientConfig = (
     authorizationEndpoint: '/authorize',
     tokenEndpoint: '/token',
     debug: false,
+    tokenLeewaySeconds: 60,
     ...configArg
   }
 }
