@@ -57,7 +57,8 @@ export default (configArg: OauthClientConfig): OauthClient => {
 
   return {
     signIn: async (): Promise<void> => signIn(config, storageModule, logger),
-    handleCallback: (): void => handleCallback(config, storageModule, logger),
+    handleCallback: async (): Promise<void> =>
+      handleCallback(config, storageModule, logger),
     getAccessToken: (): string => getAccessToken(storageModule, logger),
     getConfig: (): OauthClientConfig => config
   }
