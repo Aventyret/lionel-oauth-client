@@ -4,6 +4,9 @@ import signIn from './signIn'
 import handleCallback from './handleCallback'
 import getAccessToken from './getAccessToken'
 
+const responseModes = <const>['fragment', 'query']
+export type ResponseMode = typeof responseModes[number]
+
 export interface OauthClientConfig {
   issuer: string
   clientId: string
@@ -12,6 +15,7 @@ export interface OauthClientConfig {
   authorizationEndpoint?: string
   tokenEndpoint?: string
   tokenStorage?: StorageModuleType
+  responseMode?: ResponseMode
   debug?: boolean
 }
 

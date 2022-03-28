@@ -15,9 +15,10 @@ interface TokenRequestBody {
   code?: string
 }
 
-export const getCallbackParams = (locationHash: string) => {
-  return locationHash
+export const getCallbackParams = (queryString: string) => {
+  return queryString
     .replace(new RegExp('^#'), '')
+    .replace(new RegExp(/^\?/), '')
     .split('&')
     .reduce((params: CallbackParams, part: string): CallbackParams => {
       if (part.startsWith('code=')) {
@@ -30,7 +31,7 @@ export const getCallbackParams = (locationHash: string) => {
     }, {})
 }
 
-const getTokenRequestBody = (
+export const getTokenRequestBody = (
   oauthClientConfig: OauthClientConfig,
   codeVerifier: string,
   code?: string
@@ -60,6 +61,7 @@ export const validateClientState = (
   clientState: string,
   clientCodeVerifier: string
 ): void => {
+  console.log({ callbackParams, clientState, clientCodeVerifier })
   if (callbackParams.state !== clientState) {
     throw new Error('Incorrect state stored in oauth client')
   }
@@ -75,7 +77,7 @@ export default async (
 ): Promise<void> => {
   logger.log('Handle Callback')
   logger.log({ oauthClientConfig, storageModule })
-  const callbackParams = getCallbackParams(location.hash || '#')
+  const callbackParams = getCallbackParams(location.hash || location.search)
   logger.log('Callback Params')
   logger.log({ callbackParams })
   validateCallbackParams(callbackParams)

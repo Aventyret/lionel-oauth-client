@@ -1,0 +1,6 @@
+{
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyNDI2MjIsIm5iZiI6MTUxNjIzODk2Mn0.fcvceR4YsgVNOV85iUHsgX0G-2Di2LCJyAJZ7RxNLJM",
+  "scope": "api1"
+}
