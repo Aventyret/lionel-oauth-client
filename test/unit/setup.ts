@@ -20,6 +20,9 @@ beforeAll(() => {
       hash: '#state=mocked_state&code=mocked_code'
     }
   })
+  Object.defineProperty(window, 'fetch', {
+    value: jest.fn()
+  })
 })
 
 beforeEach(() => {

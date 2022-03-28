@@ -61,13 +61,27 @@ export const validateClientState = (
   clientState: string,
   clientCodeVerifier: string
 ): void => {
-  console.log({ callbackParams, clientState, clientCodeVerifier })
   if (callbackParams.state !== clientState) {
     throw new Error('Incorrect state stored in oauth client')
   }
   if (!clientCodeVerifier) {
     throw new Error('Missing code verifier in client')
   }
+}
+
+export const requestToken = async (
+  oauthClientConfig: OauthClientConfig,
+  tokenRequestBody: TokenRequestBody
+): Promise<string> => {
+  const uri = `${oauthClientConfig.issuer}${oauthClientConfig.tokenEndpoint}`
+  const response = await fetch(uri, {
+    method: 'POST',
+    body: JSON.stringify(tokenRequestBody)
+  })
+  if (response.status >= 200 && response.status < 300) {
+    return (await response.json())?.access_token
+  }
+  throw new Error(`Get Token http status ${response.status}`)
 }
 
 export default async (
@@ -91,4 +105,13 @@ export default async (
   )
   logger.log('Token Request Body')
   logger.log({ tokenRequestBody })
+  try {
+    const accessToken = await requestToken(oauthClientConfig, tokenRequestBody)
+    storageModule.set('accessToken', accessToken)
+  } catch (error: unknown) {
+    logger.error(error)
+    storageModule.remove('accessToken')
+  }
+  storageModule.remove('state')
+  storageModule.remove('codeVerifier')
 }

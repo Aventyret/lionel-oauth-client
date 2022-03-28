@@ -12,6 +12,9 @@ import createStorageModule from '../../src/createStorageModule'
 import createLogger from '../../src/logger'
 import { oauthConfig } from './test-config'
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const mockOauthTokenResponse = require('./mockOauthTokenResponse.json')
+
 describe('getCallbackParams', (): void => {
   it('should read state and code params from fragment', (): void => {
     const callbackParams = getCallbackParams(
@@ -66,9 +69,17 @@ describe('validateClientState', (): void => {
 })
 
 describe('handleCallback', (): void => {
+  beforeAll(() => {
+    jest.spyOn(window, 'fetch').mockImplementation(
+      jest.fn(() => {
+        return Promise.resolve({
+          status: 200,
+          json: () => Promise.resolve(mockOauthTokenResponse)
+        })
+      }) as jest.Mock
+    )
+  })
   it('should set access token in storage', async (): Promise<void> => {
-    const mockedAccessToken =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyNDI2MjIsIm5iZiI6MTUxNjIzODk2Mn0.fcvceR4YsgVNOV85iUHsgX0G-2Di2LCJyAJZ7RxNLJM'
     const storageModule = createStorageModule()
     storageModule.set('state', 'mocked_state')
     storageModule.set('codeVerifier', 'mocked_code_verifier')
@@ -77,6 +88,11 @@ describe('handleCallback', (): void => {
       createStorageModule(),
       createLogger(oauthConfig)
     )
-    expect(storageModule.get('accessToken')).toBe(mockedAccessToken)
+    expect(storageModule.get('accessToken')).toBe(
+      mockOauthTokenResponse.access_token
+    )
+  })
+  afterAll(() => {
+    jest.resetAllMocks()
   })
 })
