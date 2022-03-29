@@ -90,7 +90,7 @@ const validateJwtClaims = (
       if (nonce !== claims.nonce) {
         throw new Error('Nonce in jwt do not match nonce in client')
       }
-    } catch (error) {}
+    } catch {}
   }
   const now = new Date(0)
   now.setUTCSeconds(Math.floor(Date.now() / 1000))
