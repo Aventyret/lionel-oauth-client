@@ -1,5 +1,6 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
+import { validateJwt } from './jwt'
 import { Logger } from './logger'
 
 interface CallbackParams {
@@ -107,6 +108,7 @@ export default async (
   logger.log({ tokenRequestBody })
   try {
     const accessToken = await requestToken(oauthClientConfig, tokenRequestBody)
+    validateJwt(accessToken, oauthClientConfig, storageModule)
     storageModule.set('accessToken', accessToken)
   } catch (error: unknown) {
     logger.error(error)

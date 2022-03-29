@@ -10,7 +10,6 @@ import {
 } from '../../src/jwt'
 import createStorageModule from '../../src/createStorageModule'
 import { oauthConfig } from './test-config'
-
 import mockAccessToken from './mockAccessToken.json'
 
 describe('parseJwt', (): void => {
