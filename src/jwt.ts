@@ -64,76 +64,77 @@ export const validateJwt = (
   validateJwtSignature(decodedToken.signature)
 }
 
-const validateJwtHeader = (header: any) => {
+export const validateJwtHeader = (header: TokenPart) => {
   if (!header.alg) {
-    throw new Error('Missing alg in jwt header')
+    throw Error('Missing alg in jwt header')
   }
   if (!header.typ) {
-    throw new Error('Missing typ in jwt header')
+    throw Error('Missing typ in jwt header')
   }
   if (!allowedSigningAlgs.includes(header.alg)) {
-    throw new Error(`${header.alg} is not an allowed signing alg`)
+    throw Error(`${header.alg} is not an allowed signing alg`)
   }
 }
 
-const validateJwtClaims = (
-  claims: any,
+export const validateJwtClaims = (
+  claims: TokenPart,
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule
 ) => {
   if (claims.iss && claims.iss !== oauthClientConfig.issuer) {
-    throw new Error('Incorrect iss in jwt claims')
+    throw Error('Incorrect iss in jwt claims')
   }
   if (claims.nonce) {
+    let nonce
     try {
-      const nonce = storageModule.get('nonce')
-      if (nonce !== claims.nonce) {
-        throw new Error('Nonce in jwt do not match nonce in client')
-      }
+      nonce = storageModule.get('nonce')
     } catch {}
+    if (nonce !== claims.nonce) {
+      throw Error('Nonce in jwt do not match nonce in client')
+    }
   }
   const now = new Date(0)
   now.setUTCSeconds(Math.floor(Date.now() / 1000))
   if (claims.exp) {
     if (isNaN(claims.exp)) {
-      throw new Error(`Invalid exp, ${claims.exp} is not a number`)
+      throw Error(`Invalid exp, ${claims.exp} is not a number`)
     }
     const tokenExpDate = new Date(0)
     tokenExpDate.setUTCSeconds(
       claims.exp + (oauthClientConfig.tokenLeewaySeconds || 0)
     )
     if (now > tokenExpDate) {
-      throw new Error('jwt token is expired')
+      throw Error('jwt token is expired')
     }
   }
   if (oauthClientConfig.authenticationMaxAgeSeconds && claims.auth_time) {
     if (isNaN(claims.auth_time)) {
-      throw new Error(`Invalid auth_time, ${claims.auth_time} is not a number`)
+      throw Error(`Invalid auth_time, ${claims.auth_time} is not a number`)
     }
     const tokenEndDate = new Date(0)
     tokenEndDate.setUTCSeconds(
       claims.auth_time + (oauthClientConfig.tokenLeewaySeconds || 0)
     )
     if (now > tokenEndDate) {
-      throw new Error('jwt token is too old')
+      throw Error('jwt token is too old')
     }
   }
   if (claims.nbf) {
     if (isNaN(claims.nbf)) {
-      throw new Error(`Invalid nbf, ${claims.nbf} is not a number`)
+      throw Error(`Invalid nbf, ${claims.nbf} is not a number`)
     }
     const tokenStartDate = new Date(0)
     tokenStartDate.setUTCSeconds(
       claims.nbf - (oauthClientConfig.tokenLeewaySeconds || 0)
     )
     if (now < tokenStartDate) {
-      throw new Error('jwt token not valid yet')
+      throw Error('jwt token not valid yet')
     }
   }
 }
 
 const validateJwtSignature = (signature: string) => {
   if (!signature) {
-    throw new Error('Missing signature in jwt')
+    throw Error('Missing signature in jwt')
   }
 }

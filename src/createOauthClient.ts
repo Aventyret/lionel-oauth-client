@@ -41,7 +41,7 @@ const getOauthClientConfig = (
     requiredAttribute => !configArg[requiredAttribute]
   )
   if (missingAttribute) {
-    throw new Error(`Required attribute ${missingAttribute} missing in config`)
+    throw Error(`Required attribute ${missingAttribute} missing in config`)
   }
 
   return {
