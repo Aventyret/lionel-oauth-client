@@ -13,11 +13,14 @@ const allowedSigningAlgs = <const>[
   'ES512'
 ]
 
+interface TokenPart {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any
+}
+
 interface Token {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  header: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  claims: any
+  header: TokenPart
+  claims: TokenPart
   signature: string
 }
 
@@ -32,7 +35,7 @@ export const parseJwt = (token: string): Token => {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const parseJwtPart = (part: string): any => {
+const parseJwtPart = (part: string): TokenPart => {
   const base64 = part.replace(/-/g, '+').replace(/_/g, '/')
   try {
     const json = decodeURIComponent(
@@ -45,7 +48,7 @@ const parseJwtPart = (part: string): any => {
     )
 
     return JSON.parse(json)
-  } catch (error) {}
+  } catch {}
 
   return {}
 }

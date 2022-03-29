@@ -15,11 +15,13 @@ export const getAuthorizeUri = (
     `redirect_uri=${encodeURIComponent(oauthClientConfig.redirectUri)}`,
     `scope=${oauthClientConfig.scope}`,
     'response_type=code',
-    'response_mode=fragment',
     `state=${state}`,
     `code_challenge=${codeChallenge}`,
     'code_challenge_method=S256'
   ]
+  if (oauthClientConfig.responseMode) {
+    queryParams.push(`response_mode=${oauthClientConfig.responseMode}`)
+  }
   return `${uri}?${queryParams.join('&')}`
 }
 

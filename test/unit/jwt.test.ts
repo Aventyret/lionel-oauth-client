@@ -6,8 +6,7 @@ import { parseJwt, validateJwt } from '../../src/jwt'
 import createStorageModule from '../../src/createStorageModule'
 import { oauthConfig } from './test-config'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const mockAccessToken = require('./mockAccessToken.json')
+import mockAccessToken from './mockAccessToken.json'
 
 describe('parseJwt', (): void => {
   it('should parse an access token and extract correct header and claims', (): void => {

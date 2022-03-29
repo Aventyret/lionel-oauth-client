@@ -16,8 +16,12 @@ beforeAll(() => {
   })
   Object.defineProperty(window, 'location', {
     value: {
-      assign: jest.fn()
+      assign: jest.fn(),
+      hash: '#state=mocked_state&code=mocked_code'
     }
+  })
+  Object.defineProperty(window, 'fetch', {
+    value: jest.fn()
   })
 })
 
