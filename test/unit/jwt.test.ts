@@ -4,8 +4,7 @@
 
 import { parseJwt } from '../../src/jwt'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const mockAccessToken = require('./mockAccessToken.json')
+import * as mockAccessToken from './mockAccessToken.json'
 
 describe('parseJwt', (): void => {
   it('should parse an access token and extract a correct header and payload', (): void => {

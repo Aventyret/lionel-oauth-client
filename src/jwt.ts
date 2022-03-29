@@ -1,8 +1,11 @@
+interface TokenPart {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any
+}
+
 interface Token {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  header: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  payload: any
+  header: TokenPart
+  payload: TokenPart
   signature: string
 }
 
@@ -30,7 +33,7 @@ const parseJwtPart = (part: string): any => {
     )
 
     return JSON.parse(json)
-  } catch (error) {}
+  } catch {}
 
   return {}
 }
