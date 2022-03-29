@@ -4,7 +4,7 @@
 
 import { parseJwt } from '../../src/jwt'
 
-import * as mockAccessToken from './mockAccessToken.json'
+import mockAccessToken from './mockAccessToken.json'
 
 describe('parseJwt', (): void => {
   it('should parse an access token and extract a correct header and payload', (): void => {
