@@ -11,9 +11,7 @@ import handleCallback, {
 import createStorageModule from '../../src/createStorageModule'
 import createLogger from '../../src/logger'
 import { oauthConfig } from './test-config'
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const mockOauthTokenResponse = require('./mockOauthTokenResponse.json')
+import mockOauthTokenResponse from './mockOauthTokenResponse.json'
 
 describe('getCallbackParams', (): void => {
   it('should read state and code params from fragment', (): void => {
