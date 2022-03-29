@@ -1,0 +1,13 @@
+{
+  "encoded": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyNDI2MjIsIm5iZiI6MTUxNjIzODk2Mn0.fcvceR4YsgVNOV85iUHsgX0G-2Di2LCJyAJZ7RxNLJM",
+  "decodedHeader": {
+    "alg": "HS256",
+    "typ": "JWT"
+  },
+  "decodedPayload": {
+    "sub": "1234567890",
+    "iat": 1516239022,
+    "exp": 1516242622,
+    "nbf": 1516238962
+  }
+}
