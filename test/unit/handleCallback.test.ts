@@ -43,11 +43,11 @@ describe('getTokenRequestBody', (): void => {
       'mocked_code_verifier',
       'mocked_code'
     )
-    expect(requestBody.client_id).toBe(oauthConfig.clientId)
-    expect(requestBody.redirect_uri).toBe(oauthConfig.redirectUri)
-    expect(requestBody.grant_type).toBe('authorization_code')
-    expect(requestBody.code).toBe('mocked_code')
-    expect(requestBody.code_verifier).toBe('mocked_code_verifier')
+    expect(requestBody.get('client_id')).toBe(oauthConfig.clientId)
+    expect(requestBody.get('redirect_uri')).toBe(oauthConfig.redirectUri)
+    expect(requestBody.get('grant_type')).toBe('authorization_code')
+    expect(requestBody.get('code')).toBe('mocked_code')
+    expect(requestBody.get('code_verifier')).toBe('mocked_code_verifier')
   })
 })
 
@@ -122,11 +122,13 @@ describe('handleCallback', (): void => {
       const storageModule = createStorageModule()
       storageModule.set('state', 'mocked_state')
       storageModule.set('codeVerifier', 'mocked_code_verifier')
-      await handleCallback(
-        oauthConfig,
-        createStorageModule(),
-        createLogger(oauthConfig)
-      )
+      try {
+        await handleCallback(
+          oauthConfig,
+          createStorageModule(),
+          createLogger(oauthConfig)
+        )
+      } catch {}
       expect(() => storageModule.get('accessToken')).toThrow('Value not set')
     })
     afterAll(() => {

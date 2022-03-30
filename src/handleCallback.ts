@@ -8,14 +8,6 @@ interface CallbackParams {
   state?: string
 }
 
-interface TokenRequestBody {
-  client_id: string
-  redirect_uri: string
-  code_verifier: string
-  grant_type: string
-  code?: string
-}
-
 export const getCallbackParams = (queryString: string) => {
   return queryString
     .replace(new RegExp('^#'), '')
@@ -36,14 +28,14 @@ export const getTokenRequestBody = (
   oauthClientConfig: OauthClientConfig,
   codeVerifier: string,
   code?: string
-): TokenRequestBody => {
-  return {
+): URLSearchParams => {
+  return new URLSearchParams({
     client_id: oauthClientConfig.clientId,
     redirect_uri: oauthClientConfig.redirectUri,
     code_verifier: codeVerifier,
     grant_type: 'authorization_code',
-    code: code
-  }
+    code: code || ''
+  } as Record<string, string>)
 }
 
 export const validateCallbackParams = (
@@ -72,17 +64,23 @@ export const validateClientState = (
 
 export const requestToken = async (
   oauthClientConfig: OauthClientConfig,
-  tokenRequestBody: TokenRequestBody
+  tokenRequestBody: URLSearchParams
 ): Promise<string> => {
   const uri = `${oauthClientConfig.issuer}${oauthClientConfig.tokenEndpoint}`
   const response = await fetch(uri, {
     method: 'POST',
-    body: JSON.stringify(tokenRequestBody)
+    body: new URLSearchParams(tokenRequestBody)
   })
   if (response.status >= 200 && response.status < 300) {
     return (await response.json())?.access_token
   }
   throw Error(`Get Token http status ${response.status}`)
+}
+
+const cleanupStorage = (storageModule: StorageModule): void => {
+  storageModule.remove('accessToken')
+  storageModule.remove('state')
+  storageModule.remove('codeVerifier')
 }
 
 export default async (
@@ -106,14 +104,21 @@ export default async (
   )
   logger.log('Token Request Body')
   logger.log({ tokenRequestBody })
+  let accessToken
   try {
-    const accessToken = await requestToken(oauthClientConfig, tokenRequestBody)
+    accessToken = await requestToken(oauthClientConfig, tokenRequestBody)
+  } catch (error: unknown) {
+    logger.error(error)
+    cleanupStorage(storageModule)
+    throw Error('Token request failed')
+  }
+  try {
     validateJwt(accessToken, oauthClientConfig, storageModule)
+    cleanupStorage(storageModule)
     storageModule.set('accessToken', accessToken)
   } catch (error: unknown) {
     logger.error(error)
-    storageModule.remove('accessToken')
+    cleanupStorage(storageModule)
+    throw Error('Invalid token retreived')
   }
-  storageModule.remove('state')
-  storageModule.remove('codeVerifier')
 }
