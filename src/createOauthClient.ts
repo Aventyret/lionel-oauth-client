@@ -2,7 +2,7 @@ import createLogger from './logger'
 import { StorageModuleType, createStorageModule } from './createStorageModule'
 import signIn from './signIn'
 import handleCallback from './handleCallback'
-import getAccessToken from './getAccessToken'
+import { getAccessToken } from './accessToken'
 
 const responseModes = <const>['fragment', 'query']
 export type ResponseMode = typeof responseModes[number]

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import getAccessToken from '../../src/getAccessToken'
+import { getAccessToken } from '../../src/accessToken'
 import createStorageModule from '../../src/createStorageModule'
 import createLogger from '../../src/logger'
 import { oauthConfig } from './test-config'
