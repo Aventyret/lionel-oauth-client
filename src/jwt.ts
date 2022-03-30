@@ -34,7 +34,6 @@ export const parseJwt = (token: string): Token => {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const parseJwtPart = (part: string): TokenPart => {
   const base64 = part.replace(/-/g, '+').replace(/_/g, '/')
   try {
