@@ -2,7 +2,7 @@ import createLogger from './logger'
 import { StorageModuleType, createStorageModule } from './createStorageModule'
 import signIn from './signIn'
 import handleCallback from './handleCallback'
-import { getAccessToken } from './accessToken'
+import { getAccessToken, removeAccessToken } from './accessToken'
 
 const responseModes = <const>['fragment', 'query']
 export type ResponseMode = typeof responseModes[number]
@@ -25,6 +25,7 @@ export interface OauthClient {
   signIn: () => void
   handleCallback: () => void
   getAccessToken: () => string | null
+  removeAccessToken: () => void
   getConfig: () => OauthClientConfig
 }
 
@@ -68,6 +69,7 @@ export default (configArg: OauthClientConfig): OauthClient => {
       handleCallback(config, storageModule, logger),
     getAccessToken: (): string | null =>
       getAccessToken(config, storageModule, logger),
+    removeAccessToken: (): void => removeAccessToken(storageModule, logger),
     getConfig: (): OauthClientConfig => config
   }
 }
