@@ -18,3 +18,13 @@ export const getAccessToken = (
   logger.log('No valid token in storage')
   return null
 }
+
+export const removeAccessToken = (
+  storageModule: StorageModule,
+  logger: Logger
+): void => {
+  logger.log('Remove Access Token')
+  try {
+    storageModule.remove('accessToken')
+  } catch {}
+}

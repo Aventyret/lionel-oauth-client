@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { getAccessToken } from '../../src/accessToken'
+import { getAccessToken, removeAccessToken } from '../../src/accessToken'
 import createStorageModule from '../../src/createStorageModule'
 import createLogger from '../../src/logger'
 import { oauthConfig } from './test-config'
@@ -59,5 +59,17 @@ describe('getAccessToken', (): void => {
     afterAll(() => {
       jest.resetAllMocks()
     })
+  })
+})
+describe('removeAccessToken', (): void => {
+  it('should remove access token from storage', async (): Promise<void> => {
+    const storageModule = createStorageModule()
+    const logger = createLogger(oauthConfig)
+    storageModule.set('accessToken', accessTokenMock.encoded)
+    let accessToken = getAccessToken(oauthConfig, storageModule, logger)
+    expect(accessToken).toBe(accessTokenMock.encoded)
+    removeAccessToken(storageModule, logger)
+    accessToken = getAccessToken(oauthConfig, storageModule, logger)
+    expect(accessToken).toBe(null)
   })
 })
