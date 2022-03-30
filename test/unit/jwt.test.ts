@@ -10,24 +10,30 @@ import {
 } from '../../src/jwt'
 import createStorageModule from '../../src/createStorageModule'
 import { oauthConfig } from './test-config'
-import mockAccessToken from './mockAccessToken.json'
+import accessTokenMock from './mocks/accessTokenMock.json'
+import {
+  createTokenValidTimeMock,
+  createTokenEarlyTimeWithinLeewayMock,
+  createTokenExpiredTimeWithinLeewayMock,
+  createTokenExpiredTimeOutsideLeewayMock
+} from './mocks/timeMocks'
 
 describe('parseJwt', (): void => {
   it('should parse an access token and extract correct header and claims', (): void => {
-    const parsedAccessToken = parseJwt(mockAccessToken.encoded)
-    expect(parsedAccessToken.header.alg).toBe(mockAccessToken.decodedHeader.alg)
-    expect(parsedAccessToken.header.typ).toBe(mockAccessToken.decodedHeader.typ)
+    const parsedAccessToken = parseJwt(accessTokenMock.encoded)
+    expect(parsedAccessToken.header.alg).toBe(accessTokenMock.decodedHeader.alg)
+    expect(parsedAccessToken.header.typ).toBe(accessTokenMock.decodedHeader.typ)
     expect(parsedAccessToken.claims.sub).toBe(
-      mockAccessToken.decodedPayload.sub
+      accessTokenMock.decodedPayload.sub
     )
     expect(parsedAccessToken.claims.iat).toBe(
-      mockAccessToken.decodedPayload.iat
+      accessTokenMock.decodedPayload.iat
     )
     expect(parsedAccessToken.claims.exp).toBe(
-      mockAccessToken.decodedPayload.exp
+      accessTokenMock.decodedPayload.exp
     )
     expect(parsedAccessToken.claims.nbf).toBe(
-      mockAccessToken.decodedPayload.nbf
+      accessTokenMock.decodedPayload.nbf
     )
     expect(parsedAccessToken.signature.length).toBeGreaterThan(0)
   })
@@ -36,7 +42,7 @@ describe('validateJwtHeader', (): void => {
   it('should throw without alg', (): void => {
     expect(() => {
       validateJwtHeader({
-        ...mockAccessToken.decodedHeader,
+        ...accessTokenMock.decodedHeader,
         alg: null
       })
     }).toThrow('Missing alg in jwt header')
@@ -44,7 +50,7 @@ describe('validateJwtHeader', (): void => {
   it('should throw with invalid alg', (): void => {
     expect(() => {
       validateJwtHeader({
-        ...mockAccessToken.decodedHeader,
+        ...accessTokenMock.decodedHeader,
         alg: 'SH256'
       })
     }).toThrow('SH256 is not an allowed signing alg')
@@ -52,27 +58,19 @@ describe('validateJwtHeader', (): void => {
   it('should throw without typ', (): void => {
     expect(() => {
       validateJwtHeader({
-        ...mockAccessToken.decodedHeader,
+        ...accessTokenMock.decodedHeader,
         typ: null
       })
     }).toThrow('Missing typ in jwt header')
   })
 })
 describe('validateJwtClaims', (): void => {
-  beforeAll(() => {
-    jest
-      .spyOn(Date, 'now')
-      .mockImplementation(
-        jest.fn(
-          () => mockAccessToken.decodedPayload.nbf * 1000 + 1000
-        ) as jest.Mock
-      )
-  })
+  beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
   it('should not throw error with missing iss', (): void => {
     const storageModule = createStorageModule()
     validateJwtClaims(
       {
-        ...mockAccessToken.decodedPayload,
+        ...accessTokenMock.decodedPayload,
         iss: null
       },
       oauthConfig,
@@ -84,7 +82,7 @@ describe('validateJwtClaims', (): void => {
     expect(() => {
       validateJwtClaims(
         {
-          ...mockAccessToken.decodedPayload,
+          ...accessTokenMock.decodedPayload,
           iss: 'incorrect_iss'
         },
         oauthConfig,
@@ -97,7 +95,7 @@ describe('validateJwtClaims', (): void => {
     storageModule.set('nonce', 'mocked_nonce')
     validateJwtClaims(
       {
-        ...mockAccessToken.decodedPayload,
+        ...accessTokenMock.decodedPayload,
         nonce: 'mocked_nonce'
       },
       oauthConfig,
@@ -110,7 +108,7 @@ describe('validateJwtClaims', (): void => {
     expect(() => {
       validateJwtClaims(
         {
-          ...mockAccessToken.decodedPayload,
+          ...accessTokenMock.decodedPayload,
           nonce: 'mocked_nonce'
         },
         oauthConfig,
@@ -124,23 +122,15 @@ describe('validateJwtClaims', (): void => {
 })
 describe('validateJwt', (): void => {
   describe('when token is active', (): void => {
-    beforeAll(() => {
-      jest
-        .spyOn(Date, 'now')
-        .mockImplementation(
-          jest.fn(
-            () => mockAccessToken.decodedPayload.nbf * 1000 + 1000
-          ) as jest.Mock
-        )
-    })
+    beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
     it('should not throw error for valid token', (): void => {
       const storageModule = createStorageModule()
-      validateJwt(mockAccessToken.encoded, oauthConfig, storageModule)
+      validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
     })
     it('should throw error with extra characters', (): void => {
       expect(() => {
         const storageModule = createStorageModule()
-        validateJwt('X' + mockAccessToken.encoded, oauthConfig, storageModule)
+        validateJwt('X' + accessTokenMock.encoded, oauthConfig, storageModule)
       }).toThrow()
     })
     afterAll(() => {
@@ -148,41 +138,28 @@ describe('validateJwt', (): void => {
     })
   })
   describe('before token is active, but within leeway', (): void => {
-    beforeAll(() => {
-      jest
-        .spyOn(Date, 'now')
-        .mockImplementation(
-          jest.fn(
-            () => (mockAccessToken.decodedPayload.nbf - 1) * 1000
-          ) as jest.Mock
-        )
-    })
+    beforeAll(
+      createTokenEarlyTimeWithinLeewayMock(accessTokenMock.decodedPayload)
+    )
     it('should not throw error for valid token', (): void => {
       const storageModule = createStorageModule()
-      validateJwt(mockAccessToken.encoded, oauthConfig, storageModule)
+      validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
     })
     afterAll(() => {
       jest.resetAllMocks()
     })
   })
   describe('before token is active, outside of leeway', (): void => {
-    beforeAll(() => {
-      jest
-        .spyOn(Date, 'now')
-        .mockImplementation(
-          jest.fn(
-            () =>
-              (mockAccessToken.decodedPayload.nbf -
-                oauthConfig.tokenLeewaySeconds -
-                1) *
-              1000
-          ) as jest.Mock
-        )
-    })
+    beforeAll(
+      createTokenEarlyTimeOutsideLeewayMock(
+        accessTokenMock.decodedPayload,
+        oauthConfig
+      )
+    )
     it('should throw error for valid token', (): void => {
       const storageModule = createStorageModule()
       expect(() => {
-        validateJwt(mockAccessToken.encoded, oauthConfig, storageModule)
+        validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
       }).toThrow('jwt token not valid yet')
     })
     afterAll(() => {
@@ -190,41 +167,28 @@ describe('validateJwt', (): void => {
     })
   })
   describe('after token is expired, but within leeway', (): void => {
-    beforeAll(() => {
-      jest
-        .spyOn(Date, 'now')
-        .mockImplementation(
-          jest.fn(
-            () => (mockAccessToken.decodedPayload.exp + 1) * 1000
-          ) as jest.Mock
-        )
-    })
+    beforeAll(
+      createTokenExpiredTimeWithinLeewayMock(accessTokenMock.decodedPayload)
+    )
     it('should not throw error for valid token', (): void => {
       const storageModule = createStorageModule()
-      validateJwt(mockAccessToken.encoded, oauthConfig, storageModule)
+      validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
     })
     afterAll(() => {
       jest.resetAllMocks()
     })
   })
   describe('after token is expired, outside of leeway', (): void => {
-    beforeAll(() => {
-      jest
-        .spyOn(Date, 'now')
-        .mockImplementation(
-          jest.fn(
-            () =>
-              (mockAccessToken.decodedPayload.exp +
-                oauthConfig.tokenLeewaySeconds +
-                1) *
-              1000
-          ) as jest.Mock
-        )
-    })
+    beforeAll(
+      createTokenExpiredTimeOutsideLeewayMock(
+        accessTokenMock.decodedPayload,
+        oauthConfig
+      )
+    )
     it('should throw error for valid token', (): void => {
       const storageModule = createStorageModule()
       expect(() => {
-        validateJwt(mockAccessToken.encoded, oauthConfig, storageModule)
+        validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
       }).toThrow()
     })
     afterAll(() => {
