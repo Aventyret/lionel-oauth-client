@@ -19,6 +19,7 @@ describe('createOauthClient', (): void => {
     expect(clientConfig.scope).toBe(oauthConfig.scope)
     expect(clientConfig.authorizationEndpoint).toBe('/authorize')
     expect(clientConfig.tokenEndpoint).toBe('/token')
+    expect(clientConfig.tokenLeewaySeconds).toBe(60)
     expect(clientConfig.debug).toBe(false)
   })
   it('should throw an error if issuer is missing', (): void => {

@@ -1,4 +1,10 @@
-const storageKeys = <const>['accessToken', 'idToken', 'state', 'codeVerifier']
+const storageKeys = <const>[
+  'accessToken',
+  'idToken',
+  'state',
+  'codeVerifier',
+  'nonce'
+]
 export type StorageKey = typeof storageKeys[number]
 
 const storageModuleTypes = <const>['local', 'session']

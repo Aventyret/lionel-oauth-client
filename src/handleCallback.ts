@@ -1,5 +1,6 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
+import { validateJwt } from './jwt'
 import { Logger } from './logger'
 
 interface CallbackParams {
@@ -49,10 +50,10 @@ export const validateCallbackParams = (
   callbackParams: CallbackParams
 ): void => {
   if (!callbackParams.state) {
-    throw new Error('Missing state in callback params')
+    throw Error('Missing state in callback params')
   }
   if (!callbackParams.code) {
-    throw new Error('Missing code in callback params')
+    throw Error('Missing code in callback params')
   }
 }
 
@@ -62,10 +63,10 @@ export const validateClientState = (
   clientCodeVerifier: string
 ): void => {
   if (callbackParams.state !== clientState) {
-    throw new Error('Incorrect state stored in oauth client')
+    throw Error('Incorrect state stored in oauth client')
   }
   if (!clientCodeVerifier) {
-    throw new Error('Missing code verifier in client')
+    throw Error('Missing code verifier in client')
   }
 }
 
@@ -81,7 +82,7 @@ export const requestToken = async (
   if (response.status >= 200 && response.status < 300) {
     return (await response.json())?.access_token
   }
-  throw new Error(`Get Token http status ${response.status}`)
+  throw Error(`Get Token http status ${response.status}`)
 }
 
 export default async (
@@ -107,6 +108,7 @@ export default async (
   logger.log({ tokenRequestBody })
   try {
     const accessToken = await requestToken(oauthClientConfig, tokenRequestBody)
+    validateJwt(accessToken, oauthClientConfig, storageModule)
     storageModule.set('accessToken', accessToken)
   } catch (error: unknown) {
     logger.error(error)

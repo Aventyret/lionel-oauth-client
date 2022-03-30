@@ -41,6 +41,9 @@ const oAuthClient = createOauthClient({
   authorizationEndpoint, // Optional, defaults to '/authorize'
   tokenEndpoint, // Optional, defaults to '/token'
   tokenStorage, // Optional, defaults to 'localStorage'
+  tokenLeewaySeconds, // Optional, defaults to 60
+  authenticationMaxAgeSeconds, // Optional
+  responseMode, // Optional
   debug // Optional, defaults to false
 })
 ```

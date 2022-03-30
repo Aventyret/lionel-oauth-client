@@ -15,6 +15,8 @@ export interface OauthClientConfig {
   authorizationEndpoint?: string
   tokenEndpoint?: string
   tokenStorage?: StorageModuleType
+  tokenLeewaySeconds?: number
+  authenticationMaxAgeSeconds?: number
   responseMode?: ResponseMode
   debug?: boolean
 }
@@ -39,7 +41,7 @@ const getOauthClientConfig = (
     requiredAttribute => !configArg[requiredAttribute]
   )
   if (missingAttribute) {
-    throw new Error(`Required attribute ${missingAttribute} missing in config`)
+    throw Error(`Required attribute ${missingAttribute} missing in config`)
   }
 
   return {
@@ -47,6 +49,7 @@ const getOauthClientConfig = (
     authorizationEndpoint: '/authorize',
     tokenEndpoint: '/token',
     debug: false,
+    tokenLeewaySeconds: 60,
     ...configArg
   }
 }
