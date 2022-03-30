@@ -24,7 +24,7 @@ export interface OauthClientConfig {
 export interface OauthClient {
   signIn: () => void
   handleCallback: () => void
-  getAccessToken: () => string
+  getAccessToken: () => string | null
   getConfig: () => OauthClientConfig
 }
 
@@ -66,7 +66,8 @@ export default (configArg: OauthClientConfig): OauthClient => {
     signIn: async (): Promise<void> => signIn(config, storageModule, logger),
     handleCallback: async (): Promise<void> =>
       handleCallback(config, storageModule, logger),
-    getAccessToken: (): string => getAccessToken(config, storageModule, logger),
+    getAccessToken: (): string | null =>
+      getAccessToken(config, storageModule, logger),
     getConfig: (): OauthClientConfig => config
   }
 }
