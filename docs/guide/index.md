@@ -66,6 +66,12 @@ Get the access token of the signed in user:
 await oAuthClient.getAccessToken()
 ```
 
+Remove the access token (effectively a client side sign out):
+
+```js
+await oAuthClient.removeAccessToken()
+```
+
 #### OpenID Client
 
 Docs coming soon...
