@@ -11,8 +11,9 @@ import handleCallback, {
 import createStorageModule from '../../src/createStorageModule'
 import createLogger from '../../src/logger'
 import { oauthConfig } from './test-config'
-import mockOauthTokenResponse from './mockOauthTokenResponse.json'
-import mockAccessToken from './mockAccessToken.json'
+import tokenResponseMock from './mocks/tokenResponseMock.json'
+import accessTokenMock from './mocks/accessTokenMock.json'
+import { createTokenValidTimeMock } from './mocks/timeMocks'
 
 describe('getCallbackParams', (): void => {
   it('should read state and code params from fragment', (): void => {
@@ -43,11 +44,11 @@ describe('getTokenRequestBody', (): void => {
       'mocked_code_verifier',
       'mocked_code'
     )
-    expect(requestBody.client_id).toBe(oauthConfig.clientId)
-    expect(requestBody.redirect_uri).toBe(oauthConfig.redirectUri)
-    expect(requestBody.grant_type).toBe('authorization_code')
-    expect(requestBody.code).toBe('mocked_code')
-    expect(requestBody.code_verifier).toBe('mocked_code_verifier')
+    expect(requestBody.get('client_id')).toBe(oauthConfig.clientId)
+    expect(requestBody.get('redirect_uri')).toBe(oauthConfig.redirectUri)
+    expect(requestBody.get('grant_type')).toBe('authorization_code')
+    expect(requestBody.get('code')).toBe('mocked_code')
+    expect(requestBody.get('code_verifier')).toBe('mocked_code_verifier')
   })
 })
 
@@ -74,29 +75,23 @@ describe('handleCallback', (): void => {
         jest.fn(() => {
           return Promise.resolve({
             status: 200,
-            json: () => Promise.resolve(mockOauthTokenResponse)
+            json: () => Promise.resolve(tokenResponseMock)
           })
         }) as jest.Mock
       )
-      jest
-        .spyOn(Date, 'now')
-        .mockImplementation(
-          jest.fn(
-            () => mockAccessToken.decodedPayload.nbf * 1000 + 1000
-          ) as jest.Mock
-        )
     })
+    beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
     it('should set access token in storage', async (): Promise<void> => {
       const storageModule = createStorageModule()
       storageModule.set('state', 'mocked_state')
       storageModule.set('codeVerifier', 'mocked_code_verifier')
       await handleCallback(
         oauthConfig,
-        createStorageModule(),
+        storageModule,
         createLogger(oauthConfig)
       )
       expect(storageModule.get('accessToken')).toBe(
-        mockOauthTokenResponse.access_token
+        tokenResponseMock.access_token
       )
     })
     afterAll(() => {
@@ -111,8 +106,8 @@ describe('handleCallback', (): void => {
             status: 200,
             json: () =>
               Promise.resolve({
-                ...mockOauthTokenResponse,
-                access_token: 'X' + mockOauthTokenResponse.access_token
+                ...tokenResponseMock,
+                access_token: 'X' + tokenResponseMock.access_token
               })
           })
         }) as jest.Mock
@@ -122,11 +117,13 @@ describe('handleCallback', (): void => {
       const storageModule = createStorageModule()
       storageModule.set('state', 'mocked_state')
       storageModule.set('codeVerifier', 'mocked_code_verifier')
-      await handleCallback(
-        oauthConfig,
-        createStorageModule(),
-        createLogger(oauthConfig)
-      )
+      try {
+        await handleCallback(
+          oauthConfig,
+          storageModule,
+          createLogger(oauthConfig)
+        )
+      } catch {}
       expect(() => storageModule.get('accessToken')).toThrow('Value not set')
     })
     afterAll(() => {

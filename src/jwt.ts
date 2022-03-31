@@ -13,7 +13,7 @@ const allowedSigningAlgs = <const>[
   'ES512'
 ]
 
-interface TokenPart {
+export interface TokenPart {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
 }
