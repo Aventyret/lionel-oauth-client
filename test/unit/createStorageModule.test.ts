@@ -3,6 +3,7 @@
  */
 
 import createStorageModule from '../../src/createStorageModule'
+import { oauthConfig } from './test-config'
 
 const mockedStorage = window.Storage as jest.Mock<Storage>
 interface MockStorage {
@@ -31,33 +32,36 @@ describe('createStorageModule', (): void => {
   })
 
   it('should have a storage key that is an instance of Storage', (): void => {
-    const localStorageModule = createStorageModule()
+    const localStorageModule = createStorageModule(oauthConfig)
     expect(localStorageModule.storage).toBeInstanceOf(Storage)
-    const sessionStorageModule = createStorageModule('session')
+    const sessionStorageModule = createStorageModule({
+      ...oauthConfig,
+      tokenStorage: 'session'
+    })
     expect(sessionStorageModule.storage).toBeInstanceOf(Storage)
   })
 
   it('should throw an error when creating a StorageModule instance with an unsupported type', () => {
-    //@ts-expect-error test to see if an error is thrown when providing an unsupported `type`
-    expect(() => createStorageModule('fail')).toThrow(
-      'Not a valid storage type'
-    )
+    expect(() =>
+      //@ts-expect-error test to see if an error is thrown when providing an unsupported `type`
+      createStorageModule({ ...oauthConfig, tokenStorage: 'fail' })
+    ).toThrow('Not a valid storage type')
   })
 
   it('should set and get value to allowed key', (): void => {
-    const module = createStorageModule()
+    const module = createStorageModule(oauthConfig)
     const value = '1337'
     module.set('accessToken', value)
     expect(module.get('accessToken')).toBe(value)
   })
 
   it('should throw error when trying to get a non-set value', (): void => {
-    const module = createStorageModule()
+    const module = createStorageModule(oauthConfig)
     expect(() => module.get('accessToken')).toThrow('Value not set')
   })
 
   it('should remove value from allowed key', (): void => {
-    const module = createStorageModule()
+    const module = createStorageModule(oauthConfig)
     module.set('codeVerifier', '1337')
     expect(module.get('codeVerifier')).toBeTruthy()
     module.remove('codeVerifier')
@@ -65,14 +69,14 @@ describe('createStorageModule', (): void => {
   })
 
   it('should clear storage completely', (): void => {
-    const module = createStorageModule()
+    const module = createStorageModule(oauthConfig)
     module.set('idToken', '1337')
     module.clear()
     expect(() => module.get('idToken')).toThrow('Value not set')
   })
 
   it('should throw an error when trying to get, set or remove using a unsupported key', () => {
-    const module = createStorageModule()
+    const module = createStorageModule(oauthConfig)
     //@ts-expect-error throws error on `get` when using unsupported key
     expect(() => module.get('fail')).toThrow('Invalid storage key')
     //@ts-expect-error throws error on `set` when using unsupported key

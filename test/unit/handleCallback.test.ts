@@ -82,7 +82,7 @@ describe('handleCallback', (): void => {
     })
     beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
     it('should set access token in storage', async (): Promise<void> => {
-      const storageModule = createStorageModule()
+      const storageModule = createStorageModule(oauthConfig)
       storageModule.set('state', 'mocked_state')
       storageModule.set('codeVerifier', 'mocked_code_verifier')
       await handleCallback(
@@ -114,7 +114,7 @@ describe('handleCallback', (): void => {
       )
     })
     it('should not set access token in storage', async (): Promise<void> => {
-      const storageModule = createStorageModule()
+      const storageModule = createStorageModule(oauthConfig)
       storageModule.set('state', 'mocked_state')
       storageModule.set('codeVerifier', 'mocked_code_verifier')
       try {

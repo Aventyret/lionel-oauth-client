@@ -57,7 +57,7 @@ const getOauthClientConfig = (
 
 export default (configArg: OauthClientConfig): OauthClient => {
   const config = getOauthClientConfig(configArg)
-  const storageModule = createStorageModule(config.tokenStorage)
+  const storageModule = createStorageModule(config)
   const logger = createLogger(config)
 
   logger.log('Create oAuthClient')
