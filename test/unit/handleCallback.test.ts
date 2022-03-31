@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import handleCallback, {
   getCallbackParams,
   getTokenRequestBody,

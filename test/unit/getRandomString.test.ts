@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import getRandomString from '../../src/getRandomString'
 
 describe('getRandomString', (): void => {

@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import createState from '../../src/createState'
 
 describe('createState', (): void => {

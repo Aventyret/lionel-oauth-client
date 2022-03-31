@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import createOauthClient, { OauthClient } from '../../src/createOauthClient'
 import { oauthConfig } from './test-config'
 
