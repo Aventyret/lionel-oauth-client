@@ -68,7 +68,7 @@ describe('validateJwtHeader', (): void => {
 describe('validateJwtClaims', (): void => {
   beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
   it('should not throw error with missing iss', (): void => {
-    const storageModule = createStorageModule()
+    const storageModule = createStorageModule(oauthConfig)
     validateJwtClaims(
       {
         ...accessTokenMock.decodedPayload,
@@ -79,7 +79,7 @@ describe('validateJwtClaims', (): void => {
     )
   })
   it('should throw error with different iss than in config', (): void => {
-    const storageModule = createStorageModule()
+    const storageModule = createStorageModule(oauthConfig)
     expect(() => {
       validateJwtClaims(
         {
@@ -92,7 +92,7 @@ describe('validateJwtClaims', (): void => {
     }).toThrow('Incorrect iss in jwt claims')
   })
   it('should not throw error with correct nonce', (): void => {
-    const storageModule = createStorageModule()
+    const storageModule = createStorageModule(oauthConfig)
     storageModule.set('nonce', 'mocked_nonce')
     validateJwtClaims(
       {
@@ -104,7 +104,7 @@ describe('validateJwtClaims', (): void => {
     )
   })
   it('should throw error with incorrect nonce', (): void => {
-    const storageModule = createStorageModule()
+    const storageModule = createStorageModule(oauthConfig)
     storageModule.set('nonce', 'incorrect_nonce')
     expect(() => {
       validateJwtClaims(
@@ -125,12 +125,12 @@ describe('validateJwt', (): void => {
   describe('when token is active', (): void => {
     beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
     it('should not throw error for valid token', (): void => {
-      const storageModule = createStorageModule()
+      const storageModule = createStorageModule(oauthConfig)
       validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
     })
     it('should throw error with extra characters', (): void => {
       expect(() => {
-        const storageModule = createStorageModule()
+        const storageModule = createStorageModule(oauthConfig)
         validateJwt('X' + accessTokenMock.encoded, oauthConfig, storageModule)
       }).toThrow()
     })
@@ -143,7 +143,7 @@ describe('validateJwt', (): void => {
       createTokenEarlyTimeWithinLeewayMock(accessTokenMock.decodedPayload)
     )
     it('should not throw error for valid token', (): void => {
-      const storageModule = createStorageModule()
+      const storageModule = createStorageModule(oauthConfig)
       validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
     })
     afterAll(() => {
@@ -158,7 +158,7 @@ describe('validateJwt', (): void => {
       )
     )
     it('should throw error for valid token', (): void => {
-      const storageModule = createStorageModule()
+      const storageModule = createStorageModule(oauthConfig)
       expect(() => {
         validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
       }).toThrow('jwt token not valid yet')
@@ -172,7 +172,7 @@ describe('validateJwt', (): void => {
       createTokenExpiredTimeWithinLeewayMock(accessTokenMock.decodedPayload)
     )
     it('should not throw error for valid token', (): void => {
-      const storageModule = createStorageModule()
+      const storageModule = createStorageModule(oauthConfig)
       validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
     })
     afterAll(() => {
@@ -187,7 +187,7 @@ describe('validateJwt', (): void => {
       )
     )
     it('should throw error for valid token', (): void => {
-      const storageModule = createStorageModule()
+      const storageModule = createStorageModule(oauthConfig)
       expect(() => {
         validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
       }).toThrow()

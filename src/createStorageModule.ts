@@ -1,3 +1,5 @@
+import { OauthClientConfig } from './createOauthClient'
+
 const storageKeys = <const>[
   'accessToken',
   'idToken',
@@ -18,34 +20,40 @@ export interface StorageModule {
   clear: () => void
 }
 
-const invalidKey = (key: StorageKey) => {
-  if (storageKeys.includes(key)) return
-  throw Error('Invalid storage key')
-}
-
 export const createStorageModule = (
-  type: StorageModuleType = 'local'
+  config: OauthClientConfig
 ): StorageModule => {
+  const type = config.tokenStorage || 'local'
+
   if (!storageModuleTypes.includes(type))
     throw Error('Not a valid storage type')
 
   const storage = 'session' ? sessionStorage : localStorage
 
+  const _invalidKey = (key: StorageKey): void => {
+    if (storageKeys.includes(key)) return
+    throw Error('Invalid storage key')
+  }
+
+  const _hashedKey = (key: StorageKey): string => {
+    return btoa(`${config.issuer}-${config.clientId}-${key}`)
+  }
+
   const set = (key: StorageKey, value: string) => {
-    invalidKey(key)
-    storage.setItem(key, value)
+    _invalidKey(key)
+    storage.setItem(_hashedKey(key), value)
   }
 
   const get = (key: StorageKey) => {
-    invalidKey(key)
-    const value = storage.getItem(key)
+    _invalidKey(key)
+    const value = storage.getItem(_hashedKey(key))
     if (!value) throw Error('Value not set')
     return value
   }
 
   const remove = (key: StorageKey) => {
-    invalidKey(key)
-    storage.removeItem(key)
+    _invalidKey(key)
+    storage.removeItem(_hashedKey(key))
   }
 
   const clear = () => {

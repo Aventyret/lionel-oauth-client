@@ -16,7 +16,7 @@ describe('getAccessToken', (): void => {
   describe('when token is valid', (): void => {
     beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
     it('should get an access token if there is one in storage', async (): Promise<void> => {
-      const storageModule = createStorageModule()
+      const storageModule = createStorageModule(oauthConfig)
       storageModule.set('accessToken', accessTokenMock.encoded)
       const accessToken = getAccessToken(
         oauthConfig,
@@ -27,7 +27,7 @@ describe('getAccessToken', (): void => {
       expect(accessToken).toBe(accessTokenMock.encoded)
     })
     it('should not throw error if access token is not in storage', async (): Promise<void> => {
-      const storageModule = createStorageModule()
+      const storageModule = createStorageModule(oauthConfig)
       const accessToken = getAccessToken(
         oauthConfig,
         storageModule,
@@ -47,7 +47,7 @@ describe('getAccessToken', (): void => {
       )
     )
     it('should not get token if an expired token is in storage', async (): Promise<void> => {
-      const storageModule = createStorageModule()
+      const storageModule = createStorageModule(oauthConfig)
       storageModule.set('accessToken', accessTokenMock.encoded)
       const accessToken = getAccessToken(
         oauthConfig,
@@ -63,7 +63,7 @@ describe('getAccessToken', (): void => {
 })
 describe('removeAccessToken', (): void => {
   it('should remove access token from storage', async (): Promise<void> => {
-    const storageModule = createStorageModule()
+    const storageModule = createStorageModule(oauthConfig)
     const logger = createLogger(oauthConfig)
     storageModule.set('accessToken', accessTokenMock.encoded)
     let accessToken = getAccessToken(oauthConfig, storageModule, logger)

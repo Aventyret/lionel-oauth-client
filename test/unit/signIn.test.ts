@@ -52,6 +52,10 @@ describe('getAuthorizeUri', (): void => {
 
 describe('signIn', (): void => {
   it('should not throw any errors', (): void => {
-    signIn(oauthConfig, createStorageModule(), createLogger(oauthConfig))
+    signIn(
+      oauthConfig,
+      createStorageModule(oauthConfig),
+      createLogger(oauthConfig)
+    )
   })
 })
