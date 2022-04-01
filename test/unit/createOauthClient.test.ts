@@ -16,7 +16,7 @@ describe('createOauthClient', (): void => {
     expect(clientConfig.issuer).toBe(oauthConfig.issuer)
     expect(clientConfig.clientId).toBe(oauthConfig.clientId)
     expect(clientConfig.redirectUri).toBe(oauthConfig.redirectUri)
-    expect(clientConfig.scope).toBe(oauthConfig.scope)
+    expect(clientConfig.scopes).toBe(oauthConfig.scopes)
     expect(clientConfig.authorizationEndpoint).toBe('/authorize')
     expect(clientConfig.tokenEndpoint).toBe('/token')
     expect(clientConfig.tokenLeewaySeconds).toBe(60)

@@ -8,7 +8,6 @@ import {
   validateJwtClaims,
   validateJwt
 } from '../../src/jwt'
-import createStorageModule from '../../src/createStorageModule'
 import { oauthConfig } from './test-config'
 import accessTokenMock from './mocks/accessTokenMock.json'
 import {
@@ -68,54 +67,24 @@ describe('validateJwtHeader', (): void => {
 describe('validateJwtClaims', (): void => {
   beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
   it('should not throw error with missing iss', (): void => {
-    const storageModule = createStorageModule(oauthConfig)
     validateJwtClaims(
       {
         ...accessTokenMock.decodedPayload,
         iss: null
       },
-      oauthConfig,
-      storageModule
+      oauthConfig
     )
   })
   it('should throw error with different iss than in config', (): void => {
-    const storageModule = createStorageModule(oauthConfig)
     expect(() => {
       validateJwtClaims(
         {
           ...accessTokenMock.decodedPayload,
           iss: 'incorrect_iss'
         },
-        oauthConfig,
-        storageModule
+        oauthConfig
       )
     }).toThrow('Incorrect iss in jwt claims')
-  })
-  it('should not throw error with correct nonce', (): void => {
-    const storageModule = createStorageModule(oauthConfig)
-    storageModule.set('nonce', 'mocked_nonce')
-    validateJwtClaims(
-      {
-        ...accessTokenMock.decodedPayload,
-        nonce: 'mocked_nonce'
-      },
-      oauthConfig,
-      storageModule
-    )
-  })
-  it('should throw error with incorrect nonce', (): void => {
-    const storageModule = createStorageModule(oauthConfig)
-    storageModule.set('nonce', 'incorrect_nonce')
-    expect(() => {
-      validateJwtClaims(
-        {
-          ...accessTokenMock.decodedPayload,
-          nonce: 'mocked_nonce'
-        },
-        oauthConfig,
-        storageModule
-      )
-    }).toThrow('Nonce in jwt do not match nonce in client')
   })
   afterAll(() => {
     jest.resetAllMocks()
@@ -125,13 +94,11 @@ describe('validateJwt', (): void => {
   describe('when token is active', (): void => {
     beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
     it('should not throw error for valid token', (): void => {
-      const storageModule = createStorageModule(oauthConfig)
-      validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
+      validateJwt(accessTokenMock.encoded, oauthConfig)
     })
     it('should throw error with extra characters', (): void => {
       expect(() => {
-        const storageModule = createStorageModule(oauthConfig)
-        validateJwt('X' + accessTokenMock.encoded, oauthConfig, storageModule)
+        validateJwt('X' + accessTokenMock.encoded, oauthConfig)
       }).toThrow()
     })
     afterAll(() => {
@@ -143,8 +110,7 @@ describe('validateJwt', (): void => {
       createTokenEarlyTimeWithinLeewayMock(accessTokenMock.decodedPayload)
     )
     it('should not throw error for valid token', (): void => {
-      const storageModule = createStorageModule(oauthConfig)
-      validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
+      validateJwt(accessTokenMock.encoded, oauthConfig)
     })
     afterAll(() => {
       jest.resetAllMocks()
@@ -158,9 +124,8 @@ describe('validateJwt', (): void => {
       )
     )
     it('should throw error for valid token', (): void => {
-      const storageModule = createStorageModule(oauthConfig)
       expect(() => {
-        validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
+        validateJwt(accessTokenMock.encoded, oauthConfig)
       }).toThrow('jwt token not valid yet')
     })
     afterAll(() => {
@@ -172,8 +137,7 @@ describe('validateJwt', (): void => {
       createTokenExpiredTimeWithinLeewayMock(accessTokenMock.decodedPayload)
     )
     it('should not throw error for valid token', (): void => {
-      const storageModule = createStorageModule(oauthConfig)
-      validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
+      validateJwt(accessTokenMock.encoded, oauthConfig)
     })
     afterAll(() => {
       jest.resetAllMocks()
@@ -187,9 +151,8 @@ describe('validateJwt', (): void => {
       )
     )
     it('should throw error for valid token', (): void => {
-      const storageModule = createStorageModule(oauthConfig)
       expect(() => {
-        validateJwt(accessTokenMock.encoded, oauthConfig, storageModule)
+        validateJwt(accessTokenMock.encoded, oauthConfig)
       }).toThrow()
     })
     afterAll(() => {

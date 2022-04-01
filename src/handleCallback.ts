@@ -113,7 +113,7 @@ export default async (
     throw Error('Token request failed')
   }
   try {
-    validateJwt(accessToken, oauthClientConfig, storageModule)
+    validateJwt(accessToken, oauthClientConfig)
     cleanupStorage(storageModule)
     storageModule.set('accessToken', accessToken)
   } catch (error: unknown) {

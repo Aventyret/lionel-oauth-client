@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lionel dev demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css"
+    />
+    <style>
+      article {
+        --block-spacing-vertical: 2rem;
+        display: flex;
+        justify-items: center;
+        flex-direction: column;
+        max-width: 24rem;
+        margin-inline: auto;
+      }
+
+      img {
+        max-width: 13rem;
+        margin: 0 auto 2rem;
+      }
+    </style>
+    <script src="./dist/index.umd.js"></script>
+    <script>
+      var oauthClient = await lioneloauthclient.createOidcClient({
+        issuer: 'https://sso.example.com',
+        clientId: 'example_app',
+        redirectUri: 'http://localhost:3001/oidc-callback.html',
+        debug: true
+      })
+      console.log(lioneloauthclient.metaData)
+    </script>
+  </head>
+  <body>
+    <main class="container">
+      <article>
+        <hgroup>
+          <h1>Sign in</h1>
+          <h2>Using Lionel OAuth Client</h2>
+        </hgroup>
+        <img src="./docs/public/lionel-logo.svg" alt="Lionel logo" />
+        <button type="submit" class="contrast" onclick="oauthClient.signIn()">
+          Login
+        </button>
+      </article>
+    </main>
+  </body>
+</html>

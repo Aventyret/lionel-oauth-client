@@ -11,7 +11,7 @@ export const getAccessToken = (
   logger.log('Get Access Token')
   try {
     const accessToken = storageModule.get('accessToken')
-    validateJwt(accessToken, oauthClientConfig, storageModule)
+    validateJwt(accessToken, oauthClientConfig)
     logger.log('Valid token in storage')
     return accessToken
   } catch {}
