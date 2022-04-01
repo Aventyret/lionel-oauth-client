@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import signIn, { getAuthorizeUri } from '../../src/signIn'
 import createStorageModule from '../../src/createStorageModule'
 import createState from '../../src/createState'

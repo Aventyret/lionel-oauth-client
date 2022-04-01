@@ -72,6 +72,20 @@ Remove the access token (effectively a client side sign out):
 await oAuthClient.removeAccessToken()
 ```
 
+Subscribe to an event to trigger a function in response:
+
+```js
+/** Supported event types: "tokenUpdated", "refreshNeeded" */
+oAuthClient.subscribe('refreshNeeded', () => console.log('Refresh is needed'))
+```
+
+Unsubscribe from an event, must provide the same function that was passed to `oAuthClient.subscribe`:
+
+```js
+/** Supported event types: "tokenUpdated", "refreshNeeded" */
+oAuthClient.unsubscribe('refreshNeeded', () => console.log('Refresh is needed'))
+```
+
 #### OpenID Client
 
 Docs coming soon...

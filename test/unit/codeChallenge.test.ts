@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { createCodeChallenge } from '../../src/codeChallenge'
 
 describe('createCodeChallenge', (): void => {
