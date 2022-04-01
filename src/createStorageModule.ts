@@ -24,7 +24,6 @@ export const createStorageModule = (
   config: OauthClientConfig
 ): StorageModule => {
   const type = config.tokenStorage || 'local'
-  const hash = btoa(`${config.issuer}-${config.clientId}`)
 
   if (!storageModuleTypes.includes(type))
     throw Error('Not a valid storage type')
@@ -37,7 +36,7 @@ export const createStorageModule = (
   }
 
   const _hashedKey = (key: StorageKey): string => {
-    return `${hash}-${key}`
+    return btoa(`${config.issuer}-${config.clientId}-${key}`)
   }
 
   const set = (key: StorageKey, value: string) => {
