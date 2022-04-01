@@ -29,7 +29,6 @@ export interface OauthClientConfig {
   useNonce?: boolean
   display?: Display
   prompt?: Prompt
-  maxAgeSeconds?: number
   uiLocales?: string[]
   acrValues?: string[]
   debug?: boolean

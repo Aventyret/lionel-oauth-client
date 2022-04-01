@@ -2,16 +2,16 @@
  * @jest-environment jsdom
  */
 
-import createOidcClient, { OidcClient } from '../../src/createOidcClient'
+import createOidcClient from '../../src/createOidcClient'
 import { oidcConfig } from './test-config'
 
 describe('createOidcClient', (): void => {
-  it('should return an object when passing a valid config', async (): Promise<void> => {
-    const oidcClient: OidcClient = await createOidcClient(oidcConfig)
+  it('should return an object when passing a valid config', (): void => {
+    const oidcClient = createOidcClient(oidcConfig)
     expect(typeof oidcClient).toBe('object')
   })
-  it('should set correct config attributes, including defaults', async (): Promise<void> => {
-    const oidcClient: OidcClient = await createOidcClient(oidcConfig)
+  it('should set correct config attributes, including defaults', (): void => {
+    const oidcClient = createOidcClient(oidcConfig)
     const clientConfig = oidcClient.getConfig()
     expect(clientConfig.issuer).toBe(oidcConfig.issuer)
     expect(clientConfig.clientId).toBe(oidcConfig.clientId)
