@@ -3,10 +3,14 @@ export type EventType = typeof eventTypes[number]
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type EventCallbackFn = (...args: any[]) => any
+export type EventSubscribeFn = (
+  eventType: EventType,
+  callback: EventCallbackFn
+) => void
 
 export interface EventModule {
-  subscribe: (eventType: EventType, callback: EventCallbackFn) => void
-  unsubscribe: (eventType: EventType, callback: EventCallbackFn) => void
+  subscribe: EventSubscribeFn
+  unsubscribe: EventSubscribeFn
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   publish: (eventType: EventType, ...args: any[]) => void
 }
