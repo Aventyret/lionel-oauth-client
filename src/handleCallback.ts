@@ -1,5 +1,6 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
+import { EventPublishFn } from './createEventModule'
 import { validateJwt } from './jwt'
 import { Logger } from './logger'
 
@@ -86,7 +87,8 @@ const cleanupStorage = (storageModule: StorageModule): void => {
 export default async (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
-  logger: Logger
+  logger: Logger,
+  publish: EventPublishFn
 ): Promise<void> => {
   logger.log('Handle Callback')
   logger.log({ oauthClientConfig, storageModule })
@@ -116,6 +118,7 @@ export default async (
     validateJwt(accessToken, oauthClientConfig, storageModule)
     cleanupStorage(storageModule)
     storageModule.set('accessToken', accessToken)
+    publish('tokenUpdated', accessToken)
   } catch (error: unknown) {
     logger.error(error)
     cleanupStorage(storageModule)

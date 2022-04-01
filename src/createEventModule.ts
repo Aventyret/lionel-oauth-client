@@ -7,12 +7,13 @@ export type EventSubscribeFn = (
   eventType: EventType,
   callback: EventCallbackFn
 ) => void
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type EventPublishFn = (eventType: EventType, ...args: any[]) => void
 
 export interface EventModule {
   subscribe: EventSubscribeFn
   unsubscribe: EventSubscribeFn
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  publish: (eventType: EventType, ...args: any[]) => void
+  publish: EventPublishFn
 }
 
 interface Events {
