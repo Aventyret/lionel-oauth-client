@@ -12,6 +12,7 @@ describe('createOidcClient', (): void => {
   })
   it('should set correct config attributes, including defaults', (): void => {
     const oidcClient = createOidcClient(oidcConfig)
+    console.log({ oidcClient })
     const clientConfig = oidcClient.getConfig()
     expect(clientConfig.issuer).toBe(oidcConfig.issuer)
     expect(clientConfig.clientId).toBe(oidcConfig.clientId)

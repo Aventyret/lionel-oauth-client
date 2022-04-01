@@ -24,13 +24,12 @@
     </style>
     <script src="./dist/index.umd.js"></script>
     <script>
-      var oauthClient = await lioneloauthclient.createOidcClient({
+      var oauthClient = lioneloauthclient.createOidcClient({
         issuer: 'https://sso.example.com',
         clientId: 'example_app',
         redirectUri: 'http://localhost:3001/oidc-callback.html',
         debug: true
       })
-      console.log(lioneloauthclient.metaData)
     </script>
   </head>
   <body>

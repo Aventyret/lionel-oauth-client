@@ -35,7 +35,7 @@ export interface OauthClientConfig {
 }
 
 export interface OauthClient {
-  signIn: () => void
+  signIn: () => Promise<void>
   handleCallback: () => void
   getAccessToken: () => string | null
   removeAccessToken: () => void
