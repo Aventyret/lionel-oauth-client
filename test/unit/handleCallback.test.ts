@@ -88,6 +88,7 @@ describe('handleCallback', (): void => {
       await handleCallback(
         oauthConfig,
         storageModule,
+        null,
         createLogger(oauthConfig)
       )
       expect(storageModule.get('accessToken')).toBe(
@@ -121,6 +122,7 @@ describe('handleCallback', (): void => {
         await handleCallback(
           oauthConfig,
           storageModule,
+          null,
           createLogger(oauthConfig)
         )
       } catch {}

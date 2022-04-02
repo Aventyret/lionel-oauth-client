@@ -3,7 +3,10 @@ import createOauthClient, {
   OauthClientConfig,
   getOauthClientConfig
 } from './createOauthClient'
-import { getMetaData, MetaData } from './metaData'
+import { createStorageModule } from './createStorageModule'
+import signIn from './signIn'
+import handleCallback from './handleCallback'
+import { getMetaData } from './metaData'
 
 export interface OidcClient extends OauthClient {
   getUser: () => Promise<unknown>
@@ -19,50 +22,29 @@ const getOidcClientConfig = (
   }
   return {
     useNonce: true,
+    useMetaData: true,
     ...config
-  }
-}
-
-const setConfigEndpointsFromMetaData = (
-  config: OauthClientConfig,
-  metaData: MetaData
-) => {
-  return {
-    ...config,
-    authorizationEndpoint: metaData.authorization_endpoint.replace(
-      new RegExp(`^${config.issuer}`),
-      ''
-    ),
-    tokenEndpoint: metaData.token_endpoint.replace(
-      new RegExp(`^${config.issuer}`),
-      ''
-    )
   }
 }
 
 export default (configArg: OauthClientConfig): OidcClient => {
   const client = createOauthClient(configArg)
-  let config = getOidcClientConfig(configArg)
+  const config = getOidcClientConfig(configArg)
+  const storageModule = createStorageModule(config)
 
   client.logger.log('Create OidcClient')
-
-  if (config.metaData) {
-    config = setConfigEndpointsFromMetaData(config, config.metaData)
-  }
-
-  getMetaData(config, client.logger)
-    .then(metaData => {
-      config.metaData = metaData
-      config = setConfigEndpointsFromMetaData(config, metaData)
-      client.logger.log({ config })
-    })
-    .catch(error => {
-      client.logger.error('Could not request meta data with discovery')
-      console.error(error)
-    })
+  client.logger.log({ config })
 
   return {
     ...client,
+    signIn: async (): Promise<void> => {
+      const metaData = await getMetaData(config, storageModule, client.logger)
+      return signIn(config, storageModule, metaData, client.logger)
+    },
+    handleCallback: async (): Promise<void> => {
+      const metaData = await getMetaData(config, storageModule, client.logger)
+      return handleCallback(config, storageModule, metaData, client.logger)
+    },
     getConfig: (): OauthClientConfig => config,
     getUser: async (): Promise<unknown> => Promise.resolve({})
   }

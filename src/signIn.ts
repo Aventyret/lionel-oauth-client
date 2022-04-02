@@ -2,14 +2,18 @@ import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import createState from './createState'
 import { createCodeChallenge } from './codeChallenge'
+import { MetaData } from './metaData'
 import { Logger } from './logger'
 
 export const getAuthorizeUri = (
   oauthClientConfig: OauthClientConfig,
+  metaData: MetaData | null = null,
   state: string,
   codeChallenge: string
 ): string => {
-  const uri = `${oauthClientConfig.issuer}${oauthClientConfig.authorizationEndpoint}`
+  const uri =
+    metaData?.authorization_endpoint ||
+    `${oauthClientConfig.issuer}${oauthClientConfig.authorizationEndpoint}`
   const queryParams = [
     `client_id=${oauthClientConfig.clientId}`,
     `redirect_uri=${encodeURIComponent(oauthClientConfig.redirectUri)}`,
@@ -28,6 +32,7 @@ export const getAuthorizeUri = (
 export default async (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
+  metaData: MetaData | null = null,
   logger: Logger
 ): Promise<void> => {
   logger.log('Sign In')
@@ -36,5 +41,7 @@ export default async (
   storageModule.set('state', state)
   const { verifier, challenge } = await createCodeChallenge()
   storageModule.set('codeVerifier', verifier)
-  location.assign(getAuthorizeUri(oauthClientConfig, state, challenge))
+  location.assign(
+    getAuthorizeUri(oauthClientConfig, metaData, state, challenge)
+  )
 }

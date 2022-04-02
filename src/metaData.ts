@@ -1,4 +1,5 @@
 import { OauthClientConfig } from './createOauthClient'
+import { StorageModule } from './createStorageModule'
 import { Logger } from './logger'
 
 export interface MetaData {
@@ -131,16 +132,24 @@ const requestMetaData = async (
 
 export const getMetaData = async (
   oauthClientConfig: OauthClientConfig,
+  storageModule: StorageModule,
   logger: Logger
 ): Promise<MetaData> => {
-  logger.log('Get MetaData')
-  let metaData = oauthClientConfig.metaData
+  logger.log('Get meta data')
+  let metaData
+  try {
+    metaData = JSON.parse(storageModule.get('metaData'))
+    logger.log('Meta data found in storage')
+    return Promise.resolve(metaData)
+  } catch {}
+  metaData = oauthClientConfig.metaData
   if (!metaData) {
-    logger.log('Request MetaData from issuer')
+    logger.log('Request meta data from issuer')
     metaData = await requestMetaData(oauthClientConfig)
   }
   const metaDataWithDefaults = getMetaDataWithDefaults(metaData)
   validateMetaData(metaDataWithDefaults, oauthClientConfig)
   logger.log(metaDataWithDefaults)
+  storageModule.set('metaData', JSON.stringify(metaDataWithDefaults))
   return Promise.resolve(metaDataWithDefaults)
 }

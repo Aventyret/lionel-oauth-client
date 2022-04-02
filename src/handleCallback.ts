@@ -1,6 +1,7 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import { validateJwt } from './jwt'
+import { MetaData } from './metaData'
 import { Logger } from './logger'
 
 interface CallbackParams {
@@ -64,9 +65,12 @@ export const validateClientState = (
 
 export const requestToken = async (
   oauthClientConfig: OauthClientConfig,
+  metaData: MetaData | null = null,
   tokenRequestBody: URLSearchParams
 ): Promise<string> => {
-  const uri = `${oauthClientConfig.issuer}${oauthClientConfig.tokenEndpoint}`
+  const uri =
+    metaData?.token_endpoint ||
+    `${oauthClientConfig.issuer}${oauthClientConfig.tokenEndpoint}`
   const response = await fetch(uri, {
     method: 'POST',
     body: new URLSearchParams(tokenRequestBody)
@@ -86,6 +90,7 @@ const cleanupStorage = (storageModule: StorageModule): void => {
 export default async (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
+  metaData: MetaData | null = null,
   logger: Logger
 ): Promise<void> => {
   logger.log('Handle Callback')
@@ -106,7 +111,11 @@ export default async (
   logger.log({ tokenRequestBody })
   let accessToken
   try {
-    accessToken = await requestToken(oauthClientConfig, tokenRequestBody)
+    accessToken = await requestToken(
+      oauthClientConfig,
+      metaData,
+      tokenRequestBody
+    )
   } catch (error: unknown) {
     logger.error(error)
     cleanupStorage(storageModule)

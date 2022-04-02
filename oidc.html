@@ -24,10 +24,12 @@
     </style>
     <script src="./dist/index.umd.js"></script>
     <script>
-      var oauthClient = lioneloauthclient.createOidcClient({
-        issuer: 'https://sso.example.com',
-        clientId: 'example_app',
-        redirectUri: 'http://localhost:3001/oidc-callback.html',
+      var oidcClient = lioneloauthclient.createOidcClient({
+        issuer: 'https://psykologforbundetssodev.azurewebsites.net',
+        clientId: 'demokratiwebben-frontend',
+        redirectUri: 'http://localhost:3000/auth',
+        responseMode: 'fragment',
+        scopes: ['https://www.psykologforbundet.se/demokratiwebben-api'],
         debug: true
       })
     </script>
@@ -40,7 +42,7 @@
           <h2>Using Lionel OAuth Client</h2>
         </hgroup>
         <img src="./docs/public/lionel-logo.svg" alt="Lionel logo" />
-        <button type="submit" class="contrast" onclick="oauthClient.signIn()">
+        <button type="submit" class="contrast" onclick="oidcClient.signIn()">
           Login
         </button>
       </article>
