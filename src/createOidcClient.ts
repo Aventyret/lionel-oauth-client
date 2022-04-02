@@ -35,6 +35,8 @@ export default (configArg: OauthClientConfig): OidcClient => {
   client.logger.log('Create OidcClient')
   client.logger.log({ config })
 
+  getMetaData(config, storageModule, client.logger)
+
   return {
     ...client,
     signIn: async (): Promise<void> => {
