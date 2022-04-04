@@ -1,9 +1,10 @@
 import createLogger, { Logger } from './logger'
-import { StorageModuleType, createStorageModule } from './createStorageModule'
-import signIn from './signIn'
-import handleCallback from './handleCallback'
 import { getAccessToken, removeAccessToken } from './accessToken'
+import { StorageModuleType, createStorageModule } from './createStorageModule'
+import { EventSubscribeFn, createEventModule } from './createEventModule'
+import handleCallback from './handleCallback'
 import { MetaData } from './metaData'
+import signIn from './signIn'
 
 const responseModes = <const>['fragment', 'query']
 export type ResponseMode = typeof responseModes[number]
@@ -42,6 +43,8 @@ export interface OauthClient {
   removeAccessToken: () => void
   getConfig: () => OauthClientConfig
   logger: Logger
+  subscribe: EventSubscribeFn
+  unsubscribe: EventSubscribeFn
 }
 
 const requiredOauthClientAttributes = <const>[
@@ -73,6 +76,7 @@ export const getOauthClientConfig = (
 export default (configArg: OauthClientConfig): OauthClient => {
   const config = getOauthClientConfig(configArg)
   const storageModule = createStorageModule(config)
+  const { subscribe, unsubscribe, publish } = createEventModule()
   const logger = createLogger(config)
 
   logger.log('Create oAuthClient')
@@ -82,11 +86,13 @@ export default (configArg: OauthClientConfig): OauthClient => {
     signIn: async (): Promise<void> =>
       signIn(config, storageModule, null, logger),
     handleCallback: async (): Promise<void> =>
-      handleCallback(config, storageModule, null, logger),
+      handleCallback(config, storageModule, null, logger, publish),
     getAccessToken: (): string | null =>
       getAccessToken(config, storageModule, logger),
     removeAccessToken: (): void => removeAccessToken(storageModule, logger),
     getConfig: (): OauthClientConfig => config,
-    logger
+    logger,
+    subscribe,
+    unsubscribe
   }
 }

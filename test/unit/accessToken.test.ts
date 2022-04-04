@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { getAccessToken, removeAccessToken } from '../../src/accessToken'
 import createStorageModule from '../../src/createStorageModule'
 import createLogger from '../../src/logger'

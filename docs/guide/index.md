@@ -72,7 +72,21 @@ Remove the access token (effectively a client side sign out):
 await oAuthClient.removeAccessToken()
 ```
 
-#### Open ID Connect Client
+Subscribe to an event to trigger a function in response:
+
+```js
+/** Supported event types: "tokenUpdated", "refreshNeeded" */
+oAuthClient.subscribe('refreshNeeded', () => console.log('Refresh is needed'))
+```
+
+Unsubscribe from an event, must provide the same function that was passed to `oAuthClient.subscribe`:
+
+```js
+/** Supported event types: "tokenUpdated", "refreshNeeded" */
+oAuthClient.unsubscribe('refreshNeeded', () => console.log('Refresh is needed'))
+```
+
+#### OpenID Connect Client
 
 Initialize your client with settings for your Open ID Connect issuer.
 

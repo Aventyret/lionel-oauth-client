@@ -4,6 +4,7 @@ import createOauthClient, {
   getOauthClientConfig
 } from './createOauthClient'
 import { createStorageModule } from './createStorageModule'
+import { createEventModule } from './createEventModule'
 import signIn from './signIn'
 import handleCallback from './handleCallback'
 import { getMetaData } from './metaData'
@@ -31,6 +32,7 @@ export default (configArg: OauthClientConfig): OidcClient => {
   const client = createOauthClient(configArg)
   const config = getOidcClientConfig(configArg)
   const storageModule = createStorageModule(config)
+  const { subscribe, unsubscribe, publish } = createEventModule()
 
   client.logger.log('Create OidcClient')
   client.logger.log({ config })
@@ -45,9 +47,17 @@ export default (configArg: OauthClientConfig): OidcClient => {
     },
     handleCallback: async (): Promise<void> => {
       const metaData = await getMetaData(config, storageModule, client.logger)
-      return handleCallback(config, storageModule, metaData, client.logger)
+      return handleCallback(
+        config,
+        storageModule,
+        metaData,
+        client.logger,
+        publish
+      )
     },
     getConfig: (): OauthClientConfig => config,
-    getUser: async (): Promise<unknown> => Promise.resolve({})
+    getUser: async (): Promise<unknown> => Promise.resolve({}),
+    subscribe,
+    unsubscribe
   }
 }

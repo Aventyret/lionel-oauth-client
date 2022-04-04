@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import createStorageModule from '../../src/createStorageModule'
 import { oauthConfig } from './test-config'
 

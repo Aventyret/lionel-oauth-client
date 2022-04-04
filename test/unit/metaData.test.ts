@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { validateMetaData, getMetaData } from '../../src/metaData'
 import createStorageModule from '../../src/createStorageModule'
 import createLogger from '../../src/logger'

@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import handleCallback, {
   getCallbackParams,
   getTokenRequestBody,
@@ -9,6 +5,7 @@ import handleCallback, {
   validateClientState
 } from '../../src/handleCallback'
 import createStorageModule from '../../src/createStorageModule'
+import createEventModule from '../../src/createEventModule'
 import createLogger from '../../src/logger'
 import { oauthConfig } from './test-config'
 import tokenResponseMock from './mocks/tokenResponseMock.json'
@@ -85,11 +82,13 @@ describe('handleCallback', (): void => {
       const storageModule = createStorageModule(oauthConfig)
       storageModule.set('state', 'mocked_state')
       storageModule.set('codeVerifier', 'mocked_code_verifier')
+      const { publish } = createEventModule()
       await handleCallback(
         oauthConfig,
         storageModule,
         null,
-        createLogger(oauthConfig)
+        createLogger(oauthConfig),
+        publish
       )
       expect(storageModule.get('accessToken')).toBe(
         tokenResponseMock.access_token
@@ -118,12 +117,14 @@ describe('handleCallback', (): void => {
       const storageModule = createStorageModule(oauthConfig)
       storageModule.set('state', 'mocked_state')
       storageModule.set('codeVerifier', 'mocked_code_verifier')
+      const { publish } = createEventModule()
       try {
         await handleCallback(
           oauthConfig,
           storageModule,
           null,
-          createLogger(oauthConfig)
+          createLogger(oauthConfig),
+          publish
         )
       } catch {}
       expect(() => storageModule.get('accessToken')).toThrow('Value not set')

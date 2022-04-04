@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import createOidcClient from '../../src/createOidcClient'
 import { oidcConfig } from './test-config'
 
