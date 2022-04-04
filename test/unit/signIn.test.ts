@@ -101,6 +101,32 @@ describe('getAuthorizeUri', (): void => {
       new RegExp(`nonce=${await nonceHash(options.nonce)}`)
     )
   })
+  it('should include authenticationMaxAgeSeconds, uiLocales and acrValues if provided in config', async (): Promise<void> => {
+    const state = createState()
+    const codeChallengeData = await createCodeChallenge()
+    const config = {
+      ...oidcConfig,
+      authenticationMaxAgeSeconds: 3600,
+      uiLocales: ['sv-SE', 'en-US'],
+      acrValues: ['membership', 'premium']
+    }
+    const authorizeUri = await getAuthorizeUri(
+      {},
+      config,
+      oidcConfig.metaData,
+      state,
+      codeChallengeData.challenge
+    )
+    expect(authorizeUri).toMatch(
+      new RegExp(`max_age=${config.authenticationMaxAgeSeconds}`)
+    )
+    expect(authorizeUri).toMatch(
+      new RegExp(`ui_locales=${config.uiLocales.join(' ')}`)
+    )
+    expect(authorizeUri).toMatch(
+      new RegExp(`acr_values=${config.acrValues.join(' ')}`)
+    )
+  })
 })
 
 describe('signIn', (): void => {

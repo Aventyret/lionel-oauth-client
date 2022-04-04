@@ -51,6 +51,15 @@ export const getAuthorizeUri = async (
   if (options.nonce) {
     queryParams.push(`nonce=${await nonceHash(options.nonce)}`)
   }
+  if (oauthClientConfig.authenticationMaxAgeSeconds) {
+    queryParams.push(`max_age=${oauthClientConfig.authenticationMaxAgeSeconds}`)
+  }
+  if (oauthClientConfig.uiLocales?.length) {
+    queryParams.push(`ui_locales=${oauthClientConfig.uiLocales.join(' ')}`)
+  }
+  if (oauthClientConfig.acrValues?.length) {
+    queryParams.push(`acr_values=${oauthClientConfig.acrValues.join(' ')}`)
+  }
   return `${uri}?${queryParams.join('&')}`
 }
 
