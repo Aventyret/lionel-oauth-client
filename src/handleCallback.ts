@@ -1,13 +1,18 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import { EventPublishFn } from './createEventModule'
-import { validateJwt } from './jwt'
+import { parseJwt, validateJwt, validateIdToken, validateJwtNonce } from './jwt'
 import { MetaData } from './metaData'
 import { Logger } from './logger'
 
 interface CallbackParams {
   code?: string
   state?: string
+}
+
+interface TokenReponse {
+  accessToken: string
+  idToken: string
 }
 
 export const getCallbackParams = (queryString: string) => {
@@ -68,7 +73,7 @@ export const requestToken = async (
   oauthClientConfig: OauthClientConfig,
   metaData: MetaData | null = null,
   tokenRequestBody: URLSearchParams
-): Promise<string> => {
+): Promise<TokenReponse> => {
   const uri =
     metaData?.token_endpoint ||
     `${oauthClientConfig.issuer}${oauthClientConfig.tokenEndpoint}`
@@ -77,6 +82,11 @@ export const requestToken = async (
     body: new URLSearchParams(tokenRequestBody)
   })
   if (response.status >= 200 && response.status < 300) {
+    const tokenResponse = await response.json()
+    return {
+      accessToken: tokenResponse.access_token || '',
+      idToken: tokenResponse.id_token || ''
+    }
     return (await response.json())?.access_token
   }
   throw Error(`Get Token http status ${response.status}`)
@@ -85,6 +95,7 @@ export const requestToken = async (
 const cleanupStorage = (storageModule: StorageModule): void => {
   storageModule.remove('accessToken')
   storageModule.remove('state')
+  storageModule.remove('nonce')
   storageModule.remove('codeVerifier')
 }
 
@@ -111,9 +122,9 @@ export default async (
   )
   logger.log('Token Request Body')
   logger.log({ tokenRequestBody })
-  let accessToken
+  let tokenResponse
   try {
-    accessToken = await requestToken(
+    tokenResponse = await requestToken(
       oauthClientConfig,
       metaData,
       tokenRequestBody
@@ -124,13 +135,27 @@ export default async (
     throw Error('Token request failed')
   }
   try {
-    validateJwt(accessToken, oauthClientConfig)
+    validateJwt(tokenResponse.accessToken, oauthClientConfig)
+    if (tokenResponse.idToken) {
+      validateJwt(tokenResponse.idToken, oauthClientConfig)
+      validateIdToken(tokenResponse.idToken, oauthClientConfig)
+      validateJwtNonce(tokenResponse.idToken, storageModule)
+    }
     cleanupStorage(storageModule)
-    storageModule.set('accessToken', accessToken)
-    publish('tokenUpdated', accessToken)
+    storageModule.set('accessToken', tokenResponse.accessToken)
+    publish('tokenUpdated', tokenResponse.accessToken)
+    if (tokenResponse.idToken) {
+      storageModule.set('idToken', tokenResponse.idToken)
+      const user = parseJwt(tokenResponse.idToken).claims
+      publish('userLoaded', user)
+    } else {
+      try {
+        storageModule.remove('idToken')
+      } catch {}
+    }
   } catch (error: unknown) {
     logger.error(error)
     cleanupStorage(storageModule)
-    throw Error('Invalid token retreived')
+    throw Error(`Invalid token retreived: ${error}`)
   }
 }

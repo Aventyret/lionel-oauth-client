@@ -91,6 +91,8 @@ export const validateJwtClaims = (
     tokenExpDate.setUTCSeconds(
       claims.exp + (oauthClientConfig.tokenLeewaySeconds || 0)
     )
+    const nbf = new Date(0)
+    nbf.setUTCSeconds(claims.nbf)
     if (now > tokenExpDate) {
       throw Error('jwt token is expired')
     }
@@ -133,6 +135,42 @@ export const validateJwtNonce = (
     } catch {}
     if (nonce !== claims.nonce) {
       throw Error('Nonce in jwt does not match nonce in client')
+    }
+  }
+}
+
+const requiredIdTokenClaims = <const>['iss', 'sub', 'aud', 'exp', 'iat']
+
+export const validateIdToken = (
+  token: string,
+  oauthClientConfig: OauthClientConfig
+): void => {
+  const { claims } = parseJwt(token)
+  const missingClaim = requiredIdTokenClaims.find(
+    requiredClaim => !claims[requiredClaim]
+  )
+  if (missingClaim) {
+    throw Error(`Required claim ${missingClaim} missing in id token`)
+  }
+  if (oauthClientConfig.useNonce && !claims.nonce) {
+    throw Error(`nonce is missing in id token`)
+  }
+  if (oauthClientConfig.authenticationMaxAgeSeconds && !claims.auth_time) {
+    throw Error(`auth_time is missing in id token`)
+  }
+  if (
+    oauthClientConfig.authenticationMaxAgeSeconds &&
+    claims.auth_time + oauthClientConfig.authenticationMaxAgeSeconds >
+      Date.now() / 1000
+  ) {
+    throw Error(`auth_time is too long ago`)
+  }
+  if (claims.aud && !claims.aud.includes(oauthClientConfig.clientId)) {
+    throw Error(`clientId missing in aud claim in id token`)
+  }
+  if (Array.isArray(claims.aud) && claims.length > 0) {
+    if (claims.azp !== oauthClientConfig.clientId) {
+      throw Error(`id token azp should be clientId if token has multiple aud`)
     }
   }
 }
