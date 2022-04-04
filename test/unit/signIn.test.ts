@@ -11,7 +11,7 @@ describe('getAuthorizeUri', (): void => {
     const authorizationEndpoint = '/auth'
     const state = createState()
     const codeChallengeData = await createCodeChallenge()
-    const authorizeUri = getAuthorizeUri(
+    const authorizeUri = await getAuthorizeUri(
       {},
       {
         ...oauthConfig,
@@ -36,7 +36,7 @@ describe('getAuthorizeUri', (): void => {
     const authorizationEndpoint = '/auth'
     const state = createState()
     const codeChallengeData = await createCodeChallenge()
-    const authorizeUri = getAuthorizeUri(
+    const authorizeUri = await getAuthorizeUri(
       {},
       {
         ...oauthConfig,
@@ -52,7 +52,7 @@ describe('getAuthorizeUri', (): void => {
   it('should get authorize uri from meta data for oidc client', async (): Promise<void> => {
     const state = createState()
     const codeChallengeData = await createCodeChallenge()
-    const authorizeUri = getAuthorizeUri(
+    const authorizeUri = await getAuthorizeUri(
       {},
       {
         ...oidcConfig,
@@ -84,7 +84,7 @@ describe('getAuthorizeUri', (): void => {
       prompt: 'mocked_prompt',
       nonce: 'mocked_nonce'
     }
-    const authorizeUri = getAuthorizeUri(
+    const authorizeUri = await getAuthorizeUri(
       options,
       oidcConfig,
       oidcConfig.metaData,
@@ -98,7 +98,7 @@ describe('getAuthorizeUri', (): void => {
     expect(authorizeUri).toMatch(new RegExp(`display=${options.display}`))
     expect(authorizeUri).toMatch(new RegExp(`prompt=${options.prompt}`))
     expect(authorizeUri).toMatch(
-      new RegExp(`nonce=${nonceHash(options.nonce)}`)
+      new RegExp(`nonce=${await nonceHash(options.nonce)}`)
     )
   })
 })
@@ -112,5 +112,23 @@ describe('signIn', (): void => {
       null,
       createLogger(oauthConfig)
     )
+  })
+  it('should store a created nonce in storage if useNonce is not false', async (): Promise<void> => {
+    const storageModule = createStorageModule(oidcConfig)
+    await signIn({}, oidcConfig, storageModule, null, createLogger(oidcConfig))
+    expect(storageModule.get('nonce').length).toBe(32)
+    storageModule.remove('nonce')
+  })
+  it('should store nonce in storage if useNonce is not false', async (): Promise<void> => {
+    const storageModule = createStorageModule(oidcConfig)
+    await signIn(
+      { nonce: 'nonce' },
+      oidcConfig,
+      storageModule,
+      null,
+      createLogger(oidcConfig)
+    )
+    expect(storageModule.get('nonce')).toBe('nonce')
+    storageModule.remove('nonce')
   })
 })

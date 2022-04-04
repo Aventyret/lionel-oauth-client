@@ -2,7 +2,7 @@ import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import createState from './createState'
 import { createCodeChallenge } from './codeChallenge'
-import { nonceHash } from './createNonce'
+import createNonce, { nonceHash } from './createNonce'
 import { MetaData } from './metaData'
 import { Logger } from './logger'
 
@@ -14,13 +14,13 @@ export interface SignInOptions {
   nonce?: string
 }
 
-export const getAuthorizeUri = (
+export const getAuthorizeUri = async (
   options: SignInOptions,
   oauthClientConfig: OauthClientConfig,
   metaData: MetaData | null = null,
   state: string,
   codeChallenge: string
-): string => {
+): Promise<string> => {
   const uri =
     metaData?.authorization_endpoint ||
     `${oauthClientConfig.issuer}${oauthClientConfig.authorizationEndpoint}`
@@ -49,7 +49,7 @@ export const getAuthorizeUri = (
     queryParams.push(`prompt=${options.prompt}`)
   }
   if (options.nonce) {
-    queryParams.push(`nonce=${nonceHash(options.nonce)}`)
+    queryParams.push(`nonce=${await nonceHash(options.nonce)}`)
   }
   return `${uri}?${queryParams.join('&')}`
 }
@@ -67,7 +67,19 @@ export default async (
   storageModule.set('state', state)
   const { verifier, challenge } = await createCodeChallenge()
   storageModule.set('codeVerifier', verifier)
+  if (!options.nonce && oauthClientConfig.useNonce) {
+    options.nonce = createNonce()
+  }
+  if (options.nonce) {
+    storageModule.set('nonce', options.nonce)
+  }
   location.assign(
-    getAuthorizeUri(options, oauthClientConfig, metaData, state, challenge)
+    await getAuthorizeUri(
+      options,
+      oauthClientConfig,
+      metaData,
+      state,
+      challenge
+    )
   )
 }

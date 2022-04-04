@@ -9,9 +9,19 @@ beforeAll(() => {
           return Math.floor(Math.random() * 10)
         })
       },
-      digest: (hashFn: string, charCodes: Uint8Array): Promise<ArrayBuffer> => {
-        console.log('Mock crypto digest', hashFn, charCodes)
-        return Promise.resolve(new ArrayBuffer(43))
+      subtle: {
+        /* eslint-disable @typescript-eslint/ban-ts-comment */
+        /* eslint-disable @typescript-eslint/no-unused-vars */
+        digest: (
+          //@ts-ignore
+          hashFn: string,
+          //@ts-ignore
+          charCodes: Uint8Array
+        ): Promise<ArrayBuffer> => {
+          return Promise.resolve(new ArrayBuffer(43))
+        }
+        /* eslint-enable @typescript-eslint/ban-ts-comment */
+        /* eslint-enable @typescript-eslint/no-unused-vars */
       }
     }
   })
