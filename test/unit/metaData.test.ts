@@ -24,6 +24,93 @@ describe('validateMetaData', (): void => {
       )
     }).toThrow('Required attribute issuer missing in meta data')
   })
+  it('should throw with non TLS userinfo_endpoint', (): void => {
+    expect(() => {
+      validateMetaData(
+        {
+          ...metaDataMock,
+          userinfo_endpoint: metaDataMock.userinfo_endpoint.replace(
+            'https',
+            'http'
+          )
+        },
+        oidcConfig,
+        createLogger(oidcConfig)
+      )
+    }).toThrow('userinfo_endpoint needs to utilize TLS')
+  })
+  it('should pass when not specifing scopes_supported', (): void => {
+    validateMetaData(
+      {
+        ...metaDataMock,
+        scopes_supported: undefined
+      },
+      oidcConfig,
+      createLogger(oidcConfig)
+    )
+  })
+  it('should throw when not supporting openid', (): void => {
+    expect(() => {
+      validateMetaData(
+        {
+          ...metaDataMock,
+          scopes_supported: ['profile']
+        },
+        oidcConfig,
+        createLogger(oidcConfig)
+      )
+    }).toThrow('Scope openid is missing in scopes_supported in meta data')
+  })
+  it('should throw when not supporting code response type', (): void => {
+    expect(() => {
+      validateMetaData(
+        {
+          ...metaDataMock,
+          response_types_supported: ['implicit']
+        },
+        oidcConfig,
+        createLogger(oidcConfig)
+      )
+    }).toThrow(
+      'code is missing in response_types_supported in meta data. Lionel oAuth Client only supports the PKCE flow.'
+    )
+  })
+  it('should throw when not supporting authorization_code grant type', (): void => {
+    expect(() => {
+      validateMetaData(
+        {
+          ...metaDataMock,
+          grant_types_supported: ['client_credentials']
+        },
+        oidcConfig,
+        createLogger(oidcConfig)
+      )
+    }).toThrow('authorization_code grant type not supported')
+  })
+  it('should throw with invalid subject_types_supported', (): void => {
+    expect(() => {
+      validateMetaData(
+        {
+          ...metaDataMock,
+          subject_types_supported: ['protected']
+        },
+        oidcConfig,
+        createLogger(oidcConfig)
+      )
+    }).toThrow('Invalid supported subject types in meta data')
+  })
+  it('should throw when not supporting RS256 alg values', (): void => {
+    expect(() => {
+      validateMetaData(
+        {
+          ...metaDataMock,
+          id_token_signing_alg_values_supported: ['S256']
+        },
+        oidcConfig,
+        createLogger(oidcConfig)
+      )
+    }).toThrow('RS256 missing as supported signing alg values in meta data')
+  })
 })
 describe('getMetaData', (): void => {
   beforeAll(() => {

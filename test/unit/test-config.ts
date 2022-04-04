@@ -17,6 +17,7 @@ export const oidcConfig = {
     authorization_endpoint:
       'https://unit-test.oauth-issuer.com/connect/authorize',
     token_endpoint: 'https://unit-test.oauth-issuer.com/connect/token',
+    userinfo_endpoint: 'https://unit-test.oauth-issuer.com/connect/userinfo',
     jwks_uri: 'https://unit-test.oauth-issuer.com/connect/jwks',
     response_types_supported: ['code'],
     subject_types_supported: ['pairwise', 'public'],
