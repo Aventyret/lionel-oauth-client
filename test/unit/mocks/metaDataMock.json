@@ -1,0 +1,57 @@
+{
+  "issuer": "https://unit-test.oauth-issuer.com",
+  "jwks_uri": "https://unit-test.oauth-issuer.com/.well-known/openid-configuration/jwks",
+  "authorization_endpoint": "https://unit-test.oauth-issuer.com/connect/authorize",
+  "token_endpoint": "https://unit-test.oauth-issuer.com/connect/token",
+  "userinfo_endpoint": "https://unit-test.oauth-issuer.com/connect/userinfo",
+  "end_session_endpoint": "https://unit-test.oauth-issuer.com/connect/endsession",
+  "check_session_iframe": "https://unit-test.oauth-issuer.com/connect/checksession",
+  "revocation_endpoint": "https://unit-test.oauth-issuer.com/connect/revocation",
+  "introspection_endpoint": "https://unit-test.oauth-issuer.com/connect/introspect",
+  "device_authorization_endpoint": "https://unit-test.oauth-issuer.com/connect/deviceauthorization",
+  "frontchannel_logout_supported": true,
+  "frontchannel_logout_session_supported": true,
+  "backchannel_logout_supported": true,
+  "backchannel_logout_session_supported": true,
+  "scopes_supported": ["openid", "api1", "offline_access"],
+  "claims_supported": ["sub"],
+  "grant_types_supported": [
+    "authorization_code",
+    "client_credentials",
+    "refresh_token",
+    "implicit"
+  ],
+  "response_types_supported": [
+    "code",
+    "token",
+    "id_token",
+    "id_token token",
+    "code id_token",
+    "code token",
+    "code id_token token"
+  ],
+  "response_modes_supported": ["form_post", "query", "fragment"],
+  "token_endpoint_auth_methods_supported": [
+    "client_secret_basic",
+    "client_secret_post"
+  ],
+  "id_token_signing_alg_values_supported": ["RS256"],
+  "subject_types_supported": ["public"],
+  "code_challenge_methods_supported": ["plain", "S256"],
+  "request_parameter_supported": true,
+  "request_object_signing_alg_values_supported": [
+    "RS256",
+    "RS384",
+    "RS512",
+    "PS256",
+    "PS384",
+    "PS512",
+    "ES256",
+    "ES384",
+    "ES512",
+    "HS256",
+    "HS384",
+    "HS512"
+  ],
+  "authorization_response_iss_parameter_supported": true
+}

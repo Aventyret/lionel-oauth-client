@@ -20,6 +20,7 @@ export const oidcConfig = {
     jwks_uri: 'https://unit-test.oauth-issuer.com/connect/jwks',
     response_types_supported: ['code'],
     subject_types_supported: ['pairwise', 'public'],
-    id_token_signing_alg_values_supported: ['RS256']
+    id_token_signing_alg_values_supported: ['RS256'],
+    scopes_supported: ['openid']
   }
 }

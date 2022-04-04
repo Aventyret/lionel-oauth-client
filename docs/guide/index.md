@@ -83,7 +83,7 @@ const oidcClient = createOidcClient({
   issuer, // Required, e.g. issuer: 'https://sso.example.com'
   clientId, // Required, e.g. clientId: 'example_app'
   redirectUri, // Required, e.g. clientId: 'http://localhost:3001/oauth-callback.html'
-  scopes, // Optional, defaults to ['openid']
+  scopes, // Optional, defaults to ['openid']. 'openid' will always be added if not included
   tokenStorage, // Optional, defaults to 'localStorage'
   tokenLeewaySeconds, // Optional, defaults to 60
   authenticationMaxAgeSeconds, // Optional

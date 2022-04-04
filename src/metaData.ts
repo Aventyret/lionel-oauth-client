@@ -9,7 +9,7 @@ export interface MetaData {
   userinfo_endpoint?: string
   jwks_uri: string
   registration_endpoint?: string
-  scopes_supported?: string
+  scopes_supported?: string[]
   response_types_supported: string[]
   response_modes_supported?: string[]
   grant_types_supported?: string[]
@@ -69,9 +69,10 @@ const requiredMetaDataAttributes = <const>[
 
 const openIdScopes = <const>['profile', 'email', 'address', 'phone']
 
-const validateMetaData = (
+export const validateMetaData = (
   metaData: MetaData,
-  oauthClientConfig: OauthClientConfig
+  oauthClientConfig: OauthClientConfig,
+  logger: Logger
 ): void => {
   const missingAttribute = requiredMetaDataAttributes.find(
     requiredAttribute =>
@@ -91,15 +92,34 @@ const validateMetaData = (
   ) {
     throw Error('userinfo_endpoint needs to utilize TLS')
   }
+  // If scopes_supported is provided it needs to include openid
+  if (
+    metaData.scopes_supported &&
+    !metaData.scopes_supported.includes('openid')
+  ) {
+    throw Error('Scope openid is missing in scopes_supported in meta data')
+  }
+  if (!metaData.response_types_supported.includes('code')) {
+    throw Error(
+      'code is missing in response_types_supported in meta data. Lionel oAuth Client only supports the PKCE flow.'
+    )
+  }
+  // All scopes do not need to be stated in metaData.scopes_supported, but openid scopes that are supported SHOULD be declared
   openIdScopes.forEach(scope => {
     if (
       oauthClientConfig.scopes?.includes('scope') &&
       !metaData.scopes_supported?.includes(scope)
     ) {
-      throw Error(`Open id scope ${scope} missing in meta data`)
+      logger.warn(
+        `Open id scope ${scope} is missing in scopes_supported in meta data`
+      )
     }
   })
-  if (!metaData.grant_types_supported?.includes('authorization_code')) {
+  // If grant_types_supported is provided it needs to include authorization_code
+  if (
+    metaData.grant_types_supported &&
+    !metaData.grant_types_supported?.includes('authorization_code')
+  ) {
     throw Error('authorization_code grant type not supported')
   }
   if (
@@ -148,7 +168,7 @@ export const getMetaData = async (
     metaData = await requestMetaData(oauthClientConfig)
   }
   const metaDataWithDefaults = getMetaDataWithDefaults(metaData)
-  validateMetaData(metaDataWithDefaults, oauthClientConfig)
+  validateMetaData(metaDataWithDefaults, oauthClientConfig, logger)
   logger.log(metaDataWithDefaults)
   storageModule.set('metaData', JSON.stringify(metaDataWithDefaults))
   return Promise.resolve(metaDataWithDefaults)
