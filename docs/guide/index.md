@@ -8,7 +8,7 @@ Write a description as to why this is good.
 
 ## Browser Support
 
-Write a summary for which browsers are tested and supported.
+The library works with modern browsers. Also works with IE11, but it users `Promise` and `TextEncoder`, so you will need to implement solutions for those if you want Internet Explorer support.
 
 ## How to get going
 

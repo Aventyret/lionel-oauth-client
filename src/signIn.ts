@@ -2,10 +2,20 @@ import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import createState from './createState'
 import { createCodeChallenge } from './codeChallenge'
+import { nonceHash } from './createNonce'
 import { MetaData } from './metaData'
 import { Logger } from './logger'
 
+export interface SignInOptions {
+  idTokenHint?: string
+  loginHint?: string
+  display?: string
+  prompt?: string
+  nonce?: string
+}
+
 export const getAuthorizeUri = (
+  options: SignInOptions,
   oauthClientConfig: OauthClientConfig,
   metaData: MetaData | null = null,
   state: string,
@@ -26,10 +36,26 @@ export const getAuthorizeUri = (
   if (oauthClientConfig.responseMode) {
     queryParams.push(`response_mode=${oauthClientConfig.responseMode}`)
   }
+  if (options.idTokenHint) {
+    queryParams.push(`id_token_hint=${options.idTokenHint}`)
+  }
+  if (options.loginHint) {
+    queryParams.push(`login_hint=${options.loginHint}`)
+  }
+  if (options.display) {
+    queryParams.push(`display=${options.display}`)
+  }
+  if (options.prompt) {
+    queryParams.push(`prompt=${options.prompt}`)
+  }
+  if (options.nonce) {
+    queryParams.push(`nonce=${nonceHash(options.nonce)}`)
+  }
   return `${uri}?${queryParams.join('&')}`
 }
 
 export default async (
+  options: SignInOptions,
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
   metaData: MetaData | null = null,
@@ -42,6 +68,6 @@ export default async (
   const { verifier, challenge } = await createCodeChallenge()
   storageModule.set('codeVerifier', verifier)
   location.assign(
-    getAuthorizeUri(oauthClientConfig, metaData, state, challenge)
+    getAuthorizeUri(options, oauthClientConfig, metaData, state, challenge)
   )
 }

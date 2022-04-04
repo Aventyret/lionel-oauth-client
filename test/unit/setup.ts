@@ -1,4 +1,5 @@
 import * as codeChallenge from '../../src/codeChallenge'
+import { TextEncoder, TextDecoder } from 'util'
 
 beforeAll(() => {
   Object.defineProperty(window, 'crypto', {
@@ -22,6 +23,12 @@ beforeAll(() => {
   })
   Object.defineProperty(window, 'fetch', {
     value: jest.fn()
+  })
+  Object.defineProperty(window, 'TextEncoder', {
+    value: TextEncoder
+  })
+  Object.defineProperty(window, 'TextDecoder', {
+    value: TextDecoder
   })
 })
 
