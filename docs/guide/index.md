@@ -114,6 +114,17 @@ Sign in the user by redirecting to issuer:
 oidcClient.signIn()
 ```
 
+Optionally you can pass options to the signin request
+
+```js
+oidcClient.signIn({
+  idTokenHint, // Optional
+  display, // Optional, can be page, popup, touch or wap
+  prompt, // Optional, none, login, consent or select_account
+  nonce // Optional, if not provided the library will create a nonce for you (if not useNonce is set to false in config)
+})
+```
+
 Process the response from the issuer. This is done on the redirect uri you have specified as `redirectUri`:
 
 ```js
