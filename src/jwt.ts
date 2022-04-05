@@ -1,5 +1,6 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
+import { nonceHash } from './createNonce'
 
 const allowedSigningAlgs = <const>[
   'RS256',
@@ -123,17 +124,17 @@ export const validateJwtClaims = (
   }
 }
 
-export const validateJwtNonce = (
+export const validateJwtNonce = async (
   token: string,
   storageModule: StorageModule
-): void => {
+): Promise<void> => {
   const { claims } = parseJwt(token)
   if (claims.nonce) {
     let nonce
     try {
       nonce = storageModule.get('nonce')
     } catch {}
-    if (nonce !== claims.nonce) {
+    if ((await nonceHash(nonce || '')) !== claims.nonce) {
       throw Error('Nonce in jwt does not match nonce in client')
     }
   }

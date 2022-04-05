@@ -1,7 +1,7 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import { Logger } from './logger'
-import { parseJwt, validateJwt, TokenPart } from './jwt'
+import { parseJwt, validateJwt, validateIdToken, TokenPart } from './jwt'
 
 export const getUser = (
   oauthClientConfig: OauthClientConfig,
@@ -12,6 +12,7 @@ export const getUser = (
   try {
     const idToken = storageModule.get('idToken')
     validateJwt(idToken, oauthClientConfig)
+    validateIdToken(idToken, oauthClientConfig)
     logger.log('Valid id token in storage')
     const user = parseJwt(idToken).claims
     return user

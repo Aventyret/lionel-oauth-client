@@ -2,10 +2,15 @@ import {
   parseJwt,
   validateJwtHeader,
   validateJwtClaims,
-  validateJwt
+  validateJwt,
+  validateJwtNonce,
+  validateIdToken
 } from '../../src/jwt'
-import { oauthConfig } from './test-config'
+import createNonce from '../../src/createNonce'
+import createStorageModule from '../../src/createStorageModule'
+import { oauthConfig, oidcConfig } from './test-config'
 import accessTokenMock from './mocks/accessTokenMock.json'
+import idTokenMock from './mocks/idTokenMock.json'
 import {
   createTokenValidTimeMock,
   createTokenEarlyTimeWithinLeewayMock,
@@ -155,5 +160,30 @@ describe('validateJwt', (): void => {
       jest.resetAllMocks()
     })
   })
-  // TODO: Add tests for validating id_token claims
+})
+describe('validateJwtNonce', (): void => {
+  it('should pass if nonce in storage is correct', async (): Promise<void> => {
+    const nonce = createNonce()
+    const storageModule = createStorageModule(oidcConfig)
+    storageModule.set('nonce', nonce)
+    await validateJwtNonce(idTokenMock.encoded, storageModule)
+    storageModule.remove('nonce')
+  })
+  it('should pass if nonce in storage is correct', async (): Promise<void> => {
+    const storageModule = createStorageModule(oidcConfig)
+    storageModule.set('nonce', 'nonce_incorrect')
+    expect(
+      async () => await validateJwtNonce(idTokenMock.encoded, storageModule)
+    ).toThrow()
+    storageModule.remove('nonce')
+  })
+  it('should pass if token has no nonce', async (): Promise<void> => {
+    const storageModule = createStorageModule(oauthConfig)
+    await validateJwtNonce(accessTokenMock.encoded, storageModule)
+  })
+})
+describe('validateIdToken•', (): void => {
+  it('should pass for correct id token', (): void => {
+    validateIdToken(idTokenMock.encoded, oidcConfig)
+  })
 })
