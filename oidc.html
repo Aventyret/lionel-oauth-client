@@ -57,10 +57,10 @@
     </main>
     <script>
       var oidcClient = lioneloauthclient.createOidcClient({
-        issuer: 'https://demo.duendesoftware.com/',
+        issuer: 'https://demo.duendesoftware.com',
         clientId: 'interactive.confidential',
         redirectUri: 'http://localhost:3001/oauth-callback.html',
-        scopes: ['profile', 'email', 'api']
+        scopes: ['profile', 'email', 'api'],
         debug: true
       })
       var user = oidcClient.getUser()

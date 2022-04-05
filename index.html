@@ -27,14 +27,6 @@
       }
     </style>
     <script src="./dist/index.umd.js"></script>
-    <script>
-      var oauthClient = lioneloauthclient.createOauthClient({
-        issuer: 'https://demo.duendesoftware.com/',
-        clientId: 'interactive.confidential',
-        redirectUri: 'http://localhost:3001/oauth-callback.html',
-        debug: true
-      })
-    </script>
   </head>
   <body>
     <main class="container">
@@ -61,7 +53,9 @@
     </main>
     <script>
       var oauthClient = lioneloauthclient.createOauthClient({
-        issuer: 'https://demo.duendesoftware.com/',
+        issuer: 'https://demo.duendesoftware.com',
+        authorizationEndpoint: '/connect/authorize',
+        tokenEndpoint: '/connect/token',
         clientId: 'interactive.confidential',
         redirectUri: 'http://localhost:3001/oauth-callback.html',
         debug: true
