@@ -54,12 +54,11 @@ const parseJwtPart = (part: string): TokenPart => {
 
 export const validateJwt = (
   token: string,
-  oauthClientConfig: OauthClientConfig,
-  storageModule: StorageModule
+  oauthClientConfig: OauthClientConfig
 ): void => {
   const decodedToken = parseJwt(token)
   validateJwtHeader(decodedToken.header)
-  validateJwtClaims(decodedToken.claims, oauthClientConfig, storageModule)
+  validateJwtClaims(decodedToken.claims, oauthClientConfig)
   validateJwtSignature(decodedToken.signature)
 }
 
@@ -77,20 +76,10 @@ export const validateJwtHeader = (header: TokenPart) => {
 
 export const validateJwtClaims = (
   claims: TokenPart,
-  oauthClientConfig: OauthClientConfig,
-  storageModule: StorageModule
+  oauthClientConfig: OauthClientConfig
 ) => {
   if (claims.iss && claims.iss !== oauthClientConfig.issuer) {
     throw Error('Incorrect iss in jwt claims')
-  }
-  if (claims.nonce) {
-    let nonce
-    try {
-      nonce = storageModule.get('nonce')
-    } catch {}
-    if (nonce !== claims.nonce) {
-      throw Error('Nonce in jwt do not match nonce in client')
-    }
   }
   const now = new Date(0)
   now.setUTCSeconds(Math.floor(Date.now() / 1000))
@@ -128,6 +117,22 @@ export const validateJwtClaims = (
     )
     if (now < tokenStartDate) {
       throw Error('jwt token not valid yet')
+    }
+  }
+}
+
+export const validateJwtNonce = (
+  token: string,
+  storageModule: StorageModule
+): void => {
+  const { claims } = parseJwt(token)
+  if (claims.nonce) {
+    let nonce
+    try {
+      nonce = storageModule.get('nonce')
+    } catch {}
+    if (nonce !== claims.nonce) {
+      throw Error('Nonce in jwt does not match nonce in client')
     }
   }
 }

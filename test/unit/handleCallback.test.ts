@@ -86,6 +86,7 @@ describe('handleCallback', (): void => {
       await handleCallback(
         oauthConfig,
         storageModule,
+        null,
         createLogger(oauthConfig),
         publish
       )
@@ -121,6 +122,7 @@ describe('handleCallback', (): void => {
         await handleCallback(
           oauthConfig,
           storageModule,
+          null,
           createLogger(oauthConfig),
           publish
         )

@@ -37,7 +37,7 @@ const oAuthClient = createOauthClient({
   issuer, // Required, e.g. issuer: 'https://sso.example.com'
   clientId, // Required, e.g. clientId: 'example_app'
   redirectUri, // Required, e.g. clientId: 'http://localhost:3001/oauth-callback.html'
-  scope, // Optional
+  scopes, // Optional
   authorizationEndpoint, // Optional, defaults to '/authorize'
   tokenEndpoint, // Optional, defaults to '/token'
   tokenStorage, // Optional, defaults to 'localStorage'
@@ -86,18 +86,61 @@ Unsubscribe from an event, must provide the same function that was passed to `oA
 oAuthClient.unsubscribe('refreshNeeded', () => console.log('Refresh is needed'))
 ```
 
-#### OpenID Client
+#### OpenID Connect Client
 
-Docs coming soon...
+Initialize your client with settings for your Open ID Connect issuer.
 
 ```js
-import { createOpenIdClient } from 'lionel-oauth-client'
+import { createOidcClient } from 'lionel-oauth-client'
 
-const openIdClient = createOpenIdClient({
-  issuer,
-  clientId,
-  redirectUri,
-  scope, //
-  discoveryEndpoint // Optional, defaults to '/.well-known/openid-configuration'
+const oidcClient = createOidcClient({
+  issuer, // Required, e.g. issuer: 'https://sso.example.com'
+  clientId, // Required, e.g. clientId: 'example_app'
+  redirectUri, // Required, e.g. clientId: 'http://localhost:3001/oauth-callback.html'
+  scopes, // Optional, defaults to ['openid']. 'openid' will always be added if not included
+  tokenStorage, // Optional, defaults to 'localStorage'
+  tokenLeewaySeconds, // Optional, defaults to 60
+  authenticationMaxAgeSeconds, // Optional
+  responseMode, // Optional
+  medaData, // Optional, if left out meta data will be collected through OpenID Discovery
+  useNonce, // Optional, defaults to true
+  debug // Optional, defaults to false
 })
+```
+
+Sign in the user by redirecting to issuer:
+
+```js
+oidcClient.signIn()
+```
+
+Process the response from the issuer. This is done on the redirect uri you have specified as `redirectUri`:
+
+```js
+await oidcClient.handleCallback()
+```
+
+Get the tokens of the signed in user:
+
+```js
+oidcClient.getAccessToken()
+oidcClient.getIdToken()
+```
+
+Get the decoded user claims from id_token or from the latest UserInfo response if a UserInfo request has been made:
+
+```js
+oidcClient.getUser()
+```
+
+Get a fresh user from the UserInfo endpoint at the issuer:
+
+```js
+await oidcClient.reloadUser()
+```
+
+Remove the tokens (effectively a client side sign out):
+
+```js
+oidcClient.removeTokens()
 ```

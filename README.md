@@ -1,6 +1,6 @@
 # Lionel oAuth Client [![npm](https://img.shields.io/npm/v/lionel-oauth-client.svg)](https://www.npmjs.com/package/lionel-oauth-client) [![build status](https://github.com/Aventyret/lionel-oauth-client/actions/workflows/build-and-test.yml/badge.svg?branch=main)](https://github.com/Aventyret/lionel-oauth-client/actions/workflows/build-and-test.yml) [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 
-oAuth client with OpenID support for browser based applications.
+oAuth client with OpenID Connect support for browser based applications.
 
 This is a work in progress – not ready for production.
 

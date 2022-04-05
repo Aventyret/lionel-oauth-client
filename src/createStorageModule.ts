@@ -5,7 +5,8 @@ const storageKeys = <const>[
   'idToken',
   'state',
   'codeVerifier',
-  'nonce'
+  'nonce',
+  'metaData'
 ]
 export type StorageKey = typeof storageKeys[number]
 

@@ -15,6 +15,7 @@ describe('getAuthorizeUri', (): void => {
         ...oauthConfig,
         authorizationEndpoint
       },
+      null,
       state,
       codeChallengeData.challenge
     )
@@ -39,6 +40,7 @@ describe('getAuthorizeUri', (): void => {
         authorizationEndpoint,
         responseMode: 'fragment'
       },
+      null,
       state,
       codeChallengeData.challenge
     )
@@ -51,6 +53,7 @@ describe('signIn', (): void => {
     signIn(
       oauthConfig,
       createStorageModule(oauthConfig),
+      null,
       createLogger(oauthConfig)
     )
   })

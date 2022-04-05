@@ -4,7 +4,7 @@ export default defineConfig({
   base: '/lionel-oauth-client/',
   title: 'Lionel oAuth Client',
   description:
-    'An oAuth client with OpenID support for browser based applications.',
+    'An oAuth client with OpenID Connect support for browser based applications.',
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/lionel-logo.svg' }]
   ],

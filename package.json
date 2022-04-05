@@ -1,6 +1,6 @@
 {
   "name": "lionel-oauth-client",
-  "description": "oAuth client with OpenID support for browser based applications.",
+  "description": "oAuth client with OpenID Connect support for browser based applications.",
   "author": "Äventyret Sweden AB",
   "version": "0.1.0",
   "license": "MIT",
