@@ -26,7 +26,12 @@
         display: none;
       }
     </style>
-    <script src="./dist/index.umd.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/oidc-client/1.11.5/oidc-client.min.js"
+      integrity="sha512-pGtU1n/6GJ8fu6bjYVGIOT9Dphaw5IWPwVlqkpvVgqBxFkvdNbytUh0H8AP15NYF777P4D3XEeA/uDWFCpSQ1g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
   </head>
   <body>
     <main class="container">
@@ -36,7 +41,7 @@
           <h2>Using Lionel OAuth Client</h2>
         </hgroup>
         <img src="./docs/public/lionel-logo.svg" alt="Lionel logo" />
-        <button type="submit" class="contrast" onclick="oauthClient.signIn()">
+        <button type="submit" class="contrast" onclick="mgr.signinRedirect()">
           Login
         </button>
       </article>
@@ -51,33 +56,17 @@
         <a href onclick="signOut(event)">Remove token from storage</a>
       </article>
     </main>
-    <script>
-      var oauthClient = lioneloauthclient.createOauthClient({
-        issuer: 'https://demo.duendesoftware.com',
-        authorizationEndpoint: '/connect/authorize',
-        tokenEndpoint: '/connect/token',
-        clientId: 'interactive.confidential',
-        redirectUri: 'http://localhost:3001/oauth-callback.html',
-        scopes: ['api'],
-        debug: true
-      })
-      var accessToken = oauthClient.getAccessToken()
-      if (accessToken) {
-        document.getElementById('access-token').value = accessToken
-        document.querySelectorAll('.view').forEach(function (viewNode) {
-          if (viewNode.className.split(' ').includes('signed-in')) {
-            viewNode.style = 'display: flex'
-          } else {
-            viewNode.style = 'display: none'
-          }
-        })
+    <script type="text/javascript">
+      Oidc.Log.logger = console
+      var config = {
+        authority: 'https://demo.duendesoftware.com',
+        client_id: 'interactive.confidential',
+        response_type: 'code',
+        scope: 'api',
+        redirect_uri: 'http://localhost:3001/oidc-client-callback.html',
+        post_logout_redirect_uri: 'https://localhost:3001/loggedout'
       }
-
-      function signOut(e) {
-        e.preventDefault()
-        oauthClient.removeAccessToken()
-        location.reload()
-      }
+      var mgr = new Oidc.UserManager(config)
     </script>
   </body>
 </html>
