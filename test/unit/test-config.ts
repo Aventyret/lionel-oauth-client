@@ -12,6 +12,7 @@ export const oidcConfig = {
   redirectUri: 'http://localhost:1337/oauth-callback',
   tokenLeewaySeconds: 60,
   scopes: ['api1', 'openid'],
+  useNonce: true,
   metaData: {
     issuer: 'https://unit-test.oauth-issuer.com',
     authorization_endpoint:

@@ -5,7 +5,7 @@ import createOauthClient, {
 } from './createOauthClient'
 import { createStorageModule } from './createStorageModule'
 import { createEventModule } from './createEventModule'
-import signIn from './signIn'
+import signIn, { SignInOptions } from './signIn'
 import handleCallback from './handleCallback'
 import { getMetaData } from './metaData'
 
@@ -41,9 +41,9 @@ export default (configArg: OauthClientConfig): OidcClient => {
 
   return {
     ...client,
-    signIn: async (): Promise<void> => {
+    signIn: async (options: SignInOptions = {}): Promise<void> => {
       const metaData = await getMetaData(config, storageModule, client.logger)
-      return signIn(config, storageModule, metaData, client.logger)
+      return signIn(options, config, storageModule, metaData, client.logger)
     },
     handleCallback: async (): Promise<void> => {
       const metaData = await getMetaData(config, storageModule, client.logger)

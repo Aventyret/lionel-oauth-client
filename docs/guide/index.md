@@ -8,7 +8,7 @@ Write a description as to why this is good.
 
 ## Browser Support
 
-Write a summary for which browsers are tested and supported.
+The library works with modern browsers. Also works with IE11, but it users `Promise` and `TextEncoder`, so you will need to implement solutions for those if you want Internet Explorer support.
 
 ## How to get going
 
@@ -112,6 +112,17 @@ Sign in the user by redirecting to issuer:
 
 ```js
 oidcClient.signIn()
+```
+
+Optionally you can pass options to the signin request
+
+```js
+oidcClient.signIn({
+  idTokenHint, // Optional
+  display, // Optional, can be page, popup, touch or wap
+  prompt, // Optional, none, login, consent or select_account
+  nonce // Optional, if not provided the library will create a nonce for you (if not useNonce is set to false in config)
+})
 ```
 
 Process the response from the issuer. This is done on the redirect uri you have specified as `redirectUri`:

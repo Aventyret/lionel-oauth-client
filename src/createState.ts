@@ -1,5 +1,5 @@
-import getRandomString from './getRandomString'
+import { randomString } from './cryptoHelpers'
 
 export default (): string => {
-  return getRandomString(32)
+  return randomString(32)
 }
