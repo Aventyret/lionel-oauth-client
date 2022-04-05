@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Signing in...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./dist/index.umd.js"></script>
+    <script>
+      var oauthClient = lioneloauthclient.createOauthClient({
+        issuer: 'https://demo.duendesoftware.com/',
+        clientId: 'interactive.confidential',
+        redirectUri: 'http://localhost:3001/oauth-callback.html',
+        debug: true
+      })
+      oauthClient
+        .handleCallback()
+        .then(() => {
+          location.assign('/')
+        })
+        .catch(() => {
+          alert('Could not sign in')
+          location.assign('/')
+        })
+    </script>
+  </head>
+  <body></body>
+</html>

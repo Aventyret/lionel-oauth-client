@@ -21,6 +21,10 @@
         max-width: 13rem;
         margin: 0 auto 2rem;
       }
+
+      .view.signed-in {
+        display: none;
+      }
     </style>
     <script src="./dist/index.umd.js"></script>
     <script>
@@ -34,7 +38,7 @@
   </head>
   <body>
     <main class="container">
-      <article>
+      <article class="view">
         <hgroup>
           <h1>Sign in</h1>
           <h2>Using Lionel OAuth Client</h2>
@@ -44,6 +48,41 @@
           Login
         </button>
       </article>
+      <article class="view signed-in">
+        <hgroup>
+          <h1>You are signed in</h1>
+          <h2>Using Lionel OAuth Client</h2>
+        </hgroup>
+        <img src="./docs/public/lionel-logo.svg" alt="Lionel logo" />
+        <label for="access-token">Access token:</label>
+        <textarea id="access-token" readonly></textarea>
+        <a href onclick="signOut(event)">Remove token from storage</a>
+      </article>
     </main>
+    <script>
+      var oauthClient = lioneloauthclient.createOauthClient({
+        issuer: 'https://demo.duendesoftware.com/',
+        clientId: 'interactive.confidential',
+        redirectUri: 'http://localhost:3001/oauth-callback.html',
+        debug: true
+      })
+      var accessToken = oauthClient.getAccessToken()
+      if (accessToken) {
+        document.getElementById('access-token').value = accessToken
+        document.querySelectorAll('.view').forEach(function (viewNode) {
+          if (viewNode.className.split(' ').includes('signed-in')) {
+            viewNode.style = 'display: flex'
+          } else {
+            viewNode.style = 'display: none'
+          }
+        })
+      }
+
+      function signOut(e) {
+        e.preventDefault()
+        oauthClient.removeAccessToken()
+        location.reload()
+      }
+    </script>
   </body>
 </html>
