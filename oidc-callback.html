@@ -7,8 +7,8 @@
     <script>
       var oidcClient = lioneloauthclient.createOidcClient({
         issuer: 'https://demo.duendesoftware.com',
-        clientId: 'interactive.confidential',
-        redirectUri: 'http://localhost:3001/oauth-callback.html',
+        clientId: 'interactive.public',
+        redirectUri: 'http://localhost:3001/oidc-callback.html',
         scopes: ['profile', 'email', 'api'],
         debug: true
       })
@@ -19,7 +19,7 @@
         })
         .catch(() => {
           alert('Could not sign in')
-          location.assign('/oidc.html')
+          // location.assign('/oidc.html')
         })
     </script>
   </head>
