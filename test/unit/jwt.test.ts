@@ -4,7 +4,8 @@ import {
   validateJwtClaims,
   validateJwt,
   validateJwtNonce,
-  validateIdToken
+  validateIdToken,
+  validateIdTokenClaims
 } from '../../src/jwt'
 import createStorageModule from '../../src/createStorageModule'
 import * as nonceModule from '../../src/createNonce'
@@ -17,7 +18,8 @@ import {
   createTokenEarlyTimeWithinLeewayMock,
   createTokenEarlyTimeOutsideLeewayMock,
   createTokenExpiredTimeWithinLeewayMock,
-  createTokenExpiredTimeOutsideLeewayMock
+  createTokenExpiredTimeOutsideLeewayMock,
+  createTokenTimeAfterAuthTimeMock
 } from './mocks/timeMocks'
 
 describe('parseJwt', (): void => {
@@ -67,29 +69,53 @@ describe('validateJwtHeader', (): void => {
   })
 })
 describe('validateJwtClaims', (): void => {
-  beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
-  it('should not throw error with missing iss', (): void => {
-    validateJwtClaims(
-      {
-        ...accessTokenMock.decodedPayload,
-        iss: null
-      },
-      oauthConfig
-    )
-  })
-  it('should throw error with different iss than in config', (): void => {
-    expect(() => {
+  describe('with valid time mock', (): void => {
+    beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
+    it('should not throw error with missing iss', (): void => {
       validateJwtClaims(
         {
           ...accessTokenMock.decodedPayload,
-          iss: 'incorrect_iss'
+          iss: null
         },
         oauthConfig
       )
-    }).toThrow('Incorrect iss in jwt claims')
+    })
+    it('should throw error with different iss than in config', (): void => {
+      expect(() => {
+        validateJwtClaims(
+          {
+            ...accessTokenMock.decodedPayload,
+            iss: 'incorrect_iss'
+          },
+          oauthConfig
+        )
+      }).toThrow('Incorrect iss in jwt claims')
+    })
+    afterAll(() => {
+      jest.resetAllMocks()
+    })
   })
-  afterAll(() => {
-    jest.resetAllMocks()
+  describe('with auth_time that is 1001 seconds old', (): void => {
+    beforeAll(
+      createTokenTimeAfterAuthTimeMock(idTokenMock.decodedPayload, 1000 + 1)
+    )
+    it('should pass if auth_time is not to old', (): void => {
+      validateJwtClaims(idTokenMock.decodedPayload, {
+        ...oidcConfig,
+        authenticationMaxAgeSeconds: 3600
+      })
+    })
+    it('should throw if auth_time is to old', (): void => {
+      expect(() =>
+        validateJwtClaims(idTokenMock.decodedPayload, {
+          ...oidcConfig,
+          authenticationMaxAgeSeconds: 1000 - oidcConfig.tokenLeewaySeconds
+        })
+      ).toThrow()
+    })
+    afterAll(() => {
+      jest.resetAllMocks()
+    })
   })
 })
 describe('validateJwt', (): void => {
@@ -181,7 +207,7 @@ describe('validateJwtNonce', (): void => {
       jest.resetAllMocks()
     })
   })
-  it('should not pass if nonce in storage is not correct', async (): Promise<void> => {
+  it('should throw if nonce in storage is not correct', async (): Promise<void> => {
     const storageModule = createStorageModule(oidcConfig)
     storageModule.set('nonce', 'nonce_incorrect')
     try {
@@ -198,8 +224,90 @@ describe('validateJwtNonce', (): void => {
     await validateJwtNonce(accessTokenMock.encoded, storageModule)
   })
 })
-describe('validateIdToken•', (): void => {
+describe('validateIdToken', (): void => {
   it('should pass for correct id token', (): void => {
     validateIdToken(idTokenMock.encoded, oidcConfig)
+  })
+})
+describe('validateIdTokenClaims', (): void => {
+  it('should pass for correct id token claims', (): void => {
+    validateIdTokenClaims(idTokenMock.decodedPayload, oidcConfig)
+  })
+  it('should throw with missing required claims', (): void => {
+    ;['iss', 'sub', 'aud', 'exp', 'iat'].forEach(requiredClaim => {
+      expect(() =>
+        validateIdTokenClaims(
+          {
+            ...idTokenMock.decodedPayload,
+            [requiredClaim]: undefined
+          },
+          oidcConfig
+        )
+      ).toThrow()
+    })
+  })
+  it('should throw without nonce when useNonce is true', (): void => {
+    expect(() =>
+      validateIdTokenClaims(
+        {
+          ...idTokenMock.decodedPayload,
+          nonce: undefined
+        },
+        oidcConfig
+      )
+    ).toThrow()
+  })
+  it('should pass without nonce when useNonce is false', (): void => {
+    validateIdTokenClaims(
+      {
+        ...idTokenMock.decodedPayload,
+        nonce: undefined
+      },
+      {
+        ...oidcConfig,
+        useNonce: false
+      }
+    )
+  })
+  it('should pass without multiple aud', (): void => {
+    validateIdTokenClaims(
+      {
+        ...idTokenMock.decodedPayload,
+        aud: [oidcConfig.clientId, 'other_aud']
+      },
+      oidcConfig
+    )
+  })
+  it('should throw without multiple aud if clientId is missing', (): void => {
+    expect(() =>
+      validateIdTokenClaims(
+        {
+          ...idTokenMock.decodedPayload,
+          aud: ['other_aud', 'other_aud2']
+        },
+        oidcConfig
+      )
+    ).toThrow()
+  })
+  it('should throw with single aud if it is not clientId', (): void => {
+    expect(() =>
+      validateIdTokenClaims(
+        {
+          ...idTokenMock.decodedPayload,
+          aud: 'other_aud'
+        },
+        oidcConfig
+      )
+    ).toThrow()
+  })
+  it('should pass with single aud if it is not clientId if azp is clientId', (): void => {
+    validateIdTokenClaims(
+      {
+        ...idTokenMock.decodedPayload,
+        aud: 'other_aud',
+        azp: oidcConfig.clientId
+      },
+      oidcConfig
+    )
   })
 })

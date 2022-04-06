@@ -12,7 +12,7 @@ interface CallbackParams {
 
 interface TokenReponse {
   accessToken: string
-  idToken: string
+  idToken?: string
 }
 
 export const getCallbackParams = (queryString: string) => {
@@ -85,7 +85,7 @@ export const requestToken = async (
     const tokenResponse = await response.json()
     return {
       accessToken: tokenResponse.access_token || '',
-      idToken: tokenResponse.id_token || ''
+      idToken: tokenResponse.id_token
     }
     return (await response.json())?.access_token
   }

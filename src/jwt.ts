@@ -104,7 +104,9 @@ export const validateJwtClaims = (
     }
     const tokenEndDate = new Date(0)
     tokenEndDate.setUTCSeconds(
-      claims.auth_time + (oauthClientConfig.tokenLeewaySeconds || 0)
+      claims.auth_time +
+        oauthClientConfig.authenticationMaxAgeSeconds +
+        (oauthClientConfig.tokenLeewaySeconds || 0)
     )
     if (now > tokenEndDate) {
       throw Error('jwt token is too old')
@@ -121,6 +123,12 @@ export const validateJwtClaims = (
     if (now < tokenStartDate) {
       throw Error('jwt token not valid yet')
     }
+  }
+}
+
+const validateJwtSignature = (signature: string) => {
+  if (!signature) {
+    throw Error('Missing signature in jwt')
   }
 }
 
@@ -141,44 +149,53 @@ export const validateJwtNonce = async (
   }
 }
 
-const requiredIdTokenClaims = <const>['iss', 'sub', 'aud', 'exp', 'iat']
-
 export const validateIdToken = (
   token: string,
   oauthClientConfig: OauthClientConfig
 ): void => {
   const { claims } = parseJwt(token)
+  validateIdTokenClaims(claims, oauthClientConfig)
+}
+
+const requiredIdTokenClaims = <const>['iss', 'sub', 'aud', 'exp', 'iat']
+
+export const validateIdTokenClaims = (
+  claims: TokenPart,
+  oauthClientConfig: OauthClientConfig
+): void => {
   const missingClaim = requiredIdTokenClaims.find(
-    requiredClaim => !claims[requiredClaim]
+    requiredClaim =>
+      !claims[requiredClaim] ||
+      (Array.isArray(claims[requiredClaim]) &&
+        claims[requiredClaim].length === 0)
   )
   if (missingClaim) {
     throw Error(`Required claim ${missingClaim} missing in id token`)
   }
   if (oauthClientConfig.useNonce && !claims.nonce) {
-    throw Error(`nonce is missing in id token`)
+    throw Error('nonce is missing in id token')
   }
   if (oauthClientConfig.authenticationMaxAgeSeconds && !claims.auth_time) {
-    throw Error(`auth_time is missing in id token`)
+    throw Error('auth_time is missing in id token')
   }
   if (
-    oauthClientConfig.authenticationMaxAgeSeconds &&
-    claims.auth_time + oauthClientConfig.authenticationMaxAgeSeconds >
-      Date.now() / 1000
+    claims.aud &&
+    !claims.aud.includes(oauthClientConfig.clientId) &&
+    claims.azp !== oauthClientConfig.clientId
   ) {
-    throw Error(`auth_time is too long ago`)
+    throw Error('clientId missing in both aud claim and azp claim in id token')
   }
-  if (claims.aud && !claims.aud.includes(oauthClientConfig.clientId)) {
-    throw Error(`clientId missing in aud claim in id token`)
+  let singleAud: string | null = null
+  if (Array.isArray(claims.aud) && claims.length === 1) {
+    singleAud = claims.aud[0]
   }
-  if (Array.isArray(claims.aud) && claims.length > 0) {
-    if (claims.azp !== oauthClientConfig.clientId) {
-      throw Error(`id token azp should be clientId if token has multiple aud`)
-    }
+  if (typeof claims.aud === 'string') {
+    singleAud = claims.aud
   }
-}
-
-const validateJwtSignature = (signature: string) => {
-  if (!signature) {
-    throw Error('Missing signature in jwt')
+  if (singleAud && singleAud !== oauthClientConfig.clientId && !claims.azp) {
+    throw Error('if id token aud is other than client_id azp is required')
+  }
+  if (claims.azp && claims.azp !== oauthClientConfig.clientId) {
+    throw Error('if present, id token azp should be client_id')
   }
 }

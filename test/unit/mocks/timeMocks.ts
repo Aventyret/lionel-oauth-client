@@ -45,3 +45,13 @@ export const createTokenExpiredTimeOutsideLeewayMock =
             (tokenClaims.exp + (oauthConfig.tokenLeewaySeconds || 0) + 1) * 1000
         ) as jest.Mock
       )
+
+export const createTokenTimeAfterAuthTimeMock =
+  (tokenClaims: TokenPart, secondsAfterAuthTime: number) => () =>
+    jest
+      .spyOn(Date, 'now')
+      .mockImplementation(
+        jest.fn(
+          () => (tokenClaims.auth_time + secondsAfterAuthTime) * 1000
+        ) as jest.Mock
+      )
