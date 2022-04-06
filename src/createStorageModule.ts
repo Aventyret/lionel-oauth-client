@@ -48,7 +48,7 @@ export const createStorageModule = (
   const get = (key: StorageKey) => {
     _invalidKey(key)
     const value = storage.getItem(_hashedKey(key))
-    if (!value) throw Error(`Value not set`)
+    if (!value) throw Error('Value not set')
     return value
   }
 
