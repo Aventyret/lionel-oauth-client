@@ -3,11 +3,19 @@ import { StorageModule } from './createStorageModule'
 import { Logger } from './logger'
 import { parseJwt, validateJwt, validateIdToken, TokenPart } from './jwt'
 
+export interface User extends TokenPart {
+  iss: string
+  sub: string
+  aud: string | string[]
+  iat: number
+  exp: number
+}
+
 export const getUser = (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
   logger: Logger
-): TokenPart | null => {
+): User | null => {
   logger.log('Get User from id token')
   try {
     const idToken = storageModule.get('idToken')
@@ -15,7 +23,7 @@ export const getUser = (
     validateIdToken(idToken, oauthClientConfig)
     logger.log('Valid id token in storage')
     const user = parseJwt(idToken).claims
-    return user
+    return user as User
   } catch {}
   logger.log('No valid id token in storage')
   return null

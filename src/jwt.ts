@@ -134,6 +134,7 @@ export const validateJwtNonce = async (
     try {
       nonce = storageModule.get('nonce')
     } catch {}
+
     if ((await nonceHash(nonce || '')) !== claims.nonce) {
       throw Error('Nonce in jwt does not match nonce in client')
     }

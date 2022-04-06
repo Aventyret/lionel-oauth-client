@@ -66,9 +66,7 @@ describe('getAuthorizeUri', (): void => {
       new RegExp(`^${oidcConfig.metaData.authorization_endpoint}?`)
     )
     expect(authorizeUri).toMatch(new RegExp('response_type=code'))
-    expect(authorizeUri).toMatch(
-      new RegExp(`client_id=${oauthConfig.clientId}`)
-    )
+    expect(authorizeUri).toMatch(new RegExp(`client_id=${oidcConfig.clientId}`))
     expect(authorizeUri).toMatch(new RegExp(`state=${state}`))
     expect(authorizeUri).toMatch(
       new RegExp(`code_challenge=${codeChallengeData.challenge}`)

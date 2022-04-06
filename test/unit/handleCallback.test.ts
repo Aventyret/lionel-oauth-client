@@ -6,12 +6,14 @@ import handleCallback, {
 } from '../../src/handleCallback'
 import createStorageModule from '../../src/createStorageModule'
 import createEventModule from '../../src/createEventModule'
+import * as nonceModule from '../../src/createNonce'
 import createLogger from '../../src/logger'
 import { oauthConfig, oidcConfig } from './test-config'
 import tokenResponseMock from './mocks/tokenResponseMock.json'
 import accessTokenMock from './mocks/accessTokenMock.json'
 import idTokenResponseMock from './mocks/idTokenResponseMock.json'
 import idTokenMock from './mocks/idTokenMock.json'
+import nonceMock from './mocks/nonceMock.json'
 import { createTokenValidTimeMock } from './mocks/timeMocks'
 
 describe('getCallbackParams', (): void => {
@@ -137,9 +139,6 @@ describe('handleCallback', (): void => {
       })
     })
   })
-})
-
-describe('handleCallback', (): void => {
   describe('with id token', (): void => {
     describe('with correct token response', (): void => {
       beforeAll(() => {
@@ -151,12 +150,17 @@ describe('handleCallback', (): void => {
             })
           }) as jest.Mock
         )
+        jest.spyOn(nonceModule, 'nonceHash').mockImplementation(
+          jest.fn(() => {
+            return Promise.resolve(nonceMock.hash)
+          })
+        )
       })
       beforeAll(createTokenValidTimeMock(idTokenMock.decodedPayload))
       it('should set id token in storage', async (): Promise<void> => {
         const storageModule = createStorageModule(oidcConfig)
         storageModule.set('state', 'mocked_state')
-        storageModule.set('nonce', 'mocked_nonce')
+        storageModule.set('nonce', nonceMock.nonce)
         storageModule.set('codeVerifier', 'mocked_code_verifier')
         const { publish } = createEventModule()
         await handleCallback(
@@ -170,6 +174,13 @@ describe('handleCallback', (): void => {
           idTokenResponseMock.access_token
         )
         expect(storageModule.get('idToken')).toBe(idTokenResponseMock.id_token)
+      })
+      afterEach(() => {
+        try {
+          const storageModule = createStorageModule(oidcConfig)
+          storageModule.remove('accessToken')
+          storageModule.remove('idToken')
+        } catch {}
       })
       afterAll(() => {
         jest.resetAllMocks()
@@ -190,7 +201,7 @@ describe('handleCallback', (): void => {
           }) as jest.Mock
         )
       })
-      it('should not set access token in storage', async (): Promise<void> => {
+      it('should not set access token or id token in storage', async (): Promise<void> => {
         const storageModule = createStorageModule(oidcConfig)
         storageModule.set('state', 'mocked_state')
         storageModule.set('codeVerifier', 'mocked_code_verifier')

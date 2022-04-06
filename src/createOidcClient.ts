@@ -8,9 +8,11 @@ import { createEventModule } from './createEventModule'
 import signIn, { SignInOptions } from './signIn'
 import handleCallback from './handleCallback'
 import { getMetaData } from './metaData'
+import { User, getUser, removeUser } from './user'
 
 export interface OidcClient extends OauthClient {
-  getUser: () => Promise<unknown>
+  getUser: () => Promise<User | null>
+  removeUser: () => void
 }
 
 const getOidcClientConfig = (
@@ -56,7 +58,9 @@ export default (configArg: OauthClientConfig): OidcClient => {
       )
     },
     getConfig: (): OauthClientConfig => config,
-    getUser: async (): Promise<unknown> => Promise.resolve({}),
+    getUser: async (): Promise<User | null> =>
+      getUser(config, storageModule, client.logger),
+    removeUser: (): void => removeUser(storageModule, client.logger),
     subscribe,
     unsubscribe
   }

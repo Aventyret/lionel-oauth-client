@@ -6,11 +6,12 @@ import {
   validateJwtNonce,
   validateIdToken
 } from '../../src/jwt'
-import createNonce from '../../src/createNonce'
 import createStorageModule from '../../src/createStorageModule'
+import * as nonceModule from '../../src/createNonce'
 import { oauthConfig, oidcConfig } from './test-config'
 import accessTokenMock from './mocks/accessTokenMock.json'
 import idTokenMock from './mocks/idTokenMock.json'
+import nonceMock from './mocks/nonceMock.json'
 import {
   createTokenValidTimeMock,
   createTokenEarlyTimeWithinLeewayMock,
@@ -162,19 +163,34 @@ describe('validateJwt', (): void => {
   })
 })
 describe('validateJwtNonce', (): void => {
-  it('should pass if nonce in storage is correct', async (): Promise<void> => {
-    const nonce = createNonce()
-    const storageModule = createStorageModule(oidcConfig)
-    storageModule.set('nonce', nonce)
-    await validateJwtNonce(idTokenMock.encoded, storageModule)
-    storageModule.remove('nonce')
+  describe('with mocked nonce in storage', (): void => {
+    beforeAll(() => {
+      jest.spyOn(nonceModule, 'nonceHash').mockImplementation(
+        jest.fn(() => {
+          return Promise.resolve(nonceMock.hash)
+        })
+      )
+    })
+    it('should pass if nonce in storage is correct', async (): Promise<void> => {
+      const storageModule = createStorageModule(oidcConfig)
+      storageModule.set('nonce', nonceMock.nonce)
+      await validateJwtNonce(idTokenMock.encoded, storageModule)
+      storageModule.remove('nonce')
+    })
+    afterAll(() => {
+      jest.resetAllMocks()
+    })
   })
-  it('should pass if nonce in storage is correct', async (): Promise<void> => {
+  it('should not pass if nonce in storage is not correct', async (): Promise<void> => {
     const storageModule = createStorageModule(oidcConfig)
     storageModule.set('nonce', 'nonce_incorrect')
-    expect(
-      async () => await validateJwtNonce(idTokenMock.encoded, storageModule)
-    ).toThrow()
+    try {
+      await validateJwtNonce(idTokenMock.encoded, storageModule)
+    } catch (error: unknown) {
+      expect((error as Error).message).toBe(
+        'Nonce in jwt does not match nonce in client'
+      )
+    }
     storageModule.remove('nonce')
   })
   it('should pass if token has no nonce', async (): Promise<void> => {
