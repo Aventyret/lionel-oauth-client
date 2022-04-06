@@ -75,14 +75,14 @@ await oAuthClient.removeAccessToken()
 Subscribe to an event to trigger a function in response:
 
 ```js
-/** Supported event types: "tokenUpdated", "refreshNeeded" */
+/** Supported event types: "tokenLoaded", "tokenUnloaded", "userLoaded", "userUnloaded", "refreshNeeded" */
 oAuthClient.subscribe('refreshNeeded', () => console.log('Refresh is needed'))
 ```
 
 Unsubscribe from an event, must provide the same function that was passed to `oAuthClient.subscribe`:
 
 ```js
-/** Supported event types: "tokenUpdated", "refreshNeeded" */
+/** Supported event types: "tokenLoaded", "refreshNeeded" */
 oAuthClient.unsubscribe('refreshNeeded', () => console.log('Refresh is needed'))
 ```
 

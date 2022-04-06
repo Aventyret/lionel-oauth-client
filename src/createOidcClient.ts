@@ -59,8 +59,8 @@ export default (configArg: OauthClientConfig): OidcClient => {
     },
     getConfig: (): OauthClientConfig => config,
     getUser: async (): Promise<User | null> =>
-      getUser(config, storageModule, client.logger),
-    removeUser: (): void => removeUser(storageModule, client.logger),
+      getUser(config, storageModule, client.logger, publish),
+    removeUser: (): void => removeUser(storageModule, client.logger, publish),
     subscribe,
     unsubscribe
   }

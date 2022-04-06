@@ -143,7 +143,7 @@ export default async (
     }
     cleanupStorage(storageModule)
     storageModule.set('accessToken', tokenResponse.accessToken)
-    publish('tokenUpdated', tokenResponse.accessToken)
+    publish('tokenLoaded', tokenResponse.accessToken)
     if (tokenResponse.idToken) {
       storageModule.set('idToken', tokenResponse.idToken)
       const user = parseJwt(tokenResponse.idToken).claims

@@ -1,6 +1,6 @@
 const eventTypes = <const>[
-  'tokenUpdated',
-  'tokenRemoved',
+  'tokenLoaded',
+  'tokenUnloaded',
   'userLoaded',
   'userUnloaded',
   'refreshNeeded'

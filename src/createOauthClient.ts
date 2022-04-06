@@ -88,8 +88,9 @@ export default (configArg: OauthClientConfig): OauthClient => {
     handleCallback: async (): Promise<void> =>
       handleCallback(config, storageModule, null, logger, publish),
     getAccessToken: (): string | null =>
-      getAccessToken(config, storageModule, logger),
-    removeAccessToken: (): void => removeAccessToken(storageModule, logger),
+      getAccessToken(config, storageModule, logger, publish),
+    removeAccessToken: (): void =>
+      removeAccessToken(storageModule, logger, publish),
     getConfig: (): OauthClientConfig => config,
     logger,
     subscribe,
