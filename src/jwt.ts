@@ -1,5 +1,6 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
+import { nonceHash } from './createNonce'
 
 const allowedSigningAlgs = <const>[
   'RS256',
@@ -91,6 +92,8 @@ export const validateJwtClaims = (
     tokenExpDate.setUTCSeconds(
       claims.exp + (oauthClientConfig.tokenLeewaySeconds || 0)
     )
+    const nbf = new Date(0)
+    nbf.setUTCSeconds(claims.nbf)
     if (now > tokenExpDate) {
       throw Error('jwt token is expired')
     }
@@ -101,7 +104,9 @@ export const validateJwtClaims = (
     }
     const tokenEndDate = new Date(0)
     tokenEndDate.setUTCSeconds(
-      claims.auth_time + (oauthClientConfig.tokenLeewaySeconds || 0)
+      claims.auth_time +
+        oauthClientConfig.authenticationMaxAgeSeconds +
+        (oauthClientConfig.tokenLeewaySeconds || 0)
     )
     if (now > tokenEndDate) {
       throw Error('jwt token is too old')
@@ -121,24 +126,76 @@ export const validateJwtClaims = (
   }
 }
 
-export const validateJwtNonce = (
+const validateJwtSignature = (signature: string) => {
+  if (!signature) {
+    throw Error('Missing signature in jwt')
+  }
+}
+
+export const validateJwtNonce = async (
   token: string,
   storageModule: StorageModule
-): void => {
+): Promise<void> => {
   const { claims } = parseJwt(token)
   if (claims.nonce) {
     let nonce
     try {
       nonce = storageModule.get('nonce')
     } catch {}
-    if (nonce !== claims.nonce) {
+
+    if ((await nonceHash(nonce || '')) !== claims.nonce) {
       throw Error('Nonce in jwt does not match nonce in client')
     }
   }
 }
 
-const validateJwtSignature = (signature: string) => {
-  if (!signature) {
-    throw Error('Missing signature in jwt')
+export const validateIdToken = (
+  token: string,
+  oauthClientConfig: OauthClientConfig
+): void => {
+  const { claims } = parseJwt(token)
+  validateIdTokenClaims(claims, oauthClientConfig)
+}
+
+const requiredIdTokenClaims = <const>['iss', 'sub', 'aud', 'exp', 'iat']
+
+export const validateIdTokenClaims = (
+  claims: TokenPart,
+  oauthClientConfig: OauthClientConfig
+): void => {
+  const missingClaim = requiredIdTokenClaims.find(
+    requiredClaim =>
+      !claims[requiredClaim] ||
+      (Array.isArray(claims[requiredClaim]) &&
+        claims[requiredClaim].length === 0)
+  )
+  if (missingClaim) {
+    throw Error(`Required claim ${missingClaim} missing in id token`)
+  }
+  if (oauthClientConfig.useNonce && !claims.nonce) {
+    throw Error('nonce is missing in id token')
+  }
+  if (oauthClientConfig.authenticationMaxAgeSeconds && !claims.auth_time) {
+    throw Error('auth_time is missing in id token')
+  }
+  if (
+    claims.aud &&
+    !claims.aud.includes(oauthClientConfig.clientId) &&
+    claims.azp !== oauthClientConfig.clientId
+  ) {
+    throw Error('clientId missing in both aud claim and azp claim in id token')
+  }
+  let singleAud: string | null = null
+  if (Array.isArray(claims.aud) && claims.length === 1) {
+    singleAud = claims.aud[0]
+  }
+  if (typeof claims.aud === 'string') {
+    singleAud = claims.aud
+  }
+  if (singleAud && singleAud !== oauthClientConfig.clientId && !claims.azp) {
+    throw Error('if id token aud is other than client_id azp is required')
+  }
+  if (claims.azp && claims.azp !== oauthClientConfig.clientId) {
+    throw Error('if present, id token azp should be client_id')
   }
 }

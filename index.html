@@ -23,25 +23,28 @@
       }
     </style>
     <script src="./dist/index.umd.js"></script>
-    <script>
-      var oauthClient = lioneloauthclient.createOauthClient({
-        issuer: 'https://sso.example.com',
-        clientId: 'example_app',
-        redirectUri: 'http://localhost:3001/oauth-callback.html',
-        debug: true
-      })
-    </script>
   </head>
   <body>
     <main class="container">
-      <article>
+      <article class="view">
         <hgroup>
-          <h1>Sign in</h1>
-          <h2>Using Lionel OAuth Client</h2>
+          <h1>Dev server</h1>
+          <h2>For Lionel OAuth Client</h2>
         </hgroup>
         <img src="./docs/public/lionel-logo.svg" alt="Lionel logo" />
-        <button type="submit" class="contrast" onclick="oauthClient.signIn()">
-          Login
+        <button
+          type="submit"
+          class="contrast"
+          onclick="location.assign('oauth.html')"
+        >
+          Sign in with oAuth
+        </button>
+        <button
+          type="submit"
+          class="contrast"
+          onclick="location.assign('oidc.html')"
+        >
+          Sign in with OpenID Connect
         </button>
       </article>
     </main>

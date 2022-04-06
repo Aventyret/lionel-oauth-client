@@ -4,26 +4,26 @@ describe('createEventModule', () => {
   it('should add subscribe fn to specific event', () => {
     const eventModule = createEventModule()
     const mockFn = jest.fn().mockName('subscribeCallback')
-    eventModule.subscribe('tokenUpdated', mockFn)
-    eventModule.publish('tokenUpdated')
+    eventModule.subscribe('tokenLoaded', mockFn)
+    eventModule.publish('tokenLoaded')
     expect(mockFn).toHaveBeenCalled()
   })
 
   it('should trigger all subscribe fn for same event when event is published', () => {
     const eventModule = createEventModule()
     const mockFn = jest.fn().mockName('subscribeCallback')
-    eventModule.subscribe('tokenUpdated', mockFn)
-    eventModule.subscribe('tokenUpdated', mockFn)
-    eventModule.publish('tokenUpdated')
+    eventModule.subscribe('tokenLoaded', mockFn)
+    eventModule.subscribe('tokenLoaded', mockFn)
+    eventModule.publish('tokenLoaded')
     expect(mockFn).toHaveBeenCalledTimes(2)
   })
 
   it('should remove subscribe fn from specific event', () => {
     const eventModule = createEventModule()
     const mockFn = jest.fn().mockName('subscribeCallback')
-    eventModule.subscribe('tokenUpdated', mockFn)
-    eventModule.unsubscribe('tokenUpdated', mockFn)
-    eventModule.publish('tokenUpdated')
+    eventModule.subscribe('tokenLoaded', mockFn)
+    eventModule.unsubscribe('tokenLoaded', mockFn)
+    eventModule.publish('tokenLoaded')
     expect(mockFn).toHaveBeenCalledTimes(0)
   })
 

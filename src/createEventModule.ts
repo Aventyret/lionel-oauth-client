@@ -1,4 +1,10 @@
-const eventTypes = <const>['tokenUpdated', 'refreshNeeded']
+const eventTypes = <const>[
+  'tokenLoaded',
+  'tokenUnloaded',
+  'userLoaded',
+  'userUnloaded',
+  'refreshNeeded'
+]
 export type EventType = typeof eventTypes[number]
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

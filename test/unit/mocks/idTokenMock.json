@@ -1,22 +1,22 @@
 {
-  "encoded": "eyJraWQiOiIxZTlnZGs3IiwiYWxnIjoiUlMyNTYifQ.ewogImlzcyI6ICJodHRwOi8vc2VydmVyLmV4YW1wbGUuY29tIiwKICJzdWIiOiAiMjQ4Mjg5NzYxMDAxIiwKICJhdWQiOiAiczZCaGRSa3F0MyIsCiAibm9uY2UiOiAibi0wUzZfV3pBMk1qIiwKICJleHAiOiAxMzExMjgxOTcwLAogImlhdCI6IDEzMTEyODA5NzAsCiAibmFtZSI6ICJKYW5lIERvZSIsCiAiZ2l2ZW5fbmFtZSI6ICJKYW5lIiwKICJmYW1pbHlfbmFtZSI6ICJEb2UiLAogImdlbmRlciI6ICJmZW1hbGUiLAogImJpcnRoZGF0ZSI6ICIwMDAwLTEwLTMxIiwKICJlbWFpbCI6ICJqYW5lZG9lQGV4YW1wbGUuY29tIiwKICJwaWN0dXJlIjogImh0dHA6Ly9leGFtcGxlLmNvbS9qYW5lZG9lL21lLmpwZyIKfQ.rHQjEmBqn9Jre0OLykYNnspA10Qql2rvx4FsD00jwlB0Sym4NzpgvPKsDjn_wMkHxcp6CilPcoKrWHcipR2iAjzLvDNAReF97zoJqq880ZD1bwY82JDauCXELVR9O6_B0w3K-E7yM2macAAgNCUwtik6SjoSUZRcf-O5lygIyLENx882p6MtmwaL1hd6qn5RZOQ0TLrOYu0532g9Exxcm-ChymrB4xLykpDj3lUivJt63eEGGN6DH5K6o33TcxkIjNrCD4XB1CKKumZvCedgHHF3IAK4dVEDSUoGlH9z4pP_eWYNXvqQOjGs-rDaQzUHl6cQQWNiDpWOl_lxXjQEvQ",
+  "encoded": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkEwMzU1MUVGNkIzRTA3NzU5M0ZDRDM1QkEwRkRCMDBCIiwidHlwIjoiSldUIn0.eyJpc3MiOiJodHRwczovL2RlbW8uZHVlbmRlc29mdHdhcmUuY29tIiwibmJmIjoxNjQ5MjMwMTYxLCJpYXQiOjE2NDkyMzAxNjEsImV4cCI6MTY0OTIzMDQ2MSwiYXVkIjoiaW50ZXJhY3RpdmUucHVibGljIiwiYW1yIjpbImV4dGVybmFsIl0sIm5vbmNlIjoiYzI0Y2Q1OWEwY2VmMTY2OGUzMjhjNzk1ZTY3Njk5YjU4MjA3ZDcxM2MwNjNlMTM2OWJmYjFmYWI0ZDA1MDIxZCIsImF0X2hhc2giOiJwMDhpU0o4Q1hMZDhRNGh6WWhfb0d3Iiwic2lkIjoiMDdGNjEwNEU1OTJBQ0MzRkZDRDg0NzVEMTdERkIzNTkiLCJzdWIiOiI0MkE2Q0ZDMUJCOTA0NEZEOEE4OEJDRjMyMkY0MzE0N0M0RDdFMzlGM0QxMzY2MEIwMjM3MEFBOTJCMDUyNDAxIiwiYXV0aF90aW1lIjoxNjQ5MjI5MzQxLCJpZHAiOiJHb29nbGUifQ.LPJ95Y-sAvjWXB-RAxEqGOx9fcQsjp1hrQxud_ka8wf6X-hc1Sb3LV2ahAUXdae6j4RbfBA9XsCT2_tolh-WNAhu4IJv1-jWaa4vqE9XPtP5r7Qrks8P1MhybZhzc2u4yw7uI5z81dlTTneSryyz9oK7-2l9tEdEYA6tLg36j54j1xtExOvkR6mcRyqcJgIrPt9pQaCVCPzB_RjpKH3B0SOP01XjggvjmNO9P6Q4YNxHtdZhIfdBZr8rrrZLnh46w3tm0AP7cfVcOpGBY5CEIAvrHwgcxT4uJPfy2uejmtU1aFnpOo1WrZwcfcUgQkCx_6BKcZl7WUjmajgD7n2ZWQ",
   "decodedHeader": {
-    "kid": "1e9gdk7",
-    "alg": "RS256"
+    "alg": "RS256",
+    "kid": "A03551EF6B3E077593FCD35BA0FDB00B",
+    "typ": "JWT"
   },
   "decodedPayload": {
-    "iss": "http://server.example.com",
-    "sub": "248289761001",
-    "aud": "s6BhdRkqt3",
-    "nonce": "n-0S6_WzA2Mj",
-    "exp": 1311281970,
-    "iat": 1311280970,
-    "name": "Jane Doe",
-    "given_name": "Jane",
-    "family_name": "Doe",
-    "gender": "female",
-    "birthdate": "0000-10-31",
-    "email": "janedoe@example.com",
-    "picture": "http://example.com/janedoe/me.jpg"
+    "iss": "https://demo.duendesoftware.com",
+    "nbf": 1649230161,
+    "iat": 1649230161,
+    "exp": 1649230461,
+    "aud": "interactive.public",
+    "amr": ["external"],
+    "nonce": "c24cd59a0cef1668e328c795e67699b58207d713c063e1369bfb1fab4d05021d",
+    "at_hash": "p08iSJ8CXLd8Q4hzYh_oGw",
+    "sid": "07F6104E592ACC3FFCD8475D17DFB359",
+    "sub": "42A6CFC1BB9044FD8A88BCF322F43147C4D7E39F3D13660B02370AA92B052401",
+    "auth_time": 1649229341,
+    "idp": "Google"
   }
 }
