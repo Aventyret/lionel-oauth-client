@@ -53,8 +53,15 @@ export const removeUser = (
   } catch {}
 }
 
-export const refreshUser = (logger: Logger): void => {
-  logger.log('Refresh user')
+export const getUserInfo = async (
+  oauthClientConfig: OauthClientConfig,
+  storageModule: StorageModule,
+  logger: Logger,
+  publish: EventPublishFn
+): Promise<User | null> => {
+  logger.log('Get user info')
+  logger.log({ oauthClientConfig, storageModule, publish })
   try {
   } catch {}
+  return null
 }

@@ -147,11 +147,11 @@ oidcClient.getUser()
 Get a fresh user from the UserInfo endpoint at the issuer:
 
 ```js
-await oidcClient.reloadUser()
+await oidcClient.getUserInfo()
 ```
 
 Remove the tokens (effectively a client side sign out):
 
 ```js
-oidcClient.removeTokens()
+oidcClient.removeUser()
 ```
