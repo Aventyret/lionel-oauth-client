@@ -22,7 +22,8 @@
         margin: 0 auto 2rem;
       }
 
-      .view.signed-in {
+      .view.signed-in,
+      .view.not-signed-in {
         display: none;
       }
     </style>
@@ -30,7 +31,7 @@
   </head>
   <body>
     <main class="container">
-      <article class="view">
+      <article class="view not-signed-in">
         <hgroup>
           <h1>Sign in</h1>
           <h2>Using Lionel Oidc Client</h2>
@@ -63,18 +64,26 @@
         scopes: ['api'],
         debug: true
       })
-      var user = oidcClient.getUser()
+
       var accessToken = oidcClient.getAccessToken()
-      if (user && accessToken) {
-        document.getElementById('user').value = JSON.stringify(user)
-        document.getElementById('access-token').value = accessToken
-        document.querySelectorAll('.view').forEach(function (viewNode) {
-          if (viewNode.className.split(' ').includes('signed-in')) {
-            viewNode.style = 'display: flex'
-          } else {
-            viewNode.style = 'display: none'
-          }
-        })
+      var user = oidcClient.getUser().then(user => {
+        const isSignedIn = user && accessToken
+        setSignedIn(isSignedIn)
+        if (isSignedIn) {
+          document.getElementById('user').value = JSON.stringify(user)
+          document.getElementById('access-token').value = accessToken
+        }
+      })
+
+      function setSignedIn(signedIn) {
+        const styleTag = document.createElement('style')
+        document.head.appendChild(styleTag)
+        styleTag.type = 'text/css'
+        styleTag.appendChild(
+          document.createTextNode(
+            `.view.${signedIn ? '' : 'not-'}signed-in { display: flex; }`
+          )
+        )
       }
 
       function signOut(e) {
