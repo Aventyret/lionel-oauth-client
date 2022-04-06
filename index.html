@@ -21,69 +21,32 @@
         max-width: 13rem;
         margin: 0 auto 2rem;
       }
-
-      .view.signed-in,
-      .view.not-signed-in {
-        display: none;
-      }
     </style>
     <script src="./dist/index.umd.js"></script>
   </head>
   <body>
     <main class="container">
-      <article class="view not-signed-in">
+      <article class="view">
         <hgroup>
-          <h1>Sign in</h1>
-          <h2>Using Lionel OAuth Client</h2>
+          <h1>Dev server</h1>
+          <h2>For Lionel OAuth Client</h2>
         </hgroup>
         <img src="./docs/public/lionel-logo.svg" alt="Lionel logo" />
-        <button type="submit" class="contrast" onclick="oauthClient.signIn()">
-          Login
+        <button
+          type="submit"
+          class="contrast"
+          onclick="location.assign('oauth.html')"
+        >
+          Sign in with oAuth
+        </button>
+        <button
+          type="submit"
+          class="contrast"
+          onclick="location.assign('oidc.html')"
+        >
+          Sign in with OpenID Connect
         </button>
       </article>
-      <article class="view signed-in">
-        <hgroup>
-          <h1>You are signed in</h1>
-          <h2>Using Lionel OAuth Client</h2>
-        </hgroup>
-        <img src="./docs/public/lionel-logo.svg" alt="Lionel logo" />
-        <label for="access-token">Access token:</label>
-        <textarea id="access-token" readonly></textarea>
-        <a href onclick="signOut(event)">Remove token from storage</a>
-      </article>
     </main>
-    <script>
-      var oauthClient = lioneloauthclient.createOauthClient({
-        issuer: 'https://demo.duendesoftware.com',
-        authorizationEndpoint: '/connect/authorize',
-        tokenEndpoint: '/connect/token',
-        clientId: 'interactive.public',
-        redirectUri: 'http://localhost:3001/oauth-callback.html',
-        scopes: ['api'],
-        debug: true
-      })
-      var accessToken = oauthClient.getAccessToken()
-      setSignedIn(!!accessToken)
-      if (accessToken) {
-        document.getElementById('access-token').value = accessToken
-      }
-
-      function setSignedIn(signedIn) {
-        const styleTag = document.createElement('style')
-        document.head.appendChild(styleTag)
-        styleTag.type = 'text/css'
-        styleTag.appendChild(
-          document.createTextNode(
-            `.view.${signedIn ? '' : 'not-'}signed-in { display: flex; }`
-          )
-        )
-      }
-
-      function signOut(e) {
-        e.preventDefault()
-        oauthClient.removeAccessToken()
-        location.reload()
-      }
-    </script>
   </body>
 </html>
