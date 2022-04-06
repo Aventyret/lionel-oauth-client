@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Signing in...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/oidc-client/1.11.5/oidc-client.min.js"
+      integrity="sha512-pGtU1n/6GJ8fu6bjYVGIOT9Dphaw5IWPwVlqkpvVgqBxFkvdNbytUh0H8AP15NYF777P4D3XEeA/uDWFCpSQ1g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script>
+      Oidc.Log.logger = console
+      var config = {
+        authority: 'https://demo.duendesoftware.com',
+        client_id: 'interactive.public',
+        response_type: 'code',
+        scope: 'api',
+        redirect_uri: 'http://localhost:3001/oidc-client-callback.html',
+        post_logout_redirect_uri: 'https://localhost:3001/loggedout'
+      }
+      var mgr = new Oidc.UserManager(config)
+      mgr
+        .signinRedirectCallback()
+        .then(() => {
+          location.assign('/')
+        })
+        .catch(error => {
+          console.error(error)
+          alert('Could not sign in')
+          location.assign('/')
+        })
+    </script>
+  </head>
+  <body></body>
+</html>

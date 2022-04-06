@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Signing in...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./dist/index.umd.js"></script>
+    <script>
+      var oidcClient = lioneloauthclient.createOidcClient({
+        issuer: 'https://demo.duendesoftware.com',
+        clientId: 'interactive.public',
+        redirectUri: 'http://localhost:3001/oidc-callback.html',
+        scopes: ['profile', 'email', 'api'],
+        debug: true
+      })
+      oidcClient
+        .handleCallback()
+        .then(() => {
+          location.assign('/oidc.html')
+        })
+        .catch(() => {
+          alert('Could not sign in')
+          // location.assign('/oidc.html')
+        })
+    </script>
+  </head>
+  <body></body>
+</html>
