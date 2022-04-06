@@ -37,7 +37,6 @@ export const createStorageModule = (
   }
 
   const _hashedKey = (key: StorageKey): string => {
-    console.log((config.scopes || []).join('_'))
     return btoa(
       `${config.issuer}-${config.clientId}-${(config.scopes || []).join(
         '_'
