@@ -33,6 +33,7 @@ export interface OauthClientConfig {
   prompt?: Prompt
   uiLocales?: string[]
   acrValues?: string[]
+  postLogoutRedirectUri?: string
   debug?: boolean
 }
 
