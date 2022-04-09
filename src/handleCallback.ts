@@ -3,6 +3,7 @@ import { StorageModule } from './createStorageModule'
 import { EventPublishFn } from './createEventModule'
 import { parseJwt, validateJwt, validateIdToken, validateJwtNonce } from './jwt'
 import { MetaData } from './metaData'
+import { User, getUserInfo, mergeAndFilterUserClaims } from './user'
 import { Logger } from './logger'
 
 interface CallbackParams {
@@ -69,7 +70,7 @@ export const validateClientState = (
   }
 }
 
-export const requestToken = async (
+const requestToken = async (
   oauthClientConfig: OauthClientConfig,
   metaData: MetaData | null = null,
   tokenRequestBody: URLSearchParams
@@ -146,8 +147,29 @@ export default async (
     publish('tokenLoaded', tokenResponse.accessToken)
     if (tokenResponse.idToken) {
       storageModule.set('idToken', tokenResponse.idToken)
-      const user = parseJwt(tokenResponse.idToken).claims
-      publish('userLoaded', user)
+      const accessTokenClaims = parseJwt(tokenResponse.accessToken).claims
+      const idTokenClaims = parseJwt(tokenResponse.idToken).claims
+      let userInfo = {} as User | null
+      if (
+        oauthClientConfig.useUserInfoEndpoint &&
+        metaData?.userinfo_endpoint
+      ) {
+        userInfo = await getUserInfo(
+          oauthClientConfig,
+          storageModule,
+          metaData,
+          logger,
+          publish
+        )
+      }
+      publish(
+        'userLoaded',
+        mergeAndFilterUserClaims(
+          accessTokenClaims,
+          idTokenClaims,
+          userInfo || {}
+        )
+      )
     } else {
       try {
         storageModule.remove('idToken')

@@ -1,9 +1,10 @@
-import { getUser, removeUser } from '../../src/user'
+import { getUser, getUserInfo, removeUser } from '../../src/user'
 import createStorageModule from '../../src/createStorageModule'
 import createEventModule from '../../src/createEventModule'
 import createLogger from '../../src/logger'
 import { oidcConfig } from './test-config'
 import idTokenMock from './mocks/idTokenMock.json'
+import metaDataMock from './mocks/metaDataMock.json'
 import { createTokenValidTimeMock } from './mocks/timeMocks'
 
 describe('getUser', (): void => {
@@ -22,11 +23,6 @@ describe('getUser', (): void => {
       )
       storageModule.remove('accessToken')
       storageModule.remove('idToken')
-      expect(user?.iss).toBe(idTokenMock.decodedPayload.iss)
-      expect(user?.sub).toBe(idTokenMock.decodedPayload.sub)
-      expect(user?.exp).toBe(idTokenMock.decodedPayload.exp)
-      expect(user?.aud).toBe(idTokenMock.decodedPayload.aud)
-      expect(user?.aud).toBe(idTokenMock.decodedPayload.aud)
       expect(user?.sub).toBe(idTokenMock.decodedPayload.sub)
     })
     it('should not throw error if id token is not in storage', async (): Promise<void> => {
@@ -42,9 +38,70 @@ describe('getUser', (): void => {
       expect(user).toBe(null)
       storageModule.remove('accessToken')
     })
+    it('should merge claims from user info with id token claims', async (): Promise<void> => {
+      const storageModule = createStorageModule(oidcConfig)
+      const { publish } = createEventModule()
+      storageModule.set('accessToken', idTokenMock.encoded)
+      storageModule.set('idToken', idTokenMock.encoded)
+      storageModule.set(
+        'userInfo',
+        JSON.stringify({ sub: 'mocked_user_info_sub' })
+      )
+      const user = getUser(
+        {
+          ...oidcConfig,
+          useUserInfoEndpoint: true,
+          metaData: {
+            ...oidcConfig.metaData,
+            userinfo_endpoint: 'https://demo.test/userinfo'
+          }
+        },
+        storageModule,
+        createLogger(oidcConfig),
+        publish
+      )
+      storageModule.remove('accessToken')
+      storageModule.remove('idToken')
+      storageModule.remove('userInfo')
+      expect(user?.sub).toBe('mocked_user_info_sub')
+    })
     afterAll(() => {
       jest.resetAllMocks()
     })
+  })
+})
+describe('getUserInfo', (): void => {
+  beforeAll(createTokenValidTimeMock(idTokenMock.decodedPayload))
+  beforeAll(() => {
+    jest.spyOn(window, 'fetch').mockImplementation(
+      jest.fn(() => {
+        return Promise.resolve({
+          status: 200,
+          json: () => Promise.resolve({ sub: 'mocked_user_info_sub' })
+        })
+      }) as jest.Mock
+    )
+  })
+  it('should get user info', async (): Promise<void> => {
+    const storageModule = createStorageModule(oidcConfig)
+    const { publish } = createEventModule()
+    storageModule.set('accessToken', idTokenMock.encoded)
+    const user = await getUserInfo(
+      {
+        ...oidcConfig,
+        useUserInfoEndpoint: true
+      },
+      storageModule,
+      metaDataMock,
+      createLogger(oidcConfig),
+      publish
+    )
+    storageModule.remove('accessToken')
+    storageModule.remove('userInfo')
+    expect(user?.sub).toBe('mocked_user_info_sub')
+  })
+  afterAll(() => {
+    jest.resetAllMocks()
   })
 })
 describe('removeUser', (): void => {

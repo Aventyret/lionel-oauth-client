@@ -28,7 +28,8 @@ export interface OauthClientConfig {
   responseMode?: ResponseMode
   metaData?: MetaData
   useNonce?: boolean
-  useMetaData?: boolean
+  useMetaDataDiscovery?: boolean
+  useUserInfoEndpoint?: boolean
   display?: Display
   prompt?: Prompt
   uiLocales?: string[]
@@ -83,13 +84,21 @@ export default (configArg: OauthClientConfig): OauthClient => {
   logger.log('Create oAuthClient')
   logger.log({ config })
 
+  let _accessToken: string | null = null
+
   return {
     signIn: async (): Promise<void> =>
       signIn({}, config, storageModule, null, logger),
     handleCallback: async (): Promise<void> =>
       handleCallback(config, storageModule, null, logger, publish),
-    getAccessToken: (): string | null =>
-      getAccessToken(config, storageModule, logger, publish),
+    getAccessToken: (): string | null => {
+      const accessToken = getAccessToken(config, storageModule, logger, publish)
+      if (accessToken && accessToken != _accessToken) {
+        _accessToken = accessToken
+        publish('tokenLoaded')
+      }
+      return accessToken
+    },
     removeAccessToken: (): void =>
       removeAccessToken(storageModule, logger, publish),
     getConfig: (): OauthClientConfig => config,

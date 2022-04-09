@@ -104,6 +104,13 @@ const oidcClient = createOidcClient({
   responseMode, // Optional
   medaData, // Optional, if left out meta data will be collected through OpenID Discovery
   useNonce, // Optional, defaults to true
+  useMetaDataDiscovery, // Optional, defaults to true
+  useUserInfoEndpoint, // Optional, defaults to true
+  display, // Optional
+  prompt, // Optional
+  uiLocales, // Optional
+  acrValues, // Optional
+  postLogoutRedirectUri, // Optional
   debug // Optional, defaults to false
 })
 ```

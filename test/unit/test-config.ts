@@ -13,6 +13,7 @@ export const oidcConfig = {
   tokenLeewaySeconds: 60,
   scopes: ['api', 'openid'],
   useNonce: true,
+  useUserInfoEndpoint: false,
   metaData: {
     issuer: 'https://demo.duendesoftware.com',
     authorization_endpoint: 'https://demo.duendesoftware.com/connect/authorize',

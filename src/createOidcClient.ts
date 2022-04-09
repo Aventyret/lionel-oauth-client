@@ -28,7 +28,8 @@ const getOidcClientConfig = (
   }
   return {
     useNonce: true,
-    useMetaData: true,
+    useMetaDataDiscovery: true,
+    useUserInfoEndpoint: true,
     ...config
   }
 }
@@ -43,6 +44,8 @@ export default (configArg: OauthClientConfig): OidcClient => {
   client.logger.log({ config })
 
   getMetaData(config, storageModule, client.logger)
+
+  let _user: User | null = null
 
   return {
     ...client,
@@ -61,12 +64,30 @@ export default (configArg: OauthClientConfig): OidcClient => {
       )
     },
     getConfig: (): OauthClientConfig => config,
-    getUser: async (): Promise<User | null> =>
-      getUser(config, storageModule, client.logger, publish),
-    getUserInfo: async (): Promise<User | null> =>
-      getUserInfo(config, storageModule, client.logger, publish),
-    removeUser: (): void => removeUser(storageModule, client.logger, publish),
+    getUser: async (): Promise<User | null> => {
+      const user = getUser(config, storageModule, client.logger, publish)
+      if (user && user != _user) {
+        _user = user
+        publish('userLoaded')
+      }
+      return user
+    },
+    getUserInfo: async (): Promise<User | null> => {
+      const metaData = await getMetaData(config, storageModule, client.logger)
+      return getUserInfo(
+        config,
+        storageModule,
+        metaData,
+        client.logger,
+        publish
+      )
+    },
+    removeUser: (): void => {
+      _user = null
+      removeUser(storageModule, client.logger, publish)
+    },
     signOut: async (options: SignOutOptions = {}): Promise<void> => {
+      _user = null
       const metaData = await getMetaData(config, storageModule, client.logger)
       return signOut(
         options,
