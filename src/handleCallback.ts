@@ -8,6 +8,9 @@ import { Logger } from './logger'
 interface CallbackParams {
   code?: string
   state?: string
+  error?: string
+  errorDescription?: string
+  errorUri?: string
 }
 
 interface TokenReponse {
@@ -26,6 +29,15 @@ export const getCallbackParams = (queryString: string) => {
       }
       if (part.startsWith('state=')) {
         params.state = part.split('=')[1]
+      }
+      if (part.startsWith('error=')) {
+        params.error = part.split('=')[1]
+      }
+      if (part.startsWith('error_description=')) {
+        params.errorDescription = part.split('=')[1]
+      }
+      if (part.startsWith('error_uri=')) {
+        params.errorUri = part.split('=')[1]
       }
       return params
     }, {})
@@ -48,6 +60,9 @@ export const getTokenRequestBody = (
 export const validateCallbackParams = (
   callbackParams: CallbackParams
 ): void => {
+  if (callbackParams.error) {
+    throw Error(`Handle callback error: ${callbackParams.error}`)
+  }
   if (!callbackParams.state) {
     throw Error('Missing state in callback params')
   }

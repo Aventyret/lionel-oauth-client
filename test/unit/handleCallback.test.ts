@@ -31,6 +31,15 @@ describe('getCallbackParams', (): void => {
     expect(callbackParams.code).toBe('mocked_code')
     expect(callbackParams.state).toBe('mocked_state')
   })
+  it('should read error, errorDescription and errorUri params from query params', (): void => {
+    const callbackParams = getCallbackParams(
+      '?error=mocked_error&error_description=mocked_error_description&error_uri=mocked_error_uri&state=mocked_state'
+    )
+    expect(callbackParams.error).toBe('mocked_error')
+    expect(callbackParams.errorDescription).toBe('mocked_error_description')
+    expect(callbackParams.errorUri).toBe('mocked_error_uri')
+    expect(callbackParams.state).toBe('mocked_state')
+  })
   it('should return empty object with no query string', (): void => {
     const callbackParams = getCallbackParams('')
     expect(typeof callbackParams.code).toBe('undefined')
@@ -56,6 +65,11 @@ describe('getTokenRequestBody', (): void => {
 describe('validateCallbackParams', (): void => {
   it('should not throw errors with code and state', (): void => {
     validateCallbackParams({ code: 'mocked_code', state: 'mocked_state' })
+  })
+  it('should throw error with error and state', (): void => {
+    expect(() =>
+      validateCallbackParams({ error: 'mocked_error', state: 'mocked_state' })
+    ).toThrow('mocked_error')
   })
 })
 
