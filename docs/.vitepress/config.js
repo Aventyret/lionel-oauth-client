@@ -22,7 +22,6 @@ export default defineConfig({
     ],
 
     sidebar: {
-      '/config/': 'auto',
       '/': [
         {
           text: 'Guide',
@@ -34,6 +33,10 @@ export default defineConfig({
             {
               text: 'Features',
               link: '/guide/features'
+            },
+            {
+              text: 'Config',
+              link: '/config/'
             },
             {
               text: 'Contributing',

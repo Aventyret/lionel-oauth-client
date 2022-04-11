@@ -69,6 +69,10 @@
         scopes: ['api'],
         debug: true
       })
+      oidcClient.subscribe('tokenLoaded', () => console.log('tokenLoaded event fired'))
+      oidcClient.subscribe('tokenUnloaded', () => console.log('tokenUnloaded event fired'))
+      oidcClient.subscribe('userLoaded', () => console.log('userLoaded event fired'))
+      oidcClient.subscribe('userUnloaded', () => console.log('userUnloaded event fired'))
 
       var accessToken = oidcClient.getAccessToken()
       var user = oidcClient.getUser().then(user => {

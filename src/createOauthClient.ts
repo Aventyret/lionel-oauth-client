@@ -2,9 +2,11 @@ import createLogger, { Logger } from './logger'
 import { getAccessToken, removeAccessToken } from './accessToken'
 import { StorageModuleType, createStorageModule } from './createStorageModule'
 import { EventSubscribeFn, createEventModule } from './createEventModule'
+import signIn, { SignInOptions } from './signIn'
 import handleCallback from './handleCallback'
-import { MetaData } from './metaData'
-import signIn from './signIn'
+import signOut, { SignOutOptions } from './signOut'
+import { MetaData, getMetaData } from './metaData'
+import { User, getUser, getUserInfo, setUser, removeUser } from './user'
 
 const responseModes = <const>['fragment', 'query']
 export type ResponseMode = typeof responseModes[number]
@@ -39,7 +41,7 @@ export interface OauthClientConfig {
 }
 
 export interface OauthClient {
-  signIn: () => Promise<void>
+  signIn: (options: SignInOptions) => Promise<void>
   handleCallback: () => void
   getAccessToken: () => string | null
   removeAccessToken: () => void
@@ -47,6 +49,10 @@ export interface OauthClient {
   logger: Logger
   subscribe: EventSubscribeFn
   unsubscribe: EventSubscribeFn
+  getUser: () => Promise<User | null>
+  getUserInfo: () => Promise<User | null>
+  removeUser: () => void
+  signOut: (options: SignOutOptions) => Promise<void>
 }
 
 const requiredOauthClientAttributes = <const>[
@@ -67,15 +73,33 @@ export const getOauthClientConfig = (
 
   return {
     scopes: [''],
-    authorizationEndpoint: '/authorize',
-    tokenEndpoint: '/token',
+    authorizationEndpoint: configArg.useMetaDataDiscovery ? '' : '/authorize',
+    tokenEndpoint: configArg.useMetaDataDiscovery ? '' : '/token',
     debug: false,
     tokenLeewaySeconds: 60,
     ...configArg
   }
 }
 
-export default (configArg: OauthClientConfig): OauthClient => {
+const getOidcClientConfig = (
+  configArg: OauthClientConfig
+): OauthClientConfig => {
+  const config = getOauthClientConfig(configArg)
+  config.scopes = config.scopes || []
+  if (!config.scopes.includes('openid')) {
+    config.scopes.push('openid')
+  }
+  return {
+    useNonce: true,
+    useMetaDataDiscovery: true,
+    useUserInfoEndpoint: true,
+    ...config
+  }
+}
+
+export const createOauthClient = (
+  configArg: OauthClientConfig
+): OauthClient => {
   const config = getOauthClientConfig(configArg)
   const storageModule = createStorageModule(config)
   const { subscribe, unsubscribe, publish } = createEventModule()
@@ -85,25 +109,89 @@ export default (configArg: OauthClientConfig): OauthClient => {
   logger.log({ config })
 
   let _accessToken: string | null = null
+  let _user: User | null = null
+
+  if (config.useMetaDataDiscovery) {
+    getMetaData(config, storageModule, logger)
+  }
 
   return {
-    signIn: async (): Promise<void> =>
-      signIn({}, config, storageModule, null, logger),
-    handleCallback: async (): Promise<void> =>
-      handleCallback(config, storageModule, null, logger, publish),
+    signIn: async (options: SignInOptions = {}): Promise<void> => {
+      const metaData = await getMetaData(config, storageModule, logger)
+      return signIn(options, config, storageModule, metaData, logger)
+    },
+    handleCallback: async (): Promise<void> => {
+      const metaData = await getMetaData(config, storageModule, logger)
+      let tokens
+      try {
+        tokens = await handleCallback(config, storageModule, metaData, logger)
+      } catch (error) {
+        throw error
+      }
+      if (tokens?.accessToken) {
+        storageModule.set('accessToken', tokens.accessToken)
+        _accessToken = tokens.accessToken
+        publish('tokenLoaded', tokens.accessToken)
+      }
+      if (tokens?.idToken) {
+        const user = await setUser(
+          tokens.idToken,
+          tokens.accessToken,
+          config,
+          storageModule,
+          metaData,
+          logger
+        )
+        _user = user
+        publish('userLoaded', user)
+      }
+    },
     getAccessToken: (): string | null => {
-      const accessToken = getAccessToken(config, storageModule, logger, publish)
+      const accessToken = getAccessToken(config, storageModule, logger)
       if (accessToken && accessToken != _accessToken) {
         _accessToken = accessToken
         publish('tokenLoaded')
       }
       return accessToken
     },
-    removeAccessToken: (): void =>
-      removeAccessToken(storageModule, logger, publish),
+    removeAccessToken: (): void => {
+      removeAccessToken(storageModule, logger)
+      publish('tokenUnloaded')
+    },
     getConfig: (): OauthClientConfig => config,
+    getUser: async (): Promise<User | null> => {
+      const user = getUser(config, storageModule, logger)
+      if (user && user != _user) {
+        _user = user
+        publish('userLoaded')
+      }
+      return user
+    },
+    getUserInfo: async (): Promise<User | null> => {
+      const metaData = await getMetaData(config, storageModule, logger)
+      return getUserInfo(config, storageModule, metaData, logger)
+    },
+    removeUser: (): void => {
+      _user = null
+      removeUser(storageModule, logger)
+      publish('userUnloaded')
+    },
+    signOut: async (options: SignOutOptions = {}): Promise<void> => {
+      _user = null
+      const metaData = await getMetaData(config, storageModule, logger)
+      return signOut(options, config, metaData, storageModule, logger)
+    },
     logger,
     subscribe,
     unsubscribe
   }
+}
+
+export const createOidcClient = (configArg: OauthClientConfig): OauthClient => {
+  if (!configArg.metaData && configArg.useMetaDataDiscovery) {
+    throw Error(
+      'createOidcClient requires useMetaDataDiscovery to be true if you do not provide metaData in config'
+    )
+  }
+  return createOauthClient(getOidcClientConfig(configArg))
 }

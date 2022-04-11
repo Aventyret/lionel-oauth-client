@@ -17,7 +17,7 @@
       oauthClient
         .handleCallback()
         .then(() => {
-          location.assign('/')
+          location.assign('/oauth.html')
         })
         .catch(error => {
           console.error(error)

@@ -1,7 +1,6 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import { Logger } from './logger'
-import { EventPublishFn } from './createEventModule'
 import { MetaData } from './metaData'
 import { getAccessToken, getAccessTokenClaims } from './accessToken'
 import { parseJwt, validateJwt, validateIdToken, TokenPart } from './jwt'
@@ -17,8 +16,7 @@ export interface User extends TokenPart {
 export const getIdToken = (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
-  logger: Logger,
-  publish: EventPublishFn
+  logger: Logger
 ): string | null => {
   logger.log('Get User from id token')
   let idToken = null
@@ -34,7 +32,6 @@ export const getIdToken = (
     validateIdToken(idToken, oauthClientConfig)
     logger.log('Valid id token in storage')
   } catch {
-    publish('userUnloaded')
     return null
   }
   return idToken
@@ -43,11 +40,10 @@ export const getIdToken = (
 export const getIdTokenClaims = (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
-  logger: Logger,
-  publish: EventPublishFn
+  logger: Logger
 ): TokenPart | null => {
   logger.log('Get access token claims')
-  const idToken = getIdToken(oauthClientConfig, storageModule, logger, publish)
+  const idToken = getIdToken(oauthClientConfig, storageModule, logger)
   if (!idToken) {
     return null
   }
@@ -58,47 +54,82 @@ export const getIdTokenClaims = (
 export const getUser = (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
-  logger: Logger,
-  publish: EventPublishFn
+  logger: Logger
 ): User | null => {
   const accessTokenClaims = getAccessTokenClaims(
     oauthClientConfig,
     storageModule,
-    logger,
-    publish
+    logger
   )
   const idTokenClaims = getIdTokenClaims(
     oauthClientConfig,
     storageModule,
-    logger,
-    publish
+    logger
   )
   let userInfoClaims = null
-  try {
-    const userInfo = storageModule.get('userInfo')
-    if (userInfo) {
-      userInfoClaims = JSON.parse(userInfo) as User
+  if (accessTokenClaims) {
+    try {
+      const userInfo = storageModule.get('userInfo')
+      if (userInfo) {
+        userInfoClaims = JSON.parse(userInfo) as User
+      }
+    } catch {}
+    if (idTokenClaims || userInfoClaims) {
+      return mergeAndFilterUserClaims(
+        accessTokenClaims || {},
+        idTokenClaims || {},
+        userInfoClaims || {}
+      )
     }
-  } catch {}
-  if (idTokenClaims || userInfoClaims) {
+  }
+  return null
+}
+
+export const setUser = async (
+  idToken: string,
+  accessToken: string,
+  oauthClientConfig: OauthClientConfig,
+  storageModule: StorageModule,
+  metaData: MetaData,
+  logger: Logger
+): Promise<User | null> => {
+  if (idToken) {
+    storageModule.set('idToken', idToken)
+    const accessTokenClaims = parseJwt(accessToken).claims
+    const idTokenClaims = parseJwt(idToken).claims
+    let userInfo = {} as User | null
+    if (oauthClientConfig.useUserInfoEndpoint && metaData?.userinfo_endpoint) {
+      try {
+        userInfo = await getUserInfo(
+          oauthClientConfig,
+          storageModule,
+          metaData,
+          logger
+        )
+      } catch (error) {
+        logger.error(error)
+      }
+    }
     return mergeAndFilterUserClaims(
-      accessTokenClaims || {},
-      idTokenClaims || {},
-      userInfoClaims || {}
+      accessTokenClaims,
+      idTokenClaims,
+      userInfo || {}
     )
+  } else {
+    try {
+      storageModule.remove('idToken')
+    } catch {}
   }
   return null
 }
 
 export const removeUser = (
   storageModule: StorageModule,
-  logger: Logger,
-  publish: EventPublishFn
+  logger: Logger
 ): void => {
   logger.log('Remove user')
   try {
     storageModule.remove('idToken')
-    publish('userUnloaded')
   } catch {}
 }
 
@@ -123,32 +154,26 @@ export const getUserInfo = async (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
   metaData: MetaData,
-  logger: Logger,
-  publish: EventPublishFn
+  logger: Logger
 ): Promise<User | null> => {
   logger.log('Get user info')
-  if (!oauthClientConfig.useUserInfoEndpoint || !metaData.userinfo_endpoint) {
-    return getUser(oauthClientConfig, storageModule, logger, publish)
+  if (!metaData.userinfo_endpoint) {
+    throw Error('No userinfo_endpoint in meta data')
   }
   try {
-    const accessToken = getAccessToken(
-      oauthClientConfig,
-      storageModule,
-      logger,
-      publish
-    )
+    const accessToken = getAccessToken(oauthClientConfig, storageModule, logger)
     if (!accessToken) {
       return null
     }
     const userInfo = await requestUserInfo(metaData, accessToken)
     if (userInfo) {
       storageModule.set('userInfo', JSON.stringify(userInfo))
+      return getUser(oauthClientConfig, storageModule, logger)
     } else {
       try {
         storageModule.remove('userInfo')
       } catch {}
     }
-    return userInfo
   } catch {}
   return null
 }

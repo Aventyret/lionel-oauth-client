@@ -1,5 +1,5 @@
-import { default as createOauthClient } from './createOauthClient'
-import { default as createOidcClient } from './createOidcClient'
+import { createOauthClient } from './createOauthClient'
+import { createOidcClient } from './createOauthClient'
 
 export default {
   createOauthClient,

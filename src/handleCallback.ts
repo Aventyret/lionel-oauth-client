@@ -1,9 +1,7 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
-import { EventPublishFn } from './createEventModule'
-import { parseJwt, validateJwt, validateIdToken, validateJwtNonce } from './jwt'
+import { validateJwt, validateIdToken, validateJwtNonce } from './jwt'
 import { MetaData } from './metaData'
-import { User, getUserInfo, mergeAndFilterUserClaims } from './user'
 import { Logger } from './logger'
 
 interface CallbackParams {
@@ -11,7 +9,7 @@ interface CallbackParams {
   state?: string
 }
 
-interface TokenReponse {
+export interface TokenReponse {
   accessToken: string
   idToken?: string
 }
@@ -104,9 +102,8 @@ export default async (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
   metaData: MetaData | null = null,
-  logger: Logger,
-  publish: EventPublishFn
-): Promise<void> => {
+  logger: Logger
+): Promise<TokenReponse> => {
   logger.log('Handle Callback')
   logger.log({ oauthClientConfig, storageModule })
   const callbackParams = getCallbackParams(location.hash || location.search)
@@ -143,41 +140,10 @@ export default async (
       validateJwtNonce(tokenResponse.idToken, storageModule)
     }
     cleanupStorage(storageModule)
-    storageModule.set('accessToken', tokenResponse.accessToken)
-    publish('tokenLoaded', tokenResponse.accessToken)
-    if (tokenResponse.idToken) {
-      storageModule.set('idToken', tokenResponse.idToken)
-      const accessTokenClaims = parseJwt(tokenResponse.accessToken).claims
-      const idTokenClaims = parseJwt(tokenResponse.idToken).claims
-      let userInfo = {} as User | null
-      if (
-        oauthClientConfig.useUserInfoEndpoint &&
-        metaData?.userinfo_endpoint
-      ) {
-        userInfo = await getUserInfo(
-          oauthClientConfig,
-          storageModule,
-          metaData,
-          logger,
-          publish
-        )
-      }
-      publish(
-        'userLoaded',
-        mergeAndFilterUserClaims(
-          accessTokenClaims,
-          idTokenClaims,
-          userInfo || {}
-        )
-      )
-    } else {
-      try {
-        storageModule.remove('idToken')
-      } catch {}
-    }
   } catch (error: unknown) {
     logger.error(error)
     cleanupStorage(storageModule)
     throw Error(`Invalid token retreived: ${error}`)
   }
+  return tokenResponse
 }
