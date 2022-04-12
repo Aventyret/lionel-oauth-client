@@ -7,6 +7,7 @@ import handleCallback from './handleCallback'
 import signOut, { SignOutOptions } from './signOut'
 import { MetaData, getMetaData } from './metaData'
 import { User, getUser, getUserInfo, setUser, removeUser } from './user'
+import createSessionMonitor from './createSessionMonitor'
 
 const responseModes = <const>['fragment', 'query']
 export type ResponseMode = typeof responseModes[number]
@@ -37,6 +38,8 @@ export interface OauthClientConfig {
   uiLocales?: string[]
   acrValues?: string[]
   postLogoutRedirectUri?: string
+  monitorSession?: boolean
+  monitorSessionIntervalSeconds?: number
   debug?: boolean
 }
 
@@ -93,6 +96,8 @@ const getOidcClientConfig = (
     useNonce: true,
     useMetaDataDiscovery: true,
     useUserInfoEndpoint: true,
+    monitorSession: true,
+    monitorSessionIntervalSeconds: 5,
     ...config
   }
 }
@@ -115,7 +120,14 @@ export const createOauthClient = (
     getMetaData(config, storageModule, logger)
   }
 
-  return {
+  const sessionMonitor = createSessionMonitor(
+    config,
+    storageModule,
+    publish,
+    logger
+  )
+
+  const client = {
     signIn: async (options: SignInOptions = {}): Promise<void> => {
       const metaData = await getMetaData(config, storageModule, logger)
       return signIn(options, config, storageModule, metaData, logger)
@@ -145,18 +157,24 @@ export const createOauthClient = (
         _user = user
         publish('userLoaded', user)
       }
+      if (tokens?.sessionState) {
+        storageModule.set('sessionState', tokens.sessionState)
+        sessionMonitor.start()
+      }
     },
     getAccessToken: (): string | null => {
       const accessToken = getAccessToken(config, storageModule, logger)
       if (accessToken && accessToken != _accessToken) {
         _accessToken = accessToken
         publish('tokenLoaded')
+        sessionMonitor.start()
       }
       return accessToken
     },
     removeAccessToken: (): void => {
       removeAccessToken(storageModule, logger)
       publish('tokenUnloaded')
+      sessionMonitor.stop()
     },
     getConfig: (): OauthClientConfig => config,
     getUser: async (): Promise<User | null> => {
@@ -164,6 +182,7 @@ export const createOauthClient = (
       if (user && user != _user) {
         _user = user
         publish('userLoaded')
+        sessionMonitor.start()
       }
       return user
     },
@@ -175,16 +194,22 @@ export const createOauthClient = (
       _user = null
       removeUser(storageModule, logger)
       publish('userUnloaded')
+      sessionMonitor.stop()
     },
     signOut: async (options: SignOutOptions = {}): Promise<void> => {
       _user = null
       const metaData = await getMetaData(config, storageModule, logger)
+      sessionMonitor.stop()
       return signOut(options, config, metaData, storageModule, logger)
     },
     logger,
     subscribe,
     unsubscribe
   }
+
+  subscribe('sessionEnded', client.signOut)
+
+  return client
 }
 
 export const createOidcClient = (configArg: OauthClientConfig): OauthClient => {

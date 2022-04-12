@@ -12,6 +12,7 @@ interface CallbackParams {
 export interface TokenReponse {
   accessToken: string
   idToken?: string
+  sessionState?: string
 }
 
 export const getCallbackParams = (queryString: string) => {
@@ -84,9 +85,9 @@ const requestToken = async (
     const tokenResponse = await response.json()
     return {
       accessToken: tokenResponse.access_token || '',
-      idToken: tokenResponse.id_token
+      idToken: tokenResponse.id_token || '',
+      sessionState: tokenResponse.session_state || ''
     }
-    return (await response.json())?.access_token
   }
   throw Error(`Get Token http status ${response.status}`)
 }

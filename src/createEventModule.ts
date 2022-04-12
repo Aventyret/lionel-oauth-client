@@ -3,7 +3,8 @@ const eventTypes = <const>[
   'tokenUnloaded',
   'userLoaded',
   'userUnloaded',
-  'refreshNeeded'
+  'refreshNeeded',
+  'sessionEnded'
 ]
 export type EventType = typeof eventTypes[number]
 

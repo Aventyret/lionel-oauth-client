@@ -130,6 +130,7 @@ export const removeUser = (
   logger.log('Remove user')
   try {
     storageModule.remove('idToken')
+    storageModule.remove('sessionState')
   } catch {}
 }
 

@@ -73,6 +73,8 @@ const oauthClient = createOidcClient({
   uiLocales, // Optional
   acrValues, // Optional
   postLogoutRedirectUri, // Optional
+  monitorSession, // Optional, defaults to true – but only if issuer providers an check_session_iframe attribute
+  monitorSessionIntervalSeconds, // Optional, defaults to 5
   debug // Optional, defaults to false
 })
 ```
