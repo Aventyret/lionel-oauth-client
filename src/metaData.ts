@@ -39,6 +39,7 @@ export interface MetaData {
   op_policy_uri?: string
   op_tos_uri?: string
   check_session_iframe?: string
+  end_session_endpoint?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
 }

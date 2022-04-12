@@ -6,6 +6,7 @@ import createOauthClient, {
 import { createStorageModule } from './createStorageModule'
 import { createEventModule } from './createEventModule'
 import signIn, { SignInOptions } from './signIn'
+import signOut, { SignOutOptions } from './signOut'
 import handleCallback from './handleCallback'
 import { getMetaData } from './metaData'
 import { User, getUser, getUserInfo, removeUser } from './user'
@@ -14,6 +15,7 @@ export interface OidcClient extends OauthClient {
   getUser: () => Promise<User | null>
   getUserInfo: () => Promise<User | null>
   removeUser: () => void
+  signOut: (options: SignOutOptions) => Promise<void>
 }
 
 const getOidcClientConfig = (
@@ -64,6 +66,17 @@ export default (configArg: OauthClientConfig): OidcClient => {
     getUserInfo: async (): Promise<User | null> =>
       getUserInfo(config, storageModule, client.logger, publish),
     removeUser: (): void => removeUser(storageModule, client.logger, publish),
+    signOut: async (options: SignOutOptions = {}): Promise<void> => {
+      const metaData = await getMetaData(config, storageModule, client.logger)
+      return signOut(
+        options,
+        config,
+        metaData,
+        storageModule,
+        client.logger,
+        publish
+      )
+    },
     subscribe,
     unsubscribe
   }

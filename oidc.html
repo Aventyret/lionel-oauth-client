@@ -53,7 +53,11 @@
         <br />
         <label for="access-token">Access token:</label>
         <textarea id="access-token" readonly></textarea>
-        <a href onclick="signOut(event)">Remove user and token from storage</a>
+        <a href onclick="removeUser(event)"
+          >Remove user and token from storage</a
+        >
+        <br />
+        <a href onclick="signOut(event)">Sign out (at issuer)</a>
       </article>
     </main>
     <script>
@@ -61,6 +65,7 @@
         issuer: 'https://demo.duendesoftware.com',
         clientId: 'interactive.public',
         redirectUri: 'http://localhost:3001/oidc-callback.html',
+        postLogoutRedirectUri: 'http://localhost:3001/oidc.html',
         scopes: ['api'],
         debug: true
       })
@@ -86,11 +91,16 @@
         )
       }
 
-      function signOut(e) {
+      function removeUser(e) {
         e.preventDefault()
         oidcClient.removeAccessToken()
         oidcClient.removeUser()
         location.reload()
+      }
+
+      function signOut(e) {
+        e.preventDefault()
+        oidcClient.signOut({ useRedirect: false })
       }
     </script>
   </body>
