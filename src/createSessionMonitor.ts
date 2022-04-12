@@ -84,7 +84,7 @@ const createSessionMonitor = (
     _started = true
     _iframe = await addIframe(metaData.check_session_iframe || '', _iframeId)
     window.addEventListener('message', _handleIssuerPostMessage)
-    _interval = setInterval(
+    _interval = window.setInterval(
       _postToIssuer,
       oauthClientConfig.monitorSessionIntervalSeconds || 5 * 1000
     )

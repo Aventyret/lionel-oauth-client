@@ -14,6 +14,7 @@ export const oidcConfig = {
   scopes: ['api', 'openid'],
   useNonce: true,
   useUserInfoEndpoint: false,
+  monitorSession: false,
   metaData: {
     issuer: 'https://demo.duendesoftware.com',
     authorization_endpoint: 'https://demo.duendesoftware.com/connect/authorize',
