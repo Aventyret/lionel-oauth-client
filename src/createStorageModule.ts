@@ -3,6 +3,7 @@ import { OauthClientConfig } from './createOauthClient'
 const storageKeys = <const>[
   'accessToken',
   'idToken',
+  'userInfo',
   'state',
   'codeVerifier',
   'nonce',

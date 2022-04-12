@@ -5,7 +5,6 @@ import handleCallback, {
   validateClientState
 } from '../../src/handleCallback'
 import createStorageModule from '../../src/createStorageModule'
-import createEventModule from '../../src/createEventModule'
 import * as nonceModule from '../../src/createNonce'
 import createLogger from '../../src/logger'
 import { oauthConfig, oidcConfig } from './test-config'
@@ -83,21 +82,17 @@ describe('handleCallback', (): void => {
         )
       })
       beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
-      it('should set access token in storage', async (): Promise<void> => {
+      it('should return access token', async (): Promise<void> => {
         const storageModule = createStorageModule(oauthConfig)
         storageModule.set('state', 'mocked_state')
         storageModule.set('codeVerifier', 'mocked_code_verifier')
-        const { publish } = createEventModule()
-        await handleCallback(
+        const tokens = await handleCallback(
           oauthConfig,
           storageModule,
           null,
-          createLogger(oauthConfig),
-          publish
+          createLogger(oauthConfig)
         )
-        expect(storageModule.get('accessToken')).toBe(
-          tokenResponseMock.access_token
-        )
+        expect(tokens.accessToken).toBe(tokenResponseMock.access_token)
       })
       afterAll(() => {
         jest.resetAllMocks()
@@ -118,21 +113,20 @@ describe('handleCallback', (): void => {
           }) as jest.Mock
         )
       })
-      it('should not set access token in storage', async (): Promise<void> => {
+      it('should not return access token', async (): Promise<void> => {
         const storageModule = createStorageModule(oauthConfig)
         storageModule.set('state', 'mocked_state')
         storageModule.set('codeVerifier', 'mocked_code_verifier')
-        const { publish } = createEventModule()
+        let tokens
         try {
-          await handleCallback(
+          tokens = await handleCallback(
             oauthConfig,
             storageModule,
             null,
-            createLogger(oauthConfig),
-            publish
+            createLogger(oauthConfig)
           )
         } catch {}
-        expect(() => storageModule.get('accessToken')).toThrow('Value not set')
+        expect(typeof tokens).toBe('undefined')
       })
       afterAll(() => {
         jest.resetAllMocks()
@@ -157,23 +151,19 @@ describe('handleCallback', (): void => {
         )
       })
       beforeAll(createTokenValidTimeMock(idTokenMock.decodedPayload))
-      it('should set id token in storage', async (): Promise<void> => {
+      it('should return id token', async (): Promise<void> => {
         const storageModule = createStorageModule(oidcConfig)
         storageModule.set('state', 'mocked_state')
         storageModule.set('nonce', nonceMock.nonce)
         storageModule.set('codeVerifier', 'mocked_code_verifier')
-        const { publish } = createEventModule()
-        await handleCallback(
+        const tokens = await handleCallback(
           oidcConfig,
           storageModule,
           oidcConfig.metaData,
-          createLogger(oidcConfig),
-          publish
+          createLogger(oidcConfig)
         )
-        expect(storageModule.get('accessToken')).toBe(
-          idTokenResponseMock.access_token
-        )
-        expect(storageModule.get('idToken')).toBe(idTokenResponseMock.id_token)
+        expect(tokens?.accessToken).toBe(idTokenResponseMock.access_token)
+        expect(tokens?.idToken).toBe(idTokenResponseMock.id_token)
       })
       afterEach(() => {
         try {
@@ -205,14 +195,12 @@ describe('handleCallback', (): void => {
         const storageModule = createStorageModule(oidcConfig)
         storageModule.set('state', 'mocked_state')
         storageModule.set('codeVerifier', 'mocked_code_verifier')
-        const { publish } = createEventModule()
         try {
           await handleCallback(
             oidcConfig,
             storageModule,
             oidcConfig.metaData,
-            createLogger(oidcConfig),
-            publish
+            createLogger(oidcConfig)
           )
         } catch {}
         expect(() => storageModule.get('accessToken')).toThrow('Value not set')

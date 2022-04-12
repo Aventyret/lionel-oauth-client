@@ -5,7 +5,6 @@ import { removeAccessToken } from './accessToken'
 import { removeUser } from './user'
 import { MetaData } from './metaData'
 import { Logger } from './logger'
-import { EventPublishFn } from './createEventModule'
 
 export interface SignOutOptions {
   useIdTokenHint?: boolean
@@ -48,8 +47,7 @@ export default async (
   oauthClientConfig: OauthClientConfig,
   metaData: MetaData | null = null,
   storageModule: StorageModule,
-  logger: Logger,
-  publish: EventPublishFn
+  logger: Logger
 ): Promise<void> => {
   logger.log('Sign In')
   logger.log({ oauthClientConfig, storageModule })
@@ -64,6 +62,6 @@ export default async (
       state
     )
   )
-  removeAccessToken(storageModule, logger, publish)
-  removeUser(storageModule, logger, publish)
+  removeAccessToken(storageModule, logger)
+  removeUser(storageModule, logger)
 }

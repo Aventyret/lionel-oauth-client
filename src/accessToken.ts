@@ -1,14 +1,12 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import { Logger } from './logger'
-import { EventPublishFn } from './createEventModule'
-import { validateJwt } from './jwt'
+import { validateJwt, parseJwt, TokenPart } from './jwt'
 
 export const getAccessToken = (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
-  logger: Logger,
-  publish: EventPublishFn
+  logger: Logger
 ): string | null => {
   logger.log('Get access token')
   let accessToken = null
@@ -21,23 +19,33 @@ export const getAccessToken = (
   }
   try {
     validateJwt(accessToken, oauthClientConfig)
-    publish('tokenLoaded', accessToken)
   } catch {
-    publish('tokenUnloaded')
     return null
   }
   logger.log('Valid token in storage')
   return accessToken
 }
 
+export const getAccessTokenClaims = (
+  oauthClientConfig: OauthClientConfig,
+  storageModule: StorageModule,
+  logger: Logger
+): TokenPart | null => {
+  logger.log('Get access token claims')
+  const accessToken = getAccessToken(oauthClientConfig, storageModule, logger)
+  if (!accessToken) {
+    return null
+  }
+  const { claims } = parseJwt(accessToken)
+  return claims
+}
+
 export const removeAccessToken = (
   storageModule: StorageModule,
-  logger: Logger,
-  publish: EventPublishFn
+  logger: Logger
 ): void => {
   logger.log('Remove access token')
   try {
     storageModule.remove('accessToken')
-    publish('tokenUnloaded')
   } catch {}
 }

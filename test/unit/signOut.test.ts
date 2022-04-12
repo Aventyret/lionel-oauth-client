@@ -2,7 +2,6 @@ import signOut, { getSignOutRedirectUri } from '../../src/signOut'
 import createStorageModule from '../../src/createStorageModule'
 import createState from '../../src/createState'
 import createLogger from '../../src/logger'
-import { createEventModule } from '../../src/createEventModule'
 import { oidcConfig } from './test-config'
 import metaDataMock from './mocks/metaDataMock.json'
 
@@ -94,14 +93,12 @@ describe('getSignOutRedirectUri', (): void => {
 
 describe('signOut', (): void => {
   it('should not throw any errors', async (): Promise<void> => {
-    const { publish } = createEventModule()
     await signOut(
       {},
       oidcConfig,
       metaDataMock,
       createStorageModule(oidcConfig),
-      createLogger(oidcConfig),
-      publish
+      createLogger(oidcConfig)
     )
   })
 })
