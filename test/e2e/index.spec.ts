@@ -1,4 +1,33 @@
-import { test, expect } from '@playwright/test'
+import { test as base, expect } from '@playwright/test'
+import { OauthClientConfig } from '../../src/createOauthClient'
+import 'dotenv/config'
+
+declare global {
+  interface Window {
+    config: any // eslint-disable-line @typescript-eslint/no-explicit-any,
+  }
+}
+
+/** Preload bundled lionel source code */
+const test = base.extend({
+  page: async ({ page }, use) => {
+    const config: Partial<OauthClientConfig> = {
+      issuer: process.env.ISSUER,
+      authorizationEndpoint: process.env.AUTHORIZATION_ENDPOINT,
+      tokenEndpoint: process.env.TOKEN_ENDPOINT,
+      clientId: process.env.CLIENT_ID
+    }
+    await page.addInitScript((config: Partial<OauthClientConfig>) => {
+      window.config = {
+        issuer: config.issuer,
+        authorizationEndpoint: config.authorizationEndpoint,
+        tokenEndpoint: config.tokenEndpoint,
+        clientId: config.clientId
+      }
+    }, config)
+    await use(page)
+  }
+})
 
 test('should render and it goes to oauth page when clicking "Sign in with oAuth"', async ({
   page
