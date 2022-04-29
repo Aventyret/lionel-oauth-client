@@ -20,7 +20,7 @@ jobs:
           cache: 'yarn'
       - run: yarn
       - run: npx playwright install-deps
-      - run: npm install @playwright/test
+      - run: yarn install @playwright/test
       - run: npx playwright install
       - run: yarn test
       - run: yarn build
