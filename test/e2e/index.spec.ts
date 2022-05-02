@@ -12,10 +12,11 @@ declare global {
 const test = base.extend({
   page: async ({ page }, use) => {
     const config: Partial<OauthClientConfig> = {
-      issuer: process.env.ISSUER,
-      authorizationEndpoint: process.env.AUTHORIZATION_ENDPOINT,
-      tokenEndpoint: process.env.TOKEN_ENDPOINT,
-      clientId: process.env.CLIENT_ID
+      issuer: process.env.ISSUER || 'https://demo.duendesoftware.com',
+      authorizationEndpoint:
+        process.env.AUTHORIZATION_ENDPOINT || '/connect/authorize',
+      tokenEndpoint: process.env.TOKEN_ENDPOINT || '/connect/token',
+      clientId: process.env.CLIENT_ID || 'interactive.public'
     }
     await page.addInitScript((config: Partial<OauthClientConfig>) => {
       window.config = {
