@@ -3,19 +3,28 @@
   <head>
     <title>Signing in...</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./dev-config.js"></script>
     <script src="./dist/index.umd.js"></script>
     <script>
       var oidcClient = lioneloauthclient.createOidcClient({
-        issuer: 'https://demo.duendesoftware.com',
-        clientId: 'interactive.public',
+        issuer: window.config.issuer,
+        clientId: window.config.clientId,
         redirectUri: 'http://localhost:3001/oidc-callback.html',
         scopes: ['api'],
         debug: true
       })
-      oidcClient.subscribe('tokenLoaded', () => console.log('tokenLoaded event fired'))
-      oidcClient.subscribe('tokenUnloaded', () => console.log('tokenUnloaded event fired'))
-      oidcClient.subscribe('userLoaded', () => console.log('userLoaded event fired'))
-      oidcClient.subscribe('userUnloaded', () => console.log('userUnloaded event fired'))
+      oidcClient.subscribe('tokenLoaded', () =>
+        console.log('tokenLoaded event fired')
+      )
+      oidcClient.subscribe('tokenUnloaded', () =>
+        console.log('tokenUnloaded event fired')
+      )
+      oidcClient.subscribe('userLoaded', () =>
+        console.log('userLoaded event fired')
+      )
+      oidcClient.subscribe('userUnloaded', () =>
+        console.log('userUnloaded event fired')
+      )
       oidcClient
         .handleCallback()
         .then(() => {

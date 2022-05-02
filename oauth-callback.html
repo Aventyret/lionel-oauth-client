@@ -3,13 +3,11 @@
   <head>
     <title>Signing in...</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./dev-config.js"></script>
     <script src="./dist/index.umd.js"></script>
     <script>
       var oauthClient = lioneloauthclient.createOauthClient({
-        issuer: 'https://demo.duendesoftware.com',
-        authorizationEndpoint: '/connect/authorize',
-        tokenEndpoint: '/connect/token',
-        clientId: 'interactive.public',
+        ...window.config,
         redirectUri: 'http://localhost:3001/oauth-callback.html',
         scopes: ['api'],
         debug: true
