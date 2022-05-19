@@ -3,6 +3,7 @@ import { StorageModule } from './createStorageModule'
 import createState from './createState'
 import { createCodeChallenge } from './codeChallenge'
 import createNonce, { nonceHash } from './createNonce'
+import createIframe from './createIframe'
 import { MetaData } from './metaData'
 import { Logger } from './logger'
 
@@ -61,6 +62,60 @@ export const getAuthorizeUri = async (
     queryParams.push(`acr_values=${oauthClientConfig.acrValues.join(' ')}`)
   }
   return `${uri}?${queryParams.join('&')}`
+}
+
+const _signinSilentlyIframeId = (config: OauthClientConfig): string => {
+  const configHash = btoa(
+    `${config.issuer}-${config.clientId}-${(config.scopes || []).join('_')}`
+  )
+  return `lionel-signin-silently-${configHash}`
+}
+
+const _createHandleSigninSilenPostMessageFn =
+  (iframe: HTMLIFrameElement) =>
+  (e: MessageEvent): void => {
+    if (e.source !== iframe.contentWindow) {
+      return
+    }
+    console.log({ e })
+  }
+
+export const signinSilently = async (
+  options: SignInOptions,
+  oauthClientConfig: OauthClientConfig,
+  storageModule: StorageModule,
+  metaData: MetaData | null = null,
+  logger: Logger
+): Promise<void> => {
+  logger.log('Sign In Silently')
+  logger.log({ oauthClientConfig, storageModule })
+  const state = createState()
+  storageModule.set('silentState', state)
+  const { verifier, challenge } = await createCodeChallenge()
+  storageModule.set('silentCodeVerifier', verifier)
+  if (!options.nonce && oauthClientConfig.useNonce) {
+    options.nonce = createNonce()
+  }
+  if (options.nonce) {
+    storageModule.set('silentNonce', options.nonce)
+  }
+  const signinIframe = await createIframe(
+    _signinSilentlyIframeId(oauthClientConfig),
+    await getAuthorizeUri(
+      {
+        ...options,
+        prompt: 'none'
+      },
+      oauthClientConfig,
+      metaData,
+      state,
+      challenge
+    )
+  )
+  window.addEventListener(
+    'message',
+    _createHandleSigninSilenPostMessageFn(signinIframe)
+  )
 }
 
 export default async (

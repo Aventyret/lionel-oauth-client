@@ -100,13 +100,16 @@ describe('handleCallback', (): void => {
         const storageModule = createStorageModule(oauthConfig)
         storageModule.set('state', 'mocked_state')
         storageModule.set('codeVerifier', 'mocked_code_verifier')
-        const tokens = await handleCallback(
+        const callbackResponse = await handleCallback(
           oauthConfig,
           storageModule,
           null,
           createLogger(oauthConfig)
         )
-        expect(tokens.accessToken).toBe(tokenResponseMock.access_token)
+        expect(callbackResponse.tokenResponse.accessToken).toBe(
+          tokenResponseMock.access_token
+        )
+        expect(typeof callbackResponse.callbackType).toBe('redirect')
       })
       afterAll(() => {
         jest.resetAllMocks()
@@ -131,16 +134,16 @@ describe('handleCallback', (): void => {
         const storageModule = createStorageModule(oauthConfig)
         storageModule.set('state', 'mocked_state')
         storageModule.set('codeVerifier', 'mocked_code_verifier')
-        let tokens
+        let callbackResponse
         try {
-          tokens = await handleCallback(
+          callbackResponse = await handleCallback(
             oauthConfig,
             storageModule,
             null,
             createLogger(oauthConfig)
           )
         } catch {}
-        expect(typeof tokens).toBe('undefined')
+        expect(typeof callbackResponse.tokenResponse).toBe('undefined')
       })
       afterAll(() => {
         jest.resetAllMocks()
@@ -170,14 +173,19 @@ describe('handleCallback', (): void => {
         storageModule.set('state', 'mocked_state')
         storageModule.set('nonce', nonceMock.nonce)
         storageModule.set('codeVerifier', 'mocked_code_verifier')
-        const tokens = await handleCallback(
+        const callbackResponse = await handleCallback(
           oidcConfig,
           storageModule,
           oidcConfig.metaData,
           createLogger(oidcConfig)
         )
-        expect(tokens?.accessToken).toBe(idTokenResponseMock.access_token)
-        expect(tokens?.idToken).toBe(idTokenResponseMock.id_token)
+        expect(callbackResponse.tokenResponse?.accessToken).toBe(
+          idTokenResponseMock.access_token
+        )
+        expect(callbackResponse.tokenResponse?.idToken).toBe(
+          idTokenResponseMock.id_token
+        )
+        expect(typeof callbackResponse.callbackType).toBe('redirect')
       })
       afterEach(() => {
         try {

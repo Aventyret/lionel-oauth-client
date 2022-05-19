@@ -12,9 +12,17 @@ interface CallbackParams {
   errorUri?: string
 }
 
-export interface TokenReponse {
+const callbackTypes = <const>['redirect', 'silent']
+export type CallbackType = typeof callbackTypes[number]
+
+export interface TokenResponse {
   accessToken: string
   idToken?: string
+}
+
+export interface CallbackResponse {
+  tokenResponse: TokenResponse
+  callbackType: CallbackType
 }
 
 export const getCallbackParams = (queryString: string) => {
@@ -87,7 +95,7 @@ const requestToken = async (
   oauthClientConfig: OauthClientConfig,
   metaData: MetaData | null = null,
   tokenRequestBody: URLSearchParams
-): Promise<TokenReponse> => {
+): Promise<TokenResponse> => {
   const uri =
     metaData?.token_endpoint ||
     `${oauthClientConfig.issuer}${oauthClientConfig.tokenEndpoint}`
@@ -113,20 +121,37 @@ const cleanupStorage = (storageModule: StorageModule): void => {
   storageModule.remove('codeVerifier')
 }
 
+const _getCallbackType = (
+  callbackParams: CallbackParams,
+  storageModule: StorageModule
+): CallbackType => {
+  try {
+    const clientSilentState = storageModule.get('silentState')
+    return clientSilentState === callbackParams.state ? 'silent' : 'redirect'
+  } catch {}
+  return 'redirect'
+}
+
 export default async (
   oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
   metaData: MetaData | null = null,
   logger: Logger
-): Promise<TokenReponse> => {
+): Promise<CallbackResponse> => {
   logger.log('Handle Callback')
   logger.log({ oauthClientConfig, storageModule })
   const callbackParams = getCallbackParams(location.hash || location.search)
   logger.log('Callback Params')
   logger.log({ callbackParams })
   validateCallbackParams(callbackParams)
-  const clientState = storageModule.get('state')
-  const clientCodeVerifier = storageModule.get('codeVerifier')
+  const callbackType = _getCallbackType(callbackParams, storageModule)
+  logger.log(`Callback Type: ${callbackType}`)
+  const clientState = storageModule.get(
+    callbackType === 'silent' ? 'silentState' : 'state'
+  )
+  const clientCodeVerifier = storageModule.get(
+    callbackType === 'silent' ? 'silentCodeVerifier' : 'codeVerifier'
+  )
   validateClientState(callbackParams, clientState, clientCodeVerifier)
   const tokenRequestBody = getTokenRequestBody(
     oauthClientConfig,
@@ -160,5 +185,8 @@ export default async (
     cleanupStorage(storageModule)
     throw Error(`Invalid token retreived: ${error}`)
   }
-  return tokenResponse
+  return {
+    tokenResponse,
+    callbackType
+  }
 }

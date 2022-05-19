@@ -7,6 +7,8 @@ const storageKeys = <const>[
   'state',
   'codeVerifier',
   'nonce',
+  'silentState',
+  'silentCodeVerifier',
   'metaData',
   'signoutState'
 ]

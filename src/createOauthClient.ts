@@ -124,7 +124,8 @@ export const createOauthClient = (
       const metaData = await getMetaData(config, storageModule, logger)
       let tokens
       try {
-        tokens = await handleCallback(config, storageModule, metaData, logger)
+        tokens = (await handleCallback(config, storageModule, metaData, logger))
+          .tokenResponse
       } catch (error) {
         throw error
       }
