@@ -2,7 +2,7 @@ import createLogger, { Logger } from './logger'
 import { getAccessToken, removeAccessToken } from './accessToken'
 import { StorageModuleType, createStorageModule } from './createStorageModule'
 import { EventSubscribeFn, createEventModule } from './createEventModule'
-import signIn, { SignInOptions } from './signIn'
+import signIn, { signInSilently, SignInOptions } from './signIn'
 import handleCallback from './handleCallback'
 import signOut, { SignOutOptions } from './signOut'
 import { MetaData, getMetaData } from './metaData'
@@ -42,6 +42,7 @@ export interface OauthClientConfig {
 
 export interface OauthClient {
   signIn: (options: SignInOptions) => Promise<void>
+  signInSilently: (options: SignInOptions) => Promise<void>
   handleCallback: () => void
   getAccessToken: () => string | null
   removeAccessToken: () => void
@@ -120,15 +121,35 @@ export const createOauthClient = (
       const metaData = await getMetaData(config, storageModule, logger)
       return signIn(options, config, storageModule, metaData, logger)
     },
+    signInSilently: async (options: SignInOptions = {}): Promise<void> => {
+      const metaData = await getMetaData(config, storageModule, logger)
+      try {
+        const tokenResponse = await signInSilently(
+          options,
+          config,
+          storageModule,
+          metaData,
+          logger
+        )
+        console.log(tokenResponse)
+      } catch (error) {
+        logger.error(error)
+      }
+    },
     handleCallback: async (): Promise<void> => {
       const metaData = await getMetaData(config, storageModule, logger)
-      let tokens
+      let callbackResponse
       try {
-        tokens = (await handleCallback(config, storageModule, metaData, logger))
-          .tokenResponse
+        callbackResponse = await handleCallback(
+          config,
+          storageModule,
+          metaData,
+          logger
+        )
       } catch (error) {
         throw error
       }
+      const tokens = callbackResponse?.tokenResponse
       if (tokens?.accessToken) {
         storageModule.set('accessToken', tokens.accessToken)
         _accessToken = tokens.accessToken
@@ -145,6 +166,14 @@ export const createOauthClient = (
         )
         _user = user
         publish('userLoaded', user)
+      }
+      if (callbackResponse.callbackType === 'silent') {
+        window.postMessage(
+          {
+            tokens
+          },
+          config.redirectUri
+        )
       }
     },
     getAccessToken: (): string | null => {

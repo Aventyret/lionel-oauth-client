@@ -4,6 +4,7 @@ import createState from './createState'
 import { createCodeChallenge } from './codeChallenge'
 import createNonce, { nonceHash } from './createNonce'
 import createIframe from './createIframe'
+import { TokenResponse } from './handleCallback'
 import { MetaData } from './metaData'
 import { Logger } from './logger'
 
@@ -72,12 +73,13 @@ const _signinSilentlyIframeId = (config: OauthClientConfig): string => {
 }
 
 const _createHandleSigninSilenPostMessageFn =
-  (iframe: HTMLIFrameElement) =>
+  (iframe: HTMLIFrameElement, resolve: () => void, reject: () => void) =>
   (e: MessageEvent): void => {
     if (e.source !== iframe.contentWindow) {
       return
     }
     console.log({ e })
+    console.log(resolve, reject)
   }
 
 export const signinSilently = async (
@@ -86,7 +88,7 @@ export const signinSilently = async (
   storageModule: StorageModule,
   metaData: MetaData | null = null,
   logger: Logger
-): Promise<void> => {
+): Promise<TokenResponse> => {
   logger.log('Sign In Silently')
   logger.log({ oauthClientConfig, storageModule })
   const state = createState()
@@ -112,10 +114,12 @@ export const signinSilently = async (
       challenge
     )
   )
-  window.addEventListener(
-    'message',
-    _createHandleSigninSilenPostMessageFn(signinIframe)
-  )
+  return new Promise((resolve, reject) => {
+    window.addEventListener(
+      'message',
+      _createHandleSigninSilenPostMessageFn(signinIframe, resolve, reject)
+    )
+  })
 }
 
 export default async (
