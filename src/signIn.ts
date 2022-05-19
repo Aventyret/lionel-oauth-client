@@ -97,7 +97,7 @@ export const signinSilently = async (
     options.nonce = createNonce()
   }
   if (options.nonce) {
-    storageModule.set('silentNonce', options.nonce)
+    storageModule.set('nonce', options.nonce)
   }
   const signinIframe = await createIframe(
     _signinSilentlyIframeId(oauthClientConfig),

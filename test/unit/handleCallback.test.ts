@@ -109,7 +109,7 @@ describe('handleCallback', (): void => {
         expect(callbackResponse.tokenResponse.accessToken).toBe(
           tokenResponseMock.access_token
         )
-        expect(typeof callbackResponse.callbackType).toBe('redirect')
+        expect(callbackResponse.callbackType).toBe('redirect')
       })
       afterAll(() => {
         jest.resetAllMocks()
@@ -143,7 +143,7 @@ describe('handleCallback', (): void => {
             createLogger(oauthConfig)
           )
         } catch {}
-        expect(typeof callbackResponse.tokenResponse).toBe('undefined')
+        expect(typeof callbackResponse?.tokenResponse).toBe('undefined')
       })
       afterAll(() => {
         jest.resetAllMocks()
@@ -185,7 +185,7 @@ describe('handleCallback', (): void => {
         expect(callbackResponse.tokenResponse?.idToken).toBe(
           idTokenResponseMock.id_token
         )
-        expect(typeof callbackResponse.callbackType).toBe('redirect')
+        expect(callbackResponse.callbackType).toBe('redirect')
       })
       afterEach(() => {
         try {
