@@ -31,7 +31,7 @@
           location.assign('/oidc.html')
         })
         .catch(() => {
-          alert('Could not sign in')
+          console.error('Could not sign in')
           location.assign('/oidc.html')
         })
     </script>
