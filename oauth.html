@@ -84,12 +84,15 @@
       function signInSilently(e) {
         e.preventDefault()
         oidcClient.signInSilently().then(response => {
-          if (!response.accessToken) {
-            alert('Not signed in')
-            return
-          }
-          location.reload()
-        })
+            if (!response.accessToken) {
+              alert('Not signed in')
+              return
+            }
+            location.reload()
+          })
+          .catch(error => {
+            alert(error)
+          })
       }
 
       function signOut(e) {

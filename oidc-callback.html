@@ -30,8 +30,8 @@
         .then(() => {
           location.assign('/oidc.html')
         })
-        .catch(() => {
-          console.error('Could not sign in')
+        .catch(error => {
+          console.error(error)
         })
     </script>
   </head>

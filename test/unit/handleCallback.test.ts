@@ -111,21 +111,6 @@ describe('handleCallback', (): void => {
         )
         expect(callbackResponse.callbackType).toBe('redirect')
       })
-      it('should return access token when type is silent', async (): Promise<void> => {
-        const storageModule = createStorageModule(oauthConfig)
-        storageModule.set('silentState', 'mocked_state')
-        storageModule.set('silentCodeVerifier', 'mocked_code_verifier')
-        const callbackResponse = await handleCallback(
-          oauthConfig,
-          storageModule,
-          null,
-          createLogger(oauthConfig)
-        )
-        expect(callbackResponse.tokenResponse.accessToken).toBe(
-          tokenResponseMock.access_token
-        )
-        expect(callbackResponse.callbackType).toBe('silent')
-      })
       afterAll(() => {
         jest.resetAllMocks()
       })
