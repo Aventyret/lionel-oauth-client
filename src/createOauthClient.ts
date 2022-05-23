@@ -4,8 +4,7 @@ import { StorageModuleType, createStorageModule } from './createStorageModule'
 import { EventSubscribeFn, createEventModule } from './createEventModule'
 import signIn, { signInSilently, SignInOptions } from './signIn'
 import handleCallback, {
-  TokenResponse,
-  CallbackType,
+  CallbackResponse,
   getCallbackType
 } from './handleCallback'
 import signOut, { SignOutOptions } from './signOut'
@@ -62,9 +61,7 @@ export interface OauthClient {
   signOut: (options: SignOutOptions) => Promise<void>
 }
 
-export interface HandleCallbackResponse {
-  tokens: TokenResponse
-  callbackType: CallbackType
+export interface HandleCallbackResponse extends CallbackResponse {
   user: User | null
 }
 
@@ -204,17 +201,17 @@ export const createOauthClient = (
         _callbackFailed(error.toString())
         return null
       }
-      const tokens = callbackResponse?.tokenResponse
-      if (tokens?.accessToken) {
-        storageModule.set('accessToken', tokens.accessToken)
-        _accessToken = tokens.accessToken
-        _tokenLoaded(tokens.accessToken)
+      const tokenResponse = callbackResponse?.tokenResponse
+      if (tokenResponse?.accessToken) {
+        storageModule.set('accessToken', tokenResponse.accessToken)
+        _accessToken = tokenResponse.accessToken
+        _tokenLoaded(tokenResponse.accessToken)
       }
       let user = null
-      if (tokens?.idToken) {
+      if (tokenResponse?.idToken) {
         user = await setUser(
-          tokens.idToken,
-          tokens.accessToken,
+          tokenResponse.idToken,
+          tokenResponse.accessToken,
           config,
           storageModule,
           metaData,
@@ -223,12 +220,12 @@ export const createOauthClient = (
         _user = user
         _userLoaded(user)
       }
-      if (!tokens?.accessToken && !tokens?.idToken) {
+      if (!tokenResponse?.accessToken && !tokenResponse?.idToken) {
         _callbackFailed('Not signed in')
         return null
       }
       const handleCallbackResponse = {
-        tokens,
+        tokenResponse,
         callbackType,
         user
       }
