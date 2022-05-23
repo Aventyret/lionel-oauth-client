@@ -3,7 +3,11 @@ import { getAccessToken, removeAccessToken } from './accessToken'
 import { StorageModuleType, createStorageModule } from './createStorageModule'
 import { EventSubscribeFn, createEventModule } from './createEventModule'
 import signIn, { signInSilently, SignInOptions } from './signIn'
-import handleCallback, { TokenResponse, CallbackType } from './handleCallback'
+import handleCallback, {
+  TokenResponse,
+  CallbackType,
+  getCallbackType
+} from './handleCallback'
 import signOut, { SignOutOptions } from './signOut'
 import { MetaData, getMetaData } from './metaData'
 import { User, getUser, getUserInfo, setUser, removeUser } from './user'
@@ -167,10 +171,26 @@ export const createOauthClient = (
         )
       } catch (error) {
         logger.error(error)
+        throw error
       }
-      return handleCallbackResponse || null
+      return handleCallbackResponse
     },
-    handleCallback: async (): Promise<HandleCallbackResponse> => {
+    handleCallback: async (): Promise<HandleCallbackResponse | null> => {
+      const callbackType = getCallbackType(config)
+
+      const _callbackFailed = (errorMessage: string): void => {
+        if (callbackType === 'silent') {
+          logger.error('Silent signin failed. Not signed in.')
+          window.setTimeout(() => {
+            if (!window.top) {
+              return
+            }
+            window.top.postMessage({}, '*')
+          }, 100)
+        }
+        throw Error(errorMessage)
+      }
+
       const metaData = await getMetaData(config, storageModule, logger)
       let callbackResponse
       try {
@@ -180,8 +200,9 @@ export const createOauthClient = (
           metaData,
           logger
         )
-      } catch (error) {
-        throw error
+      } catch (error: any) {
+        _callbackFailed(error.toString())
+        return null
       }
       const tokens = callbackResponse?.tokenResponse
       if (tokens?.accessToken) {
@@ -202,15 +223,16 @@ export const createOauthClient = (
         _user = user
         _userLoaded(user)
       }
-      if (!tokens.accessToken && !tokens.idToken) {
-        throw Error('Not signed in')
+      if (!tokens?.accessToken && !tokens?.idToken) {
+        _callbackFailed('Not signed in')
+        return null
       }
       const handleCallbackResponse = {
         tokens,
-        callbackType: callbackResponse.callbackType,
+        callbackType,
         user
       }
-      if (callbackResponse.callbackType === 'silent' && window.top) {
+      if (callbackType === 'silent' && window.top) {
         window.top.postMessage(
           {
             handleCallbackResponse

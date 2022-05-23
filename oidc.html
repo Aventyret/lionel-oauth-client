@@ -110,12 +110,15 @@
       function signInSilently(e) {
         e.preventDefault()
         oidcClient.signInSilently().then(response => {
-          if (!response.user) {
-            alert('Not signed in')
-            return
-          }
-          location.reload()
-        })
+            if (!response.user) {
+              alert('Not signed in')
+              return
+            }
+            location.reload()
+          })
+          .catch(error => {
+            alert(error)
+          })
       }
 
       function removeUser(e) {

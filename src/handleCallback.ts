@@ -1,6 +1,7 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import { validateJwt, validateIdToken, validateJwtNonce } from './jwt'
+import { signInSilentlyIframeId } from './signIn'
 import { MetaData } from './metaData'
 import { Logger } from './logger'
 
@@ -121,14 +122,16 @@ const cleanupStorage = (storageModule: StorageModule): void => {
   storageModule.remove('codeVerifier')
 }
 
-const _getCallbackType = (
-  callbackParams: CallbackParams,
-  storageModule: StorageModule
+export const getCallbackType = (
+  oauthClientConfig: OauthClientConfig
 ): CallbackType => {
-  try {
-    const clientSilentState = storageModule.get('silentState')
-    return clientSilentState === callbackParams.state ? 'silent' : 'redirect'
-  } catch {}
+  if (window.parent) {
+    return window.parent.document.getElementById(
+      signInSilentlyIframeId(oauthClientConfig)
+    )
+      ? 'silent'
+      : 'redirect'
+  }
   return 'redirect'
 }
 
@@ -144,7 +147,7 @@ export default async (
   logger.log('Callback Params')
   logger.log({ callbackParams })
   validateCallbackParams(callbackParams)
-  const callbackType = _getCallbackType(callbackParams, storageModule)
+  const callbackType = getCallbackType(oauthClientConfig)
   logger.log(`Callback Type: ${callbackType}`)
   const clientState = storageModule.get(
     callbackType === 'silent' ? 'silentState' : 'state'

@@ -64,7 +64,7 @@ export const getAuthorizeUri = async (
   return `${uri}?${queryParams.join('&')}`
 }
 
-const _signInSilentlyIframeId = (config: OauthClientConfig): string => {
+export const signInSilentlyIframeId = (config: OauthClientConfig): string => {
   const configHash = btoa(
     `${config.issuer}-${config.clientId}-${(config.scopes || []).join('_')}`
   )
@@ -109,7 +109,7 @@ export const signInSilently = async (
     storageModule.set('nonce', options.nonce)
   }
   const signinIframe = await createIframe(
-    _signInSilentlyIframeId(oauthClientConfig),
+    signInSilentlyIframeId(oauthClientConfig),
     await getAuthorizeUri(
       {
         ...options,
