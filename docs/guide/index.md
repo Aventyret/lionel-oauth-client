@@ -102,6 +102,12 @@ Process the response from the issuer. This is done on the redirect uri you have 
 await oAuthClient.handleCallback()
 ```
 
+There is also a method to sign in a user silently. This will perform an authentication in a hidden iframe, and if a user is signed in at the issuer the user will be signed in in the client:
+
+```js
+await oAuthClient.signInSilently()
+```
+
 Get the access token of the signed in user:
 
 ```js
