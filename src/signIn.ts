@@ -71,7 +71,7 @@ export const signInSilentlyIframeId = (config: OauthClientConfig): string => {
   return `lionel-signin-silently-${configHash}`
 }
 
-const _createHandleSigninSilenPostMessageFn =
+const _createHandleSignInSilentPostMessageFn =
   (
     iframe: HTMLIFrameElement,
     resolve: (handleCallbackResponse: HandleCallbackResponse) => void,
@@ -124,7 +124,7 @@ export const signInSilently = async (
   return new Promise((resolve, reject) => {
     window.addEventListener(
       'message',
-      _createHandleSigninSilenPostMessageFn(signinIframe, resolve, reject)
+      _createHandleSignInSilentPostMessageFn(signinIframe, resolve, reject)
     )
   })
 }

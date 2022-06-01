@@ -179,10 +179,10 @@ export const createOauthClient = (
         if (callbackType === 'silent') {
           logger.error('Silent signin failed. Not signed in.')
           window.setTimeout(() => {
-            if (!window.top) {
+            if (!window.parent) {
               return
             }
-            window.top.postMessage({}, '*')
+            window.parent.postMessage({}, '*')
           }, 100)
         }
         throw Error(errorMessage)
@@ -229,8 +229,8 @@ export const createOauthClient = (
         callbackType,
         user
       }
-      if (callbackType === 'silent' && window.top) {
-        window.top.postMessage(
+      if (callbackType === 'silent' && window.parent) {
+        window.parent.postMessage(
           {
             handleCallbackResponse
           },
