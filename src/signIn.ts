@@ -1,8 +1,9 @@
-import { OauthClientConfig } from './createOauthClient'
+import { OauthClientConfig, HandleCallbackResponse } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import createState from './createState'
 import { createCodeChallenge } from './codeChallenge'
 import createNonce, { nonceHash } from './createNonce'
+import createIframe from './createIframe'
 import { MetaData } from './metaData'
 import { Logger } from './logger'
 
@@ -61,6 +62,71 @@ export const getAuthorizeUri = async (
     queryParams.push(`acr_values=${oauthClientConfig.acrValues.join(' ')}`)
   }
   return `${uri}?${queryParams.join('&')}`
+}
+
+export const signInSilentlyIframeId = (config: OauthClientConfig): string => {
+  const configHash = btoa(
+    `${config.issuer}-${config.clientId}-${(config.scopes || []).join('_')}`
+  )
+  return `lionel-signin-silently-${configHash}`
+}
+
+const _createHandleSignInSilentPostMessageFn =
+  (
+    iframe: HTMLIFrameElement,
+    resolve: (handleCallbackResponse: HandleCallbackResponse) => void,
+    reject: (reason: Error) => void
+  ) =>
+  (e: MessageEvent): void => {
+    if (e.source !== iframe.contentWindow) {
+      return
+    }
+    window.setTimeout(() => iframe.remove(), 100)
+    if (e.data.handleCallbackResponse) {
+      resolve(e.data.handleCallbackResponse)
+      return
+    }
+    reject(new Error('Not signed in'))
+  }
+
+export const signInSilently = async (
+  options: SignInOptions,
+  oauthClientConfig: OauthClientConfig,
+  storageModule: StorageModule,
+  metaData: MetaData | null = null,
+  logger: Logger
+): Promise<HandleCallbackResponse> => {
+  logger.log('Sign In Silently')
+  logger.log({ oauthClientConfig, storageModule })
+  const state = createState()
+  storageModule.set('silentState', state)
+  const { verifier, challenge } = await createCodeChallenge()
+  storageModule.set('silentCodeVerifier', verifier)
+  if (!options.nonce && oauthClientConfig.useNonce) {
+    options.nonce = createNonce()
+  }
+  if (options.nonce) {
+    storageModule.set('nonce', options.nonce)
+  }
+  const signinIframe = await createIframe(
+    signInSilentlyIframeId(oauthClientConfig),
+    await getAuthorizeUri(
+      {
+        ...options,
+        prompt: 'none'
+      },
+      oauthClientConfig,
+      metaData,
+      state,
+      challenge
+    )
+  )
+  return new Promise((resolve, reject) => {
+    window.addEventListener(
+      'message',
+      _createHandleSignInSilentPostMessageFn(signinIframe, resolve, reject)
+    )
+  })
 }
 
 export default async (

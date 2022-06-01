@@ -41,6 +41,7 @@
         <button type="submit" class="contrast" onclick="oauthClient.signIn()">
           Login
         </button>
+        <a href onclick="signInSilently(event)">Sign in silently</a>
       </article>
       <article class="view signed-in">
         <hgroup>
@@ -54,27 +55,44 @@
       </article>
     </main>
     <script>
+      setSignedIn(false)
       var oauthClient = lioneloauthclient.createOauthClient({
         ...window.config,
         redirectUri: 'http://localhost:3001/oauth-callback.html',
         scopes: ['api'],
         debug: true
       })
-      var accessToken = oauthClient.getAccessToken()
-      setSignedIn(!!accessToken)
-      if (accessToken) {
+      oauthClient.subscribe('tokenLoaded', function (accessToken) {
+        setSignedIn(true)
         document.getElementById('access-token').value = accessToken
-      }
+      })
+      oauthClient.subscribe('tokenUnloaded', function () {
+        setSignedIn(false)
+      })
 
       function setSignedIn(signedIn) {
-        const styleTag = document.createElement('style')
-        document.head.appendChild(styleTag)
-        styleTag.type = 'text/css'
-        styleTag.appendChild(
-          document.createTextNode(
-            `.view.${signedIn ? '' : 'not-'}signed-in { display: flex; }`
-          )
-        )
+        const viewNodes = document.querySelectorAll('.view')
+        Array.prototype.slice.call(viewNodes, 0).forEach(function(viewEl) {
+          if (viewEl.className.includes('not-signed-in')) {
+            viewEl.style.display = signedIn ? 'none' : 'flex';
+          } else if(viewEl.className.includes('signed-in')) {
+            viewEl.style.display = signedIn ? 'flex' : 'none';
+          }
+        });
+      }
+
+      function signInSilently(e) {
+        e.preventDefault()
+        oidcClient.signInSilently().then(response => {
+            if (!response.accessToken) {
+              alert('Not signed in')
+              return
+            }
+            location.reload()
+          })
+          .catch(error => {
+            alert(error)
+          })
       }
 
       function signOut(e) {

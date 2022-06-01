@@ -41,6 +41,7 @@
         <button type="submit" class="contrast" onclick="oidcClient.signIn()">
           Login
         </button>
+        <a href onclick="signInSilently(event)">Sign in silently</a>
       </article>
       <article class="view signed-in">
         <hgroup>
@@ -62,6 +63,7 @@
       </article>
     </main>
     <script>
+      setSignedIn(false)
       var oidcClient = lioneloauthclient.createOidcClient({
         issuer: window.config.issuer,
         clientId: window.config.clientId,
@@ -83,25 +85,40 @@
         console.log('userUnloaded event fired')
       )
 
-      var accessToken = oidcClient.getAccessToken()
-      var user = oidcClient.getUser().then(user => {
-        const isSignedIn = user && accessToken
-        setSignedIn(isSignedIn)
-        if (isSignedIn) {
-          document.getElementById('user').value = JSON.stringify(user)
-          document.getElementById('access-token').value = accessToken
-        }
+      oidcClient.subscribe('tokenLoaded', function (accessToken) {
+        document.getElementById('access-token').value = accessToken
+      })
+      oidcClient.subscribe('userLoaded', function (user) {
+        setSignedIn(true)
+        document.getElementById('user').value = JSON.stringify(user)
+      })
+      oidcClient.subscribe('tokenUnloaded', function () {
+        setSignedIn(false)
       })
 
       function setSignedIn(signedIn) {
-        const styleTag = document.createElement('style')
-        document.head.appendChild(styleTag)
-        styleTag.type = 'text/css'
-        styleTag.appendChild(
-          document.createTextNode(
-            `.view.${signedIn ? '' : 'not-'}signed-in { display: flex; }`
-          )
-        )
+        const viewNodes = document.querySelectorAll('.view')
+        Array.prototype.slice.call(viewNodes, 0).forEach(function (viewEl) {
+          if (viewEl.className.includes('not-signed-in')) {
+            viewEl.style.display = signedIn ? 'none' : 'flex'
+          } else if (viewEl.className.includes('signed-in')) {
+            viewEl.style.display = signedIn ? 'flex' : 'none'
+          }
+        })
+      }
+
+      function signInSilently(e) {
+        e.preventDefault()
+        oidcClient.signInSilently().then(response => {
+            if (!response.user) {
+              alert('Not signed in')
+              return
+            }
+            location.reload()
+          })
+          .catch(error => {
+            alert(error)
+          })
       }
 
       function removeUser(e) {
