@@ -43,6 +43,7 @@ const oAuthClient = createOauthClient({
   tokenStorage, // Optional, defaults to 'localStorage'
   tokenLeewaySeconds, // Optional, defaults to 60
   authenticationMaxAgeSeconds, // Optional
+  autoRenewToken, // Optional, defaults to true
   responseMode, // Optional
   debug // Optional, defaults to false
 })
@@ -62,7 +63,9 @@ const oauthClient = createOidcClient({
   scopes, // Optional, defaults to ['openid']. 'openid' will always be added if not included
   tokenStorage, // Optional, defaults to 'localStorage'
   tokenLeewaySeconds, // Optional, defaults to 60
+  signInSilentlyTimeoutSeconds, // Optional, defaults to 10
   authenticationMaxAgeSeconds, // Optional
+  autoRenewToken, // Optional, defaults to true
   responseMode, // Optional
   metaData, // Optional, but required if useMetaDataDiscovery is false
   useNonce, // Optional, defaults to true

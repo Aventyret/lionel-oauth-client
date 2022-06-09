@@ -30,6 +30,8 @@ export interface OauthClientConfig {
   tokenStorage?: StorageModuleType
   tokenLeewaySeconds?: number
   authenticationMaxAgeSeconds?: number
+  signInSilentlyTimeoutSeconds?: number
+  autoRenewToken?: boolean
   responseMode?: ResponseMode
   metaData?: MetaData
   useNonce?: boolean
@@ -87,6 +89,8 @@ export const getOauthClientConfig = (
     tokenEndpoint: configArg.useMetaDataDiscovery ? '' : '/token',
     debug: false,
     tokenLeewaySeconds: 60,
+    signInSilentlyTimeoutSeconds: 10,
+    autoRenewToken: true,
     ...configArg
   }
 }
