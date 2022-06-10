@@ -8,18 +8,23 @@ import {
   createTokenExpiredTimeOutsideLeewayMock
 } from './mocks/timeMocks'
 
-describe('getAccessToken', (): void => {
-  describe('when token is valid', (): void => {
+describe.only('getAccessToken', (): void => {
+  describe('when token is not expired', (): void => {
     beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
     it('should get an access token if there is one in storage', async (): Promise<void> => {
       const storageModule = createStorageModule(oauthConfig)
       storageModule.set('accessToken', accessTokenMock.encoded)
+      storageModule.set(
+        'accessTokenExpires',
+        accessTokenMock.decodedPayload.exp.toString()
+      )
       const accessToken = getAccessToken(
         oauthConfig,
         storageModule,
         createLogger(oauthConfig)
       )
       storageModule.remove('accessToken')
+      storageModule.remove('accessTokenExpires')
       expect(accessToken).toBe(accessTokenMock.encoded)
     })
     it('should not throw error if access token is not in storage', async (): Promise<void> => {
@@ -45,6 +50,10 @@ describe('getAccessToken', (): void => {
     it('should not get token if an expired token is in storage', async (): Promise<void> => {
       const storageModule = createStorageModule(oauthConfig)
       storageModule.set('accessToken', accessTokenMock.encoded)
+      storageModule.set(
+        'accessTokenExpires',
+        accessTokenMock.decodedPayload.exp.toString()
+      )
       const accessToken = getAccessToken(
         oauthConfig,
         storageModule,
@@ -62,6 +71,10 @@ describe('removeAccessToken', (): void => {
     const storageModule = createStorageModule(oauthConfig)
     const logger = createLogger(oauthConfig)
     storageModule.set('accessToken', accessTokenMock.encoded)
+    storageModule.set(
+      'accessTokenExpires',
+      accessTokenMock.decodedPayload.exp.toString()
+    )
     let accessToken = getAccessToken(oauthConfig, storageModule, logger)
     expect(accessToken).toBe(accessTokenMock.encoded)
     removeAccessToken(storageModule, logger)

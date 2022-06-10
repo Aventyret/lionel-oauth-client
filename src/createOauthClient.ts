@@ -208,6 +208,10 @@ export const createOauthClient = (
       const tokenResponse = callbackResponse?.tokenResponse
       if (tokenResponse?.accessToken) {
         storageModule.set('accessToken', tokenResponse.accessToken)
+        storageModule.set(
+          'accessTokenExpires',
+          tokenResponse.expires.toString()
+        )
         _accessToken = tokenResponse.accessToken
         _tokenLoaded(tokenResponse.accessToken)
       }
@@ -264,6 +268,8 @@ export const createOauthClient = (
     },
     removeUser: (): void => {
       _user = null
+      removeAccessToken(storageModule, logger)
+      publish('tokenUnloaded')
       removeUser(storageModule, logger)
       publish('userUnloaded')
     },

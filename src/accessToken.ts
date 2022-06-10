@@ -42,6 +42,9 @@ export const removeAccessToken = (
   try {
     storageModule.remove('accessToken')
   } catch {}
+  try {
+    storageModule.remove('accessTokenExpires')
+  } catch {}
 }
 
 export const validateAccessTokenExpiration = (

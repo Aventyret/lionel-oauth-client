@@ -2,7 +2,7 @@ import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import { Logger } from './logger'
 import { MetaData } from './metaData'
-import { getAccessToken, getAccessTokenClaims } from './accessToken'
+import { getAccessToken } from './accessToken'
 import { parseJwt, validateJwt, validateIdToken, TokenPart } from './jwt'
 
 export interface User extends TokenPart {
@@ -31,7 +31,7 @@ export const getIdToken = (
     validateJwt(idToken, oauthClientConfig)
     validateIdToken(idToken, oauthClientConfig)
     logger.log('Valid id token in storage')
-  } catch {
+  } catch (error) {
     return null
   }
   return idToken
@@ -56,31 +56,20 @@ export const getUser = (
   storageModule: StorageModule,
   logger: Logger
 ): User | null => {
-  const accessTokenClaims = getAccessTokenClaims(
-    oauthClientConfig,
-    storageModule,
-    logger
-  )
   const idTokenClaims = getIdTokenClaims(
     oauthClientConfig,
     storageModule,
     logger
   )
   let userInfoClaims = null
-  if (accessTokenClaims) {
-    try {
-      const userInfo = storageModule.get('userInfo')
-      if (userInfo) {
-        userInfoClaims = JSON.parse(userInfo) as User
-      }
-    } catch {}
-    if (idTokenClaims || userInfoClaims) {
-      return mergeAndFilterUserClaims(
-        accessTokenClaims || {},
-        idTokenClaims || {},
-        userInfoClaims || {}
-      )
+  try {
+    const userInfo = storageModule.get('userInfo')
+    if (userInfo) {
+      userInfoClaims = JSON.parse(userInfo) as User
     }
+  } catch {}
+  if (idTokenClaims || userInfoClaims) {
+    return mergeAndFilterUserClaims(idTokenClaims || {}, userInfoClaims || {})
   }
   return null
 }
@@ -130,6 +119,9 @@ export const removeUser = (
   logger.log('Remove user')
   try {
     storageModule.remove('idToken')
+  } catch {}
+  try {
+    storageModule.remove('userInfo')
   } catch {}
 }
 

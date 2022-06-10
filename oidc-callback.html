@@ -10,7 +10,7 @@
         issuer: window.config.issuer,
         clientId: window.config.clientId,
         redirectUri: 'http://localhost:3001/oidc-callback.html',
-        scopes: ['api'],
+        scopes: ['api', 'email'],
         debug: true
       })
       oidcClient.subscribe('tokenLoaded', () =>

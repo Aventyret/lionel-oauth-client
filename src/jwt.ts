@@ -83,6 +83,7 @@ export const validateJwtClaims = (
     throw Error('Incorrect iss in jwt claims')
   }
   const now = new Date(0)
+  now.setUTCSeconds(Math.floor(Date.now() / 1000))
   if (oauthClientConfig.authenticationMaxAgeSeconds && claims.auth_time) {
     if (isNaN(claims.auth_time)) {
       throw Error(`Invalid auth_time, ${claims.auth_time} is not a number`)

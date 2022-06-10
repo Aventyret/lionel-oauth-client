@@ -126,7 +126,7 @@ export const signInSilently = async (
   return new Promise((resolve, reject) => {
     const timeout = window.setTimeout(
       () => reject('Timeout, not signed in'),
-      oauthClientConfig.signInSilentlyTimeoutSeconds || 10 * 1000
+      (oauthClientConfig.signInSilentlyTimeoutSeconds || 10) * 1000
     )
     window.addEventListener(
       'message',

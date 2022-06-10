@@ -6,7 +6,7 @@ import {
   validateJwtExpiration,
   validateJwtNonce
 } from './jwt'
-import { validateAccessTokenExpiration } from '.accessToken'
+import { validateAccessTokenExpiration } from './accessToken'
 import { signInSilentlyIframeId } from './signIn'
 import { MetaData } from './metaData'
 import { Logger } from './logger'

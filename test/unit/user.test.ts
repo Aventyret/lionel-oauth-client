@@ -12,9 +12,14 @@ describe('getUser', (): void => {
     it('should get a user from id token if there is one in storage', async (): Promise<void> => {
       const storageModule = createStorageModule(oidcConfig)
       storageModule.set('accessToken', idTokenMock.encoded)
+      storageModule.set(
+        'accessTokenExpires',
+        idTokenMock.decodedPayload.exp.toString()
+      )
       storageModule.set('idToken', idTokenMock.encoded)
       const user = getUser(oidcConfig, storageModule, createLogger(oidcConfig))
       storageModule.remove('accessToken')
+      storageModule.remove('accessTokenExpires')
       storageModule.remove('idToken')
       expect(user?.sub).toBe(idTokenMock.decodedPayload.sub)
     })
@@ -70,6 +75,10 @@ describe('getUserInfo', (): void => {
   it('should get user info', async (): Promise<void> => {
     const storageModule = createStorageModule(oidcConfig)
     storageModule.set('accessToken', idTokenMock.encoded)
+    storageModule.set(
+      'accessTokenExpires',
+      idTokenMock.decodedPayload.exp.toString()
+    )
     const user = await getUserInfo(
       {
         ...oidcConfig,
@@ -80,6 +89,7 @@ describe('getUserInfo', (): void => {
       createLogger(oidcConfig)
     )
     storageModule.remove('accessToken')
+    storageModule.remove('accessTokenExpires')
     storageModule.remove('userInfo')
     expect(user?.sub).toBe('mocked_user_info_sub')
   })
