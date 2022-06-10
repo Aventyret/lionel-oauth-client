@@ -68,12 +68,13 @@ export const signInSilentlyIframeId = (config: OauthClientConfig): string => {
   const configHash = btoa(
     `${config.issuer}-${config.clientId}-${(config.scopes || []).join('_')}`
   )
-  return `lionel-signin-silently-${configHash}`
+  return `lionel-sign-in-silently-${configHash}`
 }
 
 const _createHandleSignInSilentPostMessageFn =
   (
     iframe: HTMLIFrameElement,
+    timeout: number,
     resolve: (handleCallbackResponse: HandleCallbackResponse) => void,
     reject: (reason: Error) => void
   ) =>
@@ -81,6 +82,7 @@ const _createHandleSignInSilentPostMessageFn =
     if (e.source !== iframe.contentWindow) {
       return
     }
+    window.clearTimeout(timeout)
     window.setTimeout(() => iframe.remove(), 100)
     if (e.data.handleCallbackResponse) {
       resolve(e.data.handleCallbackResponse)
@@ -122,9 +124,18 @@ export const signInSilently = async (
     )
   )
   return new Promise((resolve, reject) => {
+    const timeout = window.setTimeout(
+      () => reject('Timeout, not signed in'),
+      (oauthClientConfig.signInSilentlyTimeoutSeconds || 10) * 1000
+    )
     window.addEventListener(
       'message',
-      _createHandleSignInSilentPostMessageFn(signinIframe, resolve, reject)
+      _createHandleSignInSilentPostMessageFn(
+        signinIframe,
+        timeout,
+        resolve,
+        reject
+      )
     )
   })
 }

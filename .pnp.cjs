@@ -41,6 +41,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@rollup/plugin-node-resolve", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:13.1.3"],\
             ["@rollup/plugin-typescript", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:8.3.1"],\
             ["@types/jest", "npm:27.4.1"],\
+            ["@types/node", "npm:17.0.41"],\
             ["@typescript-eslint/eslint-plugin", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:5.14.0"],\
             ["@typescript-eslint/parser", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:5.14.0"],\
             ["dotenv", "npm:16.0.0"],\
@@ -3596,6 +3597,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-node-npm-17.0.21-7d68eb6a13-89dcd2fe82.zip/node_modules/@types/node/",\
           "packageDependencies": [\
             ["@types/node", "npm:17.0.21"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:17.0.41", {\
+          "packageLocation": "./.yarn/cache/@types-node-npm-17.0.41-84c451cded-ddaf9e7dec.zip/node_modules/@types/node/",\
+          "packageDependencies": [\
+            ["@types/node", "npm:17.0.41"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -7589,6 +7597,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@rollup/plugin-node-resolve", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:13.1.3"],\
             ["@rollup/plugin-typescript", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:8.3.1"],\
             ["@types/jest", "npm:27.4.1"],\
+            ["@types/node", "npm:17.0.41"],\
             ["@typescript-eslint/eslint-plugin", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:5.14.0"],\
             ["@typescript-eslint/parser", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:5.14.0"],\
             ["dotenv", "npm:16.0.0"],\

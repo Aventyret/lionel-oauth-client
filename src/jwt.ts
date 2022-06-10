@@ -84,20 +84,6 @@ export const validateJwtClaims = (
   }
   const now = new Date(0)
   now.setUTCSeconds(Math.floor(Date.now() / 1000))
-  if (claims.exp) {
-    if (isNaN(claims.exp)) {
-      throw Error(`Invalid exp, ${claims.exp} is not a number`)
-    }
-    const tokenExpDate = new Date(0)
-    tokenExpDate.setUTCSeconds(
-      claims.exp + (oauthClientConfig.tokenLeewaySeconds || 0)
-    )
-    const nbf = new Date(0)
-    nbf.setUTCSeconds(claims.nbf)
-    if (now > tokenExpDate) {
-      throw Error('jwt token is expired')
-    }
-  }
   if (oauthClientConfig.authenticationMaxAgeSeconds && claims.auth_time) {
     if (isNaN(claims.auth_time)) {
       throw Error(`Invalid auth_time, ${claims.auth_time} is not a number`)
@@ -145,6 +131,32 @@ export const validateJwtNonce = async (
 
     if ((await nonceHash(nonce || '')) !== claims.nonce) {
       throw Error('Nonce in jwt does not match nonce in client')
+    }
+  }
+}
+
+export const validateJwtExpiration = (
+  token: string,
+  oauthClientConfig: OauthClientConfig
+): void => {
+  const { claims } = parseJwt(token)
+  const now = new Date(0)
+  now.setUTCSeconds(Math.floor(Date.now() / 1000))
+  if (claims.exp) {
+    if (isNaN(claims.exp)) {
+      throw Error(`Invalid exp, ${claims.exp} is not a number`)
+    }
+    const tokenExpDate = new Date(0)
+    tokenExpDate.setUTCSeconds(
+      claims.exp + (oauthClientConfig.tokenLeewaySeconds || 0)
+    )
+    if (now > tokenExpDate) {
+      throw Error('jwt token is expired')
+    }
+    const nbf = new Date(0)
+    nbf.setUTCSeconds(claims.nbf)
+    if (now < nbf) {
+      throw Error('jwt token is not valid yet')
     }
   }
 }

@@ -30,6 +30,7 @@ export interface OauthClientConfig {
   tokenStorage?: StorageModuleType
   tokenLeewaySeconds?: number
   authenticationMaxAgeSeconds?: number
+  signInSilentlyTimeoutSeconds?: number
   responseMode?: ResponseMode
   metaData?: MetaData
   useNonce?: boolean
@@ -87,6 +88,7 @@ export const getOauthClientConfig = (
     tokenEndpoint: configArg.useMetaDataDiscovery ? '' : '/token',
     debug: false,
     tokenLeewaySeconds: 60,
+    signInSilentlyTimeoutSeconds: 10,
     ...configArg
   }
 }
@@ -204,6 +206,10 @@ export const createOauthClient = (
       const tokenResponse = callbackResponse?.tokenResponse
       if (tokenResponse?.accessToken) {
         storageModule.set('accessToken', tokenResponse.accessToken)
+        storageModule.set(
+          'accessTokenExpires',
+          tokenResponse.expires.toString()
+        )
         _accessToken = tokenResponse.accessToken
         _tokenLoaded(tokenResponse.accessToken)
       }
@@ -260,6 +266,8 @@ export const createOauthClient = (
     },
     removeUser: (): void => {
       _user = null
+      removeAccessToken(storageModule, logger)
+      publish('tokenUnloaded')
       removeUser(storageModule, logger)
       publish('userUnloaded')
     },

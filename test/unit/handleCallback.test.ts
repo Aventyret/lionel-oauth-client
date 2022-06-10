@@ -115,40 +115,6 @@ describe('handleCallback', (): void => {
         jest.resetAllMocks()
       })
     })
-    describe('with invalid token in response', (): void => {
-      beforeAll(() => {
-        jest.spyOn(window, 'fetch').mockImplementation(
-          jest.fn(() => {
-            return Promise.resolve({
-              status: 200,
-              json: () =>
-                Promise.resolve({
-                  ...tokenResponseMock,
-                  access_token: 'X' + tokenResponseMock.access_token
-                })
-            })
-          }) as jest.Mock
-        )
-      })
-      it('should not return access token', async (): Promise<void> => {
-        const storageModule = createStorageModule(oauthConfig)
-        storageModule.set('state', 'mocked_state')
-        storageModule.set('codeVerifier', 'mocked_code_verifier')
-        let callbackResponse
-        try {
-          callbackResponse = await handleCallback(
-            oauthConfig,
-            storageModule,
-            null,
-            createLogger(oauthConfig)
-          )
-        } catch {}
-        expect(typeof callbackResponse?.tokenResponse).toBe('undefined')
-      })
-      afterAll(() => {
-        jest.resetAllMocks()
-      })
-    })
   })
   describe('with id token', (): void => {
     describe('with correct token response', (): void => {

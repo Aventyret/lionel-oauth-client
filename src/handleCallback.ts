@@ -1,6 +1,12 @@
 import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
-import { validateJwt, validateIdToken, validateJwtNonce } from './jwt'
+import {
+  validateJwt,
+  validateIdToken,
+  validateJwtExpiration,
+  validateJwtNonce
+} from './jwt'
+import { validateAccessTokenExpiration } from './accessToken'
 import { signInSilentlyIframeId } from './signIn'
 import { MetaData } from './metaData'
 import { Logger } from './logger'
@@ -19,6 +25,7 @@ export type CallbackType = typeof callbackTypes[number]
 export interface TokenResponse {
   accessToken: string
   idToken?: string
+  expires: number
 }
 
 export interface CallbackResponse {
@@ -108,7 +115,8 @@ const requestToken = async (
     const tokenResponse = await response.json()
     return {
       accessToken: tokenResponse.access_token || '',
-      idToken: tokenResponse.id_token
+      idToken: tokenResponse.id_token,
+      expires: Date.now() / 1000 + (tokenResponse.expires_in || 0)
     }
     return (await response.json())?.access_token
   }
@@ -176,10 +184,11 @@ export default async (
     throw Error('Token request failed')
   }
   try {
-    validateJwt(tokenResponse.accessToken, oauthClientConfig)
+    validateAccessTokenExpiration(tokenResponse.expires, oauthClientConfig)
     if (tokenResponse.idToken) {
       validateJwt(tokenResponse.idToken, oauthClientConfig)
       validateIdToken(tokenResponse.idToken, oauthClientConfig)
+      validateJwtExpiration(tokenResponse.idToken, oauthClientConfig)
       validateJwtNonce(tokenResponse.idToken, storageModule)
     }
     cleanupStorage(storageModule)

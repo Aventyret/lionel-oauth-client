@@ -69,7 +69,7 @@
         clientId: window.config.clientId,
         redirectUri: 'http://localhost:3001/oidc-callback.html',
         postLogoutRedirectUri: 'http://localhost:3001/oidc.html',
-        scopes: ['api'],
+        scopes: ['api', 'email'],
         debug: true
       })
       oidcClient.subscribe('tokenLoaded', () =>
@@ -123,14 +123,13 @@
 
       function removeUser(e) {
         e.preventDefault()
-        oidcClient.removeAccessToken()
         oidcClient.removeUser()
         location.reload()
       }
 
       function signOut(e) {
         e.preventDefault()
-        oidcClient.signOut({ useRedirect: false })
+        oidcClient.signOut()
       }
     </script>
   </body>

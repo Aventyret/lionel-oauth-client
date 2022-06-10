@@ -3,6 +3,7 @@ import {
   validateJwtHeader,
   validateJwtClaims,
   validateJwt,
+  validateJwtExpiration,
   validateJwtNonce,
   validateIdToken,
   validateIdTokenClaims
@@ -160,33 +161,6 @@ describe('validateJwt', (): void => {
       jest.resetAllMocks()
     })
   })
-  describe('after token is expired, but within leeway', (): void => {
-    beforeAll(
-      createTokenExpiredTimeWithinLeewayMock(accessTokenMock.decodedPayload)
-    )
-    it('should not throw error for valid token', (): void => {
-      validateJwt(accessTokenMock.encoded, oauthConfig)
-    })
-    afterAll(() => {
-      jest.resetAllMocks()
-    })
-  })
-  describe('after token is expired, outside of leeway', (): void => {
-    beforeAll(
-      createTokenExpiredTimeOutsideLeewayMock(
-        accessTokenMock.decodedPayload,
-        oauthConfig
-      )
-    )
-    it('should throw error for valid token', (): void => {
-      expect(() => {
-        validateJwt(accessTokenMock.encoded, oauthConfig)
-      }).toThrow()
-    })
-    afterAll(() => {
-      jest.resetAllMocks()
-    })
-  })
 })
 describe('validateJwtNonce', (): void => {
   describe('with mocked nonce in storage', (): void => {
@@ -222,6 +196,44 @@ describe('validateJwtNonce', (): void => {
   it('should pass if token has no nonce', async (): Promise<void> => {
     const storageModule = createStorageModule(oauthConfig)
     await validateJwtNonce(accessTokenMock.encoded, storageModule)
+  })
+})
+describe('validateJwtExpiration', (): void => {
+  describe('when token is not expired', (): void => {
+    beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
+    it('should not throw error for valid token', (): void => {
+      validateJwtExpiration(accessTokenMock.encoded, oauthConfig)
+    })
+    afterAll(() => {
+      jest.resetAllMocks()
+    })
+  })
+  describe('after token is expired, but within leeway', (): void => {
+    beforeAll(
+      createTokenExpiredTimeWithinLeewayMock(accessTokenMock.decodedPayload)
+    )
+    it('should not throw error for valid token', (): void => {
+      validateJwtExpiration(accessTokenMock.encoded, oauthConfig)
+    })
+    afterAll(() => {
+      jest.resetAllMocks()
+    })
+  })
+  describe('after token is expired, outside of leeway', (): void => {
+    beforeAll(
+      createTokenExpiredTimeOutsideLeewayMock(
+        accessTokenMock.decodedPayload,
+        oauthConfig
+      )
+    )
+    it('should throw error for valid token', (): void => {
+      expect(() => {
+        validateJwtExpiration(accessTokenMock.encoded, oauthConfig)
+      }).toThrow()
+    })
+    afterAll(() => {
+      jest.resetAllMocks()
+    })
   })
 })
 describe('validateIdToken', (): void => {
