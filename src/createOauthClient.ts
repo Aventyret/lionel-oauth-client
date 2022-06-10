@@ -31,7 +31,6 @@ export interface OauthClientConfig {
   tokenLeewaySeconds?: number
   authenticationMaxAgeSeconds?: number
   signInSilentlyTimeoutSeconds?: number
-  autoRenewToken?: boolean
   responseMode?: ResponseMode
   metaData?: MetaData
   useNonce?: boolean
@@ -90,7 +89,6 @@ export const getOauthClientConfig = (
     debug: false,
     tokenLeewaySeconds: 60,
     signInSilentlyTimeoutSeconds: 10,
-    autoRenewToken: true,
     ...configArg
   }
 }
