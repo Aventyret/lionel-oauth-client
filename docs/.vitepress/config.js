@@ -14,7 +14,7 @@ export default defineConfig({
 
     nav: [
       { text: 'Guide', link: '/guide/' },
-      { text: 'Config', link: '/config/' },
+      { text: 'API', link: '/api/' },
       {
         text: 'Releases',
         link: 'https://github.com/Aventyret/lionel-oauth-client/releases'
@@ -31,12 +31,12 @@ export default defineConfig({
               link: '/guide/'
             },
             {
-              text: 'Features',
-              link: '/guide/features'
+              text: 'API',
+              link: '/api/'
             },
             {
-              text: 'Config',
-              link: '/config/'
+              text: 'Resources',
+              link: '/guide/resources'
             },
             {
               text: 'Contributing',
