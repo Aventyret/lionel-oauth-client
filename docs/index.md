@@ -10,9 +10,9 @@ features:
   - title: Spec compliant oAuth
     details: Browser based oAuth client to use with Code Flow + PKCE.
   - title: OIDC support
-    details: Supports Open ID Connect, including discovery, session monitoring and RP initiated logout.
+    details: Supports Open ID Connect, including discovery, session monitoring (coming soon) and RP initiated logout.
   - title: Additional Features
-    details: Signin silently, auto renewal of tokens, authentication subscription and much more.
+    details: Sign in silently, auto renewal of tokens (coming soon), authentication subscription and much more.
   - title: Easy to use
     details: Simple and consistent API, easy to configure.
   - title: Fully typed

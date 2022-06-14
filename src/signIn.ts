@@ -7,11 +7,14 @@ import createIframe from './createIframe'
 import { MetaData } from './metaData'
 import { Logger } from './logger'
 
+const prompts = <const>['none', 'login', 'consent', 'select_account']
+export type Prompt = typeof prompts[number]
+
 export interface SignInOptions {
   idTokenHint?: string
   loginHint?: string
   display?: string
-  prompt?: string
+  prompts?: Prompt[]
   nonce?: string
 }
 
@@ -46,8 +49,8 @@ export const getAuthorizeUri = async (
   if (options.display) {
     queryParams.push(`display=${options.display}`)
   }
-  if (options.prompt) {
-    queryParams.push(`prompt=${options.prompt}`)
+  if (options.prompts && options.prompts.length) {
+    queryParams.push(`prompt=${options.prompts.join(' ')}`)
   }
   if (options.nonce) {
     queryParams.push(`nonce=${await nonceHash(options.nonce)}`)
@@ -115,7 +118,7 @@ export const signInSilently = async (
     await getAuthorizeUri(
       {
         ...options,
-        prompt: 'none'
+        prompts: ['none']
       },
       oauthClientConfig,
       metaData,

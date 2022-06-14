@@ -16,4 +16,6 @@ oAuth and OIDC are not the easiest to understand. Here are some reading tips on 
 
 [Open ID Connect specification](https://openid.net/specs/openid-connect-core-1_0.html)
 
+[Open ID Discovery specification](https://openid.net/specs/openid-connect-discovery-1_0.html)
+
 [openid.net/connect](https://openid.net/connect/)

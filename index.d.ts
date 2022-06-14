@@ -1,6 +1,11 @@
-export { OauthClientConfig, OauthClient } from './src/createOauthClient'
+export {
+  OauthClientConfig,
+  OauthClient,
+  ResponseMode,
+  Display
+} from './src/createOauthClient'
 
-export { SignInOptions } from './src/signIn'
+export { SignInOptions, Prompt } from './src/signIn'
 
 export { SignOutOptions } from './src/signOut'
 

@@ -7,12 +7,12 @@ import { MetaData } from './metaData'
 import { Logger } from './logger'
 
 export interface SignOutOptions {
+  postLogoutRedirectUri?: string
   useIdTokenHint?: boolean
 }
 
 export const getSignOutRedirectUri = async (
-  { useIdTokenHint = true }: SignOutOptions,
-  oauthClientConfig: OauthClientConfig,
+  { useIdTokenHint = true, postLogoutRedirectUri = '' }: SignOutOptions,
   metaData: MetaData | null = null,
   storageModule: StorageModule,
   state: string
@@ -29,15 +29,13 @@ export const getSignOutRedirectUri = async (
   if (idToken && useIdTokenHint) {
     queryParams.push(`id_token_hint=${idToken}`)
   }
-  if (oauthClientConfig.postLogoutRedirectUri) {
+  if (postLogoutRedirectUri) {
     if (!idToken || !useIdTokenHint) {
       throw Error(
-        'id_token_hint is required when sending post_logout_redirect_uri'
+        'An id token is required when sending post_logout_redirect_uri'
       )
     }
-    queryParams.push(
-      `post_logout_redirect_uri=${oauthClientConfig.postLogoutRedirectUri}`
-    )
+    queryParams.push(`post_logout_redirect_uri=${postLogoutRedirectUri}`)
   }
   return `${uri}?${queryParams.join('&')}`
 }
@@ -54,13 +52,7 @@ export default async (
   const state = createState()
   storageModule.set('signoutState', state)
   location.assign(
-    await getSignOutRedirectUri(
-      options,
-      oauthClientConfig,
-      metaData,
-      storageModule,
-      state
-    )
+    await getSignOutRedirectUri(options, metaData, storageModule, state)
   )
   removeAccessToken(storageModule, logger)
   removeUser(storageModule, logger)
