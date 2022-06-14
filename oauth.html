@@ -84,7 +84,8 @@
       function signInSilently(e) {
         e.preventDefault()
         oauthClient.signInSilently().then(response => {
-            if (!response.accessToken) {
+            console.log({response})
+            if (!response.tokenResponse.accessToken) {
               alert('Not signed in')
               return
             }

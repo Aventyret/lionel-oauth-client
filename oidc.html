@@ -68,7 +68,6 @@
         issuer: window.config.issuer,
         clientId: window.config.clientId,
         redirectUri: 'http://localhost:3001/oidc-callback.html',
-        postLogoutRedirectUri: 'http://localhost:3001/oidc.html',
         scopes: ['api', 'email'],
         debug: true
       })
@@ -129,7 +128,7 @@
 
       function signOut(e) {
         e.preventDefault()
-        oidcClient.signOut()
+        oidcClient.signOut({ postLogoutRedirectUri: 'http://localhost:3001/oidc.html' })
       }
     </script>
   </body>

@@ -11,7 +11,6 @@ describe('getSignOutRedirectUri', (): void => {
     const storageModule = createStorageModule(oidcConfig)
     const signOutRedirectUri = await getSignOutRedirectUri(
       {},
-      oidcConfig,
       metaDataMock,
       storageModule,
       state
@@ -27,7 +26,6 @@ describe('getSignOutRedirectUri', (): void => {
     storageModule.set('idToken', 'mock_id_token')
     const signOutRedirectUri = await getSignOutRedirectUri(
       {},
-      oidcConfig,
       metaDataMock,
       storageModule,
       state
@@ -48,7 +46,6 @@ describe('getSignOutRedirectUri', (): void => {
       {
         useIdTokenHint: false
       },
-      oidcConfig,
       metaDataMock,
       storageModule,
       state
@@ -65,7 +62,7 @@ describe('getSignOutRedirectUri', (): void => {
     const state = createState()
     const storageModule = createStorageModule(oidcConfig)
     try {
-      await getSignOutRedirectUri({}, oidcConfig, null, storageModule, state)
+      await getSignOutRedirectUri({}, null, storageModule, state)
     } catch (error: unknown) {
       expect((error as Error).message).toBe(
         'No end_session_endpoint in meta data'
@@ -78,7 +75,6 @@ describe('getSignOutRedirectUri', (): void => {
     try {
       await getSignOutRedirectUri(
         {},
-        oidcConfig,
         { ...metaDataMock, end_session_endpoint: undefined },
         storageModule,
         state

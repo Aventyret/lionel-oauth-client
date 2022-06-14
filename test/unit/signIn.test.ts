@@ -1,4 +1,4 @@
-import signIn, { getAuthorizeUri } from '../../src/signIn'
+import signIn, { getAuthorizeUri, Prompt } from '../../src/signIn'
 import createStorageModule from '../../src/createStorageModule'
 import createState from '../../src/createState'
 import { createCodeChallenge } from '../../src/codeChallenge'
@@ -79,7 +79,7 @@ describe('getAuthorizeUri', (): void => {
       idTokenHint: 'mocked_id_token_hint',
       loginHint: 'mocked_login_hint',
       display: 'mocked_display',
-      prompt: 'mocked_prompt',
+      prompts: ['mocked_prompt' as Prompt],
       nonce: 'mocked_nonce'
     }
     const authorizeUri = await getAuthorizeUri(
@@ -94,7 +94,9 @@ describe('getAuthorizeUri', (): void => {
     )
     expect(authorizeUri).toMatch(new RegExp(`login_hint=${options.loginHint}`))
     expect(authorizeUri).toMatch(new RegExp(`display=${options.display}`))
-    expect(authorizeUri).toMatch(new RegExp(`prompt=${options.prompt}`))
+    expect(authorizeUri).toMatch(
+      new RegExp(`prompt=${options.prompts.join(' ')}`)
+    )
     expect(authorizeUri).toMatch(
       new RegExp(`nonce=${await nonceHash(options.nonce)}`)
     )

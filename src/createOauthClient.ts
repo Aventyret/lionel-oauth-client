@@ -1,4 +1,4 @@
-import createLogger, { Logger } from './logger'
+import createLogger from './logger'
 import { getAccessToken, removeAccessToken } from './accessToken'
 import { StorageModuleType, createStorageModule } from './createStorageModule'
 import { EventSubscribeFn, createEventModule } from './createEventModule'
@@ -17,9 +17,6 @@ export type ResponseMode = typeof responseModes[number]
 const displays = <const>['page', 'popup', 'touch', 'wap']
 export type Display = typeof displays[number]
 
-const prompts = <const>['none', 'login', 'consent', 'select_account']
-export type Prompt = typeof prompts[number]
-
 export interface OauthClientConfig {
   issuer: string
   clientId: string
@@ -37,10 +34,8 @@ export interface OauthClientConfig {
   useMetaDataDiscovery?: boolean
   useUserInfoEndpoint?: boolean
   display?: Display
-  prompt?: Prompt
   uiLocales?: string[]
   acrValues?: string[]
-  postLogoutRedirectUri?: string
   debug?: boolean
 }
 
@@ -49,11 +44,10 @@ export interface OauthClient {
   signInSilently: (
     options: SignInOptions
   ) => Promise<HandleCallbackResponse | null>
-  handleCallback: () => void
+  handleCallback: () => Promise<HandleCallbackResponse | null>
   getAccessToken: () => string | null
   removeAccessToken: () => void
   getConfig: () => OauthClientConfig
-  logger: Logger
   subscribe: EventSubscribeFn
   unsubscribe: EventSubscribeFn
   getUser: () => Promise<User | null>
@@ -276,7 +270,6 @@ export const createOauthClient = (
       const metaData = await getMetaData(config, storageModule, logger)
       return signOut(options, config, metaData, storageModule, logger)
     },
-    logger,
     subscribe,
     unsubscribe
   }
