@@ -84,4 +84,10 @@ Sadly [playwright](https://playwright.dev/) does not currently support a watch m
 
 ## Release
 
-The library is published to npm and the documentation is published to GitHub pages when a new release tag is created.
+The library is published to npm and the documentation is published to GitHub pages when a new release tag is created. To create a new release, run:
+
+```bash
+yarn version patch|minor|major # This bumps the version in the versioned files, e.g. yarn version minor will bump version to the next minor version number
+yarn tag
+
+```
