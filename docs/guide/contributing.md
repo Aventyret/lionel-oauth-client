@@ -28,23 +28,9 @@ Build code with watch:
 yarn dev
 ```
 
-## Development workflow
-
-The library is written in [TypeScript](https://www.typescriptlang.org/) and packaged with [Rollup](https://rollupjs.org/). [Yarn Berry (v3)](https://yarnpkg.com/) is used for package management, with the Yarn concepts Plug n' Play and zero-installs enabled.
-
-Prettier and linting is run on each commit through `lint-staged.`
-
-The main branch is protected by a branch protection rule, so commits to the main branch can only be made through approved pull requests.
-
-Tests are run and the library is built on every pull request against the main branch.
-
-### Naming branches
+## Naming branches
 
 A branch should be called what it does or what it is, e.g. _you created a random number function so the branch could be called `add-random-number-function`_. Keep it simple, understandable, and somewhat short.
-
-### External pull requests
-
-Since we use Yarn's zero-installs philosophy it is important to check the cache on all external packages that has updated any dependencies. This is done with `yarn install --check-cache`.
 
 ## Testing
 
@@ -84,4 +70,9 @@ Sadly [playwright](https://playwright.dev/) does not currently support a watch m
 
 ## Release
 
-The library is published to npm and the documentation is published to GitHub pages when a new release tag is created.
+The library is published to npm and the documentation is published to GitHub pages when a new release tag is created. To create a new release, run:
+
+```bash
+yarn version patch|minor|major # This bumps the version in the versioned files, e.g. yarn version minor will bump version to the next minor version number
+yarn tag # This will commit the version bump and create a tag in git with the new version. The commit and the tag will be pushed to the origin remote.
+```
