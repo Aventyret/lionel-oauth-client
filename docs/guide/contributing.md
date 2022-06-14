@@ -67,3 +67,12 @@ yarn test:e2e
 ```
 
 Sadly [playwright](https://playwright.dev/) does not currently support a watch mode like [jest](https://jestjs.io/) does so when you want to check if you have broken something or made something work for the very first time you need to rerun `yarn test:e2e`.
+
+## Release
+
+The library is published to npm and the documentation is published to GitHub pages when a new release tag is created. To create a new release, run:
+
+```bash
+yarn version patch|minor|major # This bumps the version in the versioned files, e.g. yarn version minor will bump version to the next minor version number
+yarn tag # This will commit the version bump and create a tag in git with the new version. The commit and the tag will be pushed to the origin remote.
+```
