@@ -436,7 +436,7 @@ Optional `boolean`. Defaults to `false` but if you provide a `postLogoutRedirect
 
 ## Events
 
-The client publishes events when things that has to to with authentication happens that you can subscribe to.
+The client publishes events when things that has to do with authentication happens that you can subscribe to.
 
 Subscribe to an event to trigger a function in response:
 

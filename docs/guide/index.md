@@ -70,7 +70,7 @@ const oAuthClient = createOidcClient({
 
 For the authentication to work you need to set up a page where you handle the redirect response from your issuer. On that page you should call `oAuthClient.handleCallback()` – make sure that the client was created with the same config options as the client that initiated the authentication.
 
-The absolute uri of the page where you hande the callback is what you should set as `redirectUri` when you create your client.
+The absolute uri of the page where you handle the callback is what you should set as `redirectUri` when you create your client.
 
 The same callback page will be used in all authorizations: sign in with redirect, sign in silently, auto renewal of tokens and authentication checks after session monitoring has indicatied a session change at the issuer.
 
@@ -80,6 +80,6 @@ A complete list of client methods and their arguments can be found in the [API s
 
 ### Event subscription
 
-The client publishes events when things that have to to with authentication happens that you can subscribe to.
+The client publishes events when things that have to do with authentication happens that you can subscribe to.
 
 A complete list of events and details on how you subscribe to them can be found in the [API section](/api/#events).
