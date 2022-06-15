@@ -36,11 +36,11 @@ export default defineConfig({
             },
             {
               text: 'Resources',
-              link: '/guide/resources'
+              link: '/resources'
             },
             {
               text: 'Contributing',
-              link: '/guide/contributing'
+              link: '/resources/contributing'
             }
           ]
         }
