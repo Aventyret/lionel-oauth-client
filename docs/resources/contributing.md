@@ -70,9 +70,15 @@ Sadly [playwright](https://playwright.dev/) does not currently support a watch m
 
 ## Release
 
-The library is published to npm and the documentation is published to GitHub pages when a new release tag is created. To create a new release, run:
+The library is published to npm and the documentation is published to GitHub pages when a new release tag is created.
+
+To create a new release, create a new branch and set it's upstream origin. Then run:
 
 ```bash
 yarn version patch|minor|major # This bumps the version in the versioned files, e.g. yarn version minor will bump version to the next minor version number
 yarn tag # This will commit the version bump and create a tag in git with the new version. The commit and the tag will be pushed to the origin remote.
 ```
+
+Create a pull request for the new branch into main.
+
+After the pull request is merged, create a new release tag (with automated changlog in the description).

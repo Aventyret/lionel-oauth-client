@@ -20,7 +20,7 @@ You can also use the issue list for bug reports and feature requests.
 
 ## Contribute
 
-If you want to contribute, please check out the [Contribute Section](https://aventyret.github.io/lionel-oauth-client/guide/contributing.html) of the documentation.
+If you want to contribute, please check out the [Contribute Section](https://aventyret.github.io/lionel-oauth-client/resources/contributing.html) of the documentation.
 
 ## License
 
