@@ -1,21 +1,78 @@
----
-title: oAuth and OIDC Resources
----
+# Contributing
 
-# oAuth and OIDC Resources
+How can you contribute to this project? Guidelines for PRs, suggestions, etc.
 
-oAuth and OIDC are not the easiest to understand. Here are some reading tips on the area.
+## Setup development environment
 
-[oAuth 2.0 specifiation](https://datatracker.ietf.org/doc/html/rfc6749)
+Use the Node version defined in the `.nvmrc` file in the project root. If you use NVM you can do:
 
-[PKCE specification](https://datatracker.ietf.org/doc/html/rfc7636)
+```bash
+nvm use
+```
 
-[Draft of best practices for oAuth 2.0 in browser based apps](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps)
+Install dependencies:
 
-[oauth.net](https://oauth.net/2/)
+```bash
+yarn
+```
 
-[Open ID Connect specification](https://openid.net/specs/openid-connect-core-1_0.html)
+Build code into `./dist` directory:
 
-[Open ID Discovery specification](https://openid.net/specs/openid-connect-discovery-1_0.html)
+```bash
+yarn build
+```
 
-[openid.net/connect](https://openid.net/connect/)
+Build code with watch:
+
+```bash
+yarn dev
+```
+
+## Naming branches
+
+A branch should be called what it does or what it is, e.g. _you created a random number function so the branch could be called `add-random-number-function`_. Keep it simple, understandable, and somewhat short.
+
+## Testing
+
+_Everything should be tested_. The recommended approach is to think what you want to do and author [unit tests](https://en.wikipedia.org/wiki/Unit_testing) using [jest](https://jestjs.io/) that will confirm that you have successfully done it. In addition to unit testing you should also ensure that all of the _end-to-end (e2e) tests_ powered by [playwright](https://playwright.dev/) are still _green_, and in the instance where you have made modifications to the _flow_ add or update the tests accordingly.
+
+Run both **unit** and **e2e** tests _once_:
+
+```bash
+yarn test
+```
+
+### Unit tests
+
+Any and all unit tests should be created in `/test/unit` and be named according to what you are testing, e.g. the `createStorageModule.test.ts` is a test for `createStorageModule.ts`.
+
+Run **unit** tests:
+
+```bash
+# Once
+yarn test:unit
+
+# Watch for changes
+yarn test:unit --watch
+```
+
+### e2e tests
+
+e2e tests should be created in `/test/e2e` and be named to indicate what it is supposed to test, e.g. `oauthPkceFlowIdentityServer.spec.ts`.
+
+Run **e2e** tests:
+
+```bash
+yarn test:e2e
+```
+
+Sadly [playwright](https://playwright.dev/) does not currently support a watch mode like [jest](https://jestjs.io/) does so when you want to check if you have broken something or made something work for the very first time you need to rerun `yarn test:e2e`.
+
+## Release
+
+The library is published to npm and the documentation is published to GitHub pages when a new release tag is created. To create a new release, run:
+
+```bash
+yarn version patch|minor|major # This bumps the version in the versioned files, e.g. yarn version minor will bump version to the next minor version number
+yarn tag # This will commit the version bump and create a tag in git with the new version. The commit and the tag will be pushed to the origin remote.
+```

@@ -36,7 +36,7 @@ export default defineConfig({
             },
             {
               text: 'Resources',
-              link: '/resources'
+              link: '/resources/'
             },
             {
               text: 'Contributing',
