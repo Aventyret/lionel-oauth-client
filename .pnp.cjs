@@ -55,6 +55,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pinst", "npm:3.0.0"],\
             ["prettier", "npm:2.5.1"],\
             ["rollup", "npm:2.70.0"],\
+            ["rollup-plugin-dts", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:4.2.2"],\
             ["rollup-plugin-livereload", "npm:2.0.5"],\
             ["rollup-plugin-serve", "npm:1.1.0"],\
             ["rollup-plugin-terser", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:7.0.2"],\
@@ -7611,6 +7612,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pinst", "npm:3.0.0"],\
             ["prettier", "npm:2.5.1"],\
             ["rollup", "npm:2.70.0"],\
+            ["rollup-plugin-dts", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:4.2.2"],\
             ["rollup-plugin-livereload", "npm:2.0.5"],\
             ["rollup-plugin-serve", "npm:1.1.0"],\
             ["rollup-plugin-terser", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:7.0.2"],\
@@ -7757,6 +7759,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/magic-string-npm-0.25.9-0b51c0ea50-9a0e55a15c.zip/node_modules/magic-string/",\
           "packageDependencies": [\
             ["magic-string", "npm:0.25.9"],\
+            ["sourcemap-codec", "npm:1.4.8"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:0.26.2", {\
+          "packageLocation": "./.yarn/cache/magic-string-npm-0.26.2-999d3fee92-b4db4e2b37.zip/node_modules/magic-string/",\
+          "packageDependencies": [\
+            ["magic-string", "npm:0.26.2"],\
             ["sourcemap-codec", "npm:1.4.8"]\
           ],\
           "linkType": "HARD"\
@@ -8930,6 +8940,34 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["rollup", "npm:2.70.0"],\
             ["fsevents", "patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["rollup-plugin-dts", [\
+        ["npm:4.2.2", {\
+          "packageLocation": "./.yarn/cache/rollup-plugin-dts-npm-4.2.2-6feb0c1375-cf4b45f6cc.zip/node_modules/rollup-plugin-dts/",\
+          "packageDependencies": [\
+            ["rollup-plugin-dts", "npm:4.2.2"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:4.2.2", {\
+          "packageLocation": "./.yarn/__virtual__/rollup-plugin-dts-virtual-73e0bc635b/0/cache/rollup-plugin-dts-npm-4.2.2-6feb0c1375-cf4b45f6cc.zip/node_modules/rollup-plugin-dts/",\
+          "packageDependencies": [\
+            ["rollup-plugin-dts", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:4.2.2"],\
+            ["@babel/code-frame", "npm:7.16.7"],\
+            ["@types/rollup", null],\
+            ["@types/typescript", null],\
+            ["magic-string", "npm:0.26.2"],\
+            ["rollup", "npm:2.70.0"],\
+            ["typescript", "patch:typescript@npm%3A4.6.2#~builtin<compat/typescript>::version=4.6.2&hash=7ad353"]\
+          ],\
+          "packagePeers": [\
+            "@types/rollup",\
+            "@types/typescript",\
+            "rollup",\
+            "typescript"\
           ],\
           "linkType": "HARD"\
         }]\

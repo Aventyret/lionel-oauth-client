@@ -2,6 +2,7 @@ import { terser } from 'rollup-plugin-terser'
 import pluginTypescript from '@rollup/plugin-typescript'
 import pluginCommonjs from '@rollup/plugin-commonjs'
 import pluginNodeResolve from '@rollup/plugin-node-resolve'
+import dts from 'rollup-plugin-dts'
 import { babel } from '@rollup/plugin-babel'
 import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
@@ -72,11 +73,26 @@ export default [
     ...baseConfig,
     output: {
       ...baseConfig.output,
-      file: pkg.module,
+      file: pkg.main,
       format: 'cjs',
       exports: 'named'
     },
     plugins: [...baseConfig.plugins, pluginNodeResolve({ browser: false })],
+    external
+  },
+  {
+    ...baseConfig,
+    output: {
+      ...baseConfig.output,
+      file: pkg.module.replace('.ejs.js', '.d.ts'),
+      format: 'es',
+      exports: 'named'
+    },
+    plugins: [
+      ...baseConfig.plugins,
+      pluginNodeResolve({ browser: false }),
+      dts()
+    ],
     external
   }
 ]
