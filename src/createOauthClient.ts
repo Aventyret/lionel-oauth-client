@@ -1,5 +1,9 @@
 import createLogger from './logger'
-import { getAccessToken, removeAccessToken } from './accessToken'
+import {
+  getAccessToken,
+  getAccessTokenExpires,
+  removeAccessToken
+} from './accessToken'
 import { StorageModuleType, createStorageModule } from './createStorageModule'
 import { EventSubscribeFn, createEventModule } from './createEventModule'
 import signIn, { signInSilently, SignInOptions } from './signIn'
@@ -10,6 +14,7 @@ import handleCallback, {
 import signOut, { SignOutOptions } from './signOut'
 import { MetaData, getMetaData } from './metaData'
 import { User, getUser, getUserInfo, setUser, removeUser } from './user'
+import createTokenExpirationService from './createTokenExpirationService'
 
 const responseModes = <const>['fragment', 'query']
 export type ResponseMode = typeof responseModes[number]
@@ -28,6 +33,8 @@ export interface OauthClientConfig {
   tokenLeewaySeconds?: number
   authenticationMaxAgeSeconds?: number
   signInSilentlyTimeoutSeconds?: number
+  autoRenewToken?: boolean
+  tokenWillExpireSeconds?: number
   responseMode?: ResponseMode
   metaData?: MetaData
   useNonce?: boolean
@@ -45,9 +52,10 @@ export interface OauthClient {
     options: SignInOptions
   ) => Promise<HandleCallbackResponse | null>
   handleCallback: () => Promise<HandleCallbackResponse | null>
-  getAccessToken: () => string | null
-  removeAccessToken: () => void
   getConfig: () => OauthClientConfig
+  getAccessToken: () => string | null
+  getAccessTokenExpires: () => number
+  removeAccessToken: () => void
   subscribe: EventSubscribeFn
   unsubscribe: EventSubscribeFn
   getUser: () => Promise<User | null>
@@ -83,6 +91,8 @@ export const getOauthClientConfig = (
     debug: false,
     tokenLeewaySeconds: 60,
     signInSilentlyTimeoutSeconds: 10,
+    autoRenewToken: true,
+    tokenWillExpireSeconds: 60,
     ...configArg
   }
 }
@@ -117,8 +127,8 @@ export const createOauthClient = (
 ): OauthClient => {
   const config = getOauthClientConfig(configArg)
   const storageModule = createStorageModule(config)
-  const { subscribe, unsubscribe, publish } = createEventModule()
   const logger = createLogger(config)
+  const { subscribe, unsubscribe, publish } = createEventModule(logger)
 
   logger.log('Create oAuthClient')
   logger.log({ config })
@@ -144,30 +154,92 @@ export const createOauthClient = (
     getMetaData(config, storageModule, logger)
   }
 
+  const signInFn = async (options: SignInOptions = {}): Promise<void> => {
+    const metaData = await getMetaData(config, storageModule, logger)
+    return signIn(options, config, storageModule, metaData, logger)
+  }
+
+  const signInSilentlyFn = async (
+    options: SignInOptions = {}
+  ): Promise<HandleCallbackResponse | null> => {
+    const metaData = await getMetaData(config, storageModule, logger)
+    let handleCallbackResponse
+    try {
+      handleCallbackResponse = await signInSilently(
+        options,
+        config,
+        storageModule,
+        metaData,
+        logger
+      )
+    } catch (error) {
+      logger.error(error)
+      throw error
+    }
+    return handleCallbackResponse
+  }
+
+  const getAccessTokenFn = (): string | null => {
+    const accessToken = getAccessToken(storageModule, logger)
+    _tokenLoaded(accessToken)
+    return accessToken
+  }
+
+  const getAccessTokenExpiresFn = (): number =>
+    getAccessTokenExpires(storageModule)
+
+  const removeAccessTokenFn = (): void => {
+    _accessToken = null
+    removeAccessToken(storageModule, logger)
+    publish('tokenUnloaded')
+  }
+
+  const getUserFn = async (): Promise<User | null> => {
+    const user = getUser(config, storageModule, logger)
+    _userLoaded(user)
+    return user
+  }
+
+  const getUserInfoFn = async (): Promise<User | null> => {
+    const metaData = await getMetaData(config, storageModule, logger)
+    return getUserInfo(config, storageModule, metaData, logger)
+  }
+
+  const removeUserFn = (): void => {
+    _accessToken = null
+    _user = null
+    removeAccessToken(storageModule, logger)
+    publish('tokenUnloaded')
+    removeUser(storageModule, logger)
+    publish('userUnloaded')
+  }
+
+  const signOutFn = async (options: SignOutOptions = {}): Promise<void> => {
+    _user = null
+    const metaData = await getMetaData(config, storageModule, logger)
+    return signOut(options, config, metaData, storageModule, logger)
+  }
+
+  const tokenExpirationService = createTokenExpirationService(
+    config,
+    storageModule,
+    publish,
+    logger
+  )
+
+  subscribe('tokenLoaded', tokenExpirationService.start)
+  subscribe('tokenUnloaded', tokenExpirationService.stop)
+
+  subscribe('tokenDidExpire', removeAccessTokenFn)
+  subscribe('tokenDidExpire', removeUserFn)
+
+  if (config.autoRenewToken) {
+    subscribe('tokenWillExpire', signInSilentlyFn)
+  }
+
   const client = {
-    signIn: async (options: SignInOptions = {}): Promise<void> => {
-      const metaData = await getMetaData(config, storageModule, logger)
-      return signIn(options, config, storageModule, metaData, logger)
-    },
-    signInSilently: async (
-      options: SignInOptions = {}
-    ): Promise<HandleCallbackResponse | null> => {
-      const metaData = await getMetaData(config, storageModule, logger)
-      let handleCallbackResponse
-      try {
-        handleCallbackResponse = await signInSilently(
-          options,
-          config,
-          storageModule,
-          metaData,
-          logger
-        )
-      } catch (error) {
-        logger.error(error)
-        throw error
-      }
-      return handleCallbackResponse
-    },
+    signIn: signInFn,
+    signInSilently: signInSilentlyFn,
     handleCallback: async (): Promise<HandleCallbackResponse | null> => {
       const callbackType = getCallbackType(config)
 
@@ -204,7 +276,6 @@ export const createOauthClient = (
           'accessTokenExpires',
           tokenResponse.expires.toString()
         )
-        _accessToken = tokenResponse.accessToken
         _tokenLoaded(tokenResponse.accessToken)
       }
       let user = null
@@ -217,7 +288,6 @@ export const createOauthClient = (
           metaData,
           logger
         )
-        _user = user
         _userLoaded(user)
       }
       if (!tokenResponse?.accessToken && !tokenResponse?.idToken) {
@@ -239,37 +309,14 @@ export const createOauthClient = (
       }
       return handleCallbackResponse
     },
-    getAccessToken: (): string | null => {
-      const accessToken = getAccessToken(config, storageModule, logger)
-      _tokenLoaded(accessToken)
-      return accessToken
-    },
-    removeAccessToken: (): void => {
-      removeAccessToken(storageModule, logger)
-      publish('tokenUnloaded')
-    },
     getConfig: (): OauthClientConfig => config,
-    getUser: async (): Promise<User | null> => {
-      const user = getUser(config, storageModule, logger)
-      _userLoaded(user)
-      return user
-    },
-    getUserInfo: async (): Promise<User | null> => {
-      const metaData = await getMetaData(config, storageModule, logger)
-      return getUserInfo(config, storageModule, metaData, logger)
-    },
-    removeUser: (): void => {
-      _user = null
-      removeAccessToken(storageModule, logger)
-      publish('tokenUnloaded')
-      removeUser(storageModule, logger)
-      publish('userUnloaded')
-    },
-    signOut: async (options: SignOutOptions = {}): Promise<void> => {
-      _user = null
-      const metaData = await getMetaData(config, storageModule, logger)
-      return signOut(options, config, metaData, storageModule, logger)
-    },
+    getAccessToken: getAccessTokenFn,
+    getAccessTokenExpires: getAccessTokenExpiresFn,
+    removeAccessToken: removeAccessTokenFn,
+    getUser: getUserFn,
+    getUserInfo: getUserInfoFn,
+    removeUser: removeUserFn,
+    signOut: signOutFn,
     subscribe,
     unsubscribe
   }

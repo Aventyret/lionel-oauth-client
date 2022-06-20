@@ -170,6 +170,7 @@ export const getMetaData = async (
   }
   const metaDataWithDefaults = getMetaDataWithDefaults(metaData)
   validateMetaData(metaDataWithDefaults, oauthClientConfig, logger)
+  logger.log('Valid metadata fetched')
   logger.log(metaDataWithDefaults)
   storageModule.set('metaData', JSON.stringify(metaDataWithDefaults))
   return Promise.resolve(metaDataWithDefaults)

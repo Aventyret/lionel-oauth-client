@@ -1,3 +1,5 @@
+import { Logger } from './logger'
+
 const eventTypes = <const>[
   'tokenLoaded',
   'tokenUnloaded',
@@ -27,7 +29,7 @@ interface Events {
   [key: string]: EventCallbackFn[]
 }
 
-export const createEventModule = (): EventModule => {
+export const createEventModule = (logger: Logger): EventModule => {
   const events: Events = {}
 
   const _invalidEventType = (eventType: EventType) => {
@@ -54,8 +56,10 @@ export const createEventModule = (): EventModule => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const publish = (eventType: EventType, ...args: any[]) => {
     _invalidEventType(eventType)
+    logger.log(`Publish ${eventType} event`)
     const callbacks = events[eventType]
     if (!Array.isArray(callbacks)) return
+    logger.log(`Trigger ${eventType} callbacks`)
     callbacks.forEach(callback => callback(...args))
   }
 

@@ -153,7 +153,7 @@ export const getUserInfo = async (
     throw Error('No userinfo_endpoint in meta data')
   }
   try {
-    const accessToken = getAccessToken(oauthClientConfig, storageModule, logger)
+    const accessToken = getAccessToken(storageModule, logger)
     if (!accessToken) {
       return null
     }
