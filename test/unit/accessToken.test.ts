@@ -1,4 +1,8 @@
-import { getAccessToken, removeAccessToken } from '../../src/accessToken'
+import {
+  getAccessToken,
+  getAccessTokenExpires,
+  removeAccessToken
+} from '../../src/accessToken'
 import createStorageModule from '../../src/createStorageModule'
 import createLogger from '../../src/logger'
 import { oauthConfig } from './test-config'
@@ -61,6 +65,25 @@ describe('getAccessToken', (): void => {
     afterAll(() => {
       jest.resetAllMocks()
     })
+  })
+})
+describe('getAccessTokenExpires', (): void => {
+  it('should return expires timestamp as a number', async (): Promise<void> => {
+    const storageModule = createStorageModule(oauthConfig)
+    const logger = createLogger(oauthConfig)
+    storageModule.set('accessToken', accessTokenMock.encoded)
+    storageModule.set(
+      'accessTokenExpires',
+      accessTokenMock.decodedPayload.exp.toString()
+    )
+    const expires = getAccessTokenExpires(storageModule)
+    expect(expires).toBe(accessTokenMock.decodedPayload.exp)
+    removeAccessToken(storageModule, logger)
+  })
+  it('should get 0 if not set in storage', async (): Promise<void> => {
+    const storageModule = createStorageModule(oauthConfig)
+    const expires = getAccessTokenExpires(storageModule)
+    expect(expires).toBe(0)
   })
 })
 describe('removeAccessToken', (): void => {
