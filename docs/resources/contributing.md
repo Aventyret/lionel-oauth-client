@@ -13,7 +13,7 @@ nvm use
 Install dependencies:
 
 ```bash
-yarn
+yarn && yarn husky
 ```
 
 Build code into `./dist` directory:
