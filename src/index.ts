@@ -1,7 +1,2 @@
-import { createOauthClient } from './createOauthClient'
-import { createOidcClient } from './createOauthClient'
-
-export default {
-  createOauthClient,
-  createOidcClient
-}
+export { createOauthClient } from './createOauthClient'
+export { createOidcClient } from './createOauthClient'

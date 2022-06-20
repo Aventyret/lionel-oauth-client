@@ -74,7 +74,7 @@ export default [
       ...baseConfig.output,
       file: pkg.module,
       format: 'cjs',
-      exports: 'default'
+      exports: 'named'
     },
     plugins: [...baseConfig.plugins, pluginNodeResolve({ browser: false })],
     external
