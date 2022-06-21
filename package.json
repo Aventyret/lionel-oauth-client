@@ -2,7 +2,7 @@
   "name": "lionel-oauth-client",
   "description": "oAuth client with OpenID Connect support for browser based applications.",
   "author": "Äventyret Sweden AB",
-  "version": "0.3.5",
+  "version": "0.4.0",
   "license": "MIT",
   "packageManager": "yarn@3.2.1",
   "homepage": "https://github.com/Aventyret/lionel-oauth-client#readme",
@@ -28,7 +28,7 @@
   "browser": "dist/index.umd.js",
   "main": "dist/index.cjs.js",
   "module": "dist/index.ejs.js",
-  "typings": "index.d.ts",
+  "typings": "dist/index.d.ts",
   "lint-staged": {
     "*.js": [
       "prettier --write"
@@ -75,8 +75,6 @@
     "oauth-pkce": "^0.0.6"
   },
   "files": [
-    "dist",
-    "index.d.ts",
-    "src"
+    "dist"
   ]
 }
