@@ -8,7 +8,7 @@ import {
   createTokenExpiredTimeOutsideLeewayMock
 } from './mocks/timeMocks'
 
-describe.only('getAccessToken', (): void => {
+describe('getAccessToken', (): void => {
   describe('when token is not expired', (): void => {
     beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
     it('should get an access token if there is one in storage', async (): Promise<void> => {
