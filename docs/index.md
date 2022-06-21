@@ -12,7 +12,7 @@ features:
   - title: OIDC support
     details: Supports Open ID Connect, including discovery, session monitoring (coming soon) and RP initiated logout.
   - title: Additional Features
-    details: Sign in silently, auto renewal of tokens (coming soon), authentication subscription and much more.
+    details: Sign in silently, auto renewal of tokens, authentication subscription and much more.
   - title: Easy to use
     details: Simple and consistent API, easy to configure.
   - title: Fully typed

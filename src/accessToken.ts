@@ -1,9 +1,7 @@
-import { OauthClientConfig } from './createOauthClient'
 import { StorageModule } from './createStorageModule'
 import { Logger } from './logger'
 
 export const getAccessToken = (
-  oauthClientConfig: OauthClientConfig,
   storageModule: StorageModule,
   logger: Logger
 ): string | null => {
@@ -12,7 +10,7 @@ export const getAccessToken = (
   let accessTokenExpires = null
   try {
     accessToken = storageModule.get('accessToken')
-    accessTokenExpires = storageModule.get('accessTokenExpires')
+    accessTokenExpires = getAccessTokenExpires(storageModule)
   } catch {}
   if (!accessToken) {
     logger.log('No token in storage')
@@ -23,15 +21,19 @@ export const getAccessToken = (
     return null
   }
   try {
-    validateAccessTokenExpiration(
-      parseInt(accessTokenExpires || '0', 10),
-      oauthClientConfig
-    )
+    validateAccessTokenExpiration(accessTokenExpires)
   } catch {
     return null
   }
   logger.log('Valid token in storage')
   return accessToken
+}
+
+export const getAccessTokenExpires = (storageModule: StorageModule): number => {
+  try {
+    return parseInt(storageModule.get('accessTokenExpires'), 10)
+  } catch {}
+  return 0
 }
 
 export const removeAccessToken = (
@@ -47,10 +49,7 @@ export const removeAccessToken = (
   } catch {}
 }
 
-export const validateAccessTokenExpiration = (
-  expires: number,
-  oauthClientConfig: OauthClientConfig
-): void => {
+export const validateAccessTokenExpiration = (expires: number): void => {
   const now = new Date(0)
   now.setUTCSeconds(Math.floor(Date.now() / 1000))
   if (expires) {
@@ -58,11 +57,9 @@ export const validateAccessTokenExpiration = (
       throw Error(`Invalid expires, ${expires} is not a number`)
     }
     const tokenExpDate = new Date(0)
-    tokenExpDate.setUTCSeconds(
-      expires + (oauthClientConfig.tokenLeewaySeconds || 0)
-    )
+    tokenExpDate.setUTCSeconds(expires)
     if (now > tokenExpDate) {
-      throw Error('jwt token is expired')
+      throw Error('Access token is expired')
     }
   }
 }

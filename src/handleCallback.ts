@@ -184,7 +184,7 @@ export default async (
     throw Error('Token request failed')
   }
   try {
-    validateAccessTokenExpiration(tokenResponse.expires, oauthClientConfig)
+    validateAccessTokenExpiration(tokenResponse.expires)
     if (tokenResponse.idToken) {
       validateJwt(tokenResponse.idToken, oauthClientConfig)
       validateIdToken(tokenResponse.idToken, oauthClientConfig)

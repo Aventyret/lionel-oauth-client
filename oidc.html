@@ -55,6 +55,10 @@
         <br />
         <label for="access-token">Access token:</label>
         <textarea id="access-token" readonly></textarea>
+        <br />
+        <br />
+        <label for="access-token-expires">Tokens expire in:</label>
+        <textarea id="access-token-expires" readonly></textarea>
         <a href onclick="removeUser(event)"
           >Remove user and token from storage</a
         >
@@ -86,6 +90,12 @@
 
       oidcClient.subscribe('tokenLoaded', function (accessToken) {
         document.getElementById('access-token').value = accessToken
+        document.getElementById('access-token-expires').value =
+          oidcClient.getAccessTokenExpires() +
+          '\n' +
+          '(' +
+          new Date(oidcClient.getAccessTokenExpires() * 1000).toISOString() +
+          ')'
       })
       oidcClient.subscribe('userLoaded', function (user) {
         setSignedIn(true)
@@ -108,7 +118,9 @@
 
       function signInSilently(e) {
         e.preventDefault()
-        oidcClient.signInSilently().then(response => {
+        oidcClient
+          .signInSilently()
+          .then(response => {
             if (!response.user) {
               alert('Not signed in')
               return
@@ -128,7 +140,9 @@
 
       function signOut(e) {
         e.preventDefault()
-        oidcClient.signOut({ postLogoutRedirectUri: 'http://localhost:3001/oidc.html' })
+        oidcClient.signOut({
+          postLogoutRedirectUri: 'http://localhost:3001/oidc.html'
+        })
       }
     </script>
   </body>

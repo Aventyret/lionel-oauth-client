@@ -57,9 +57,9 @@ interface OauthClient {
     options: SignInOptions
   ) => Promise<HandleCallbackResponse | null>
   handleCallback: () => Promise<HandleCallbackResponse | null>
+  getConfig: () => OauthClientConfig
   getAccessToken: () => string | null
   removeAccessToken: () => void
-  getConfig: () => OauthClientConfig
   subscribe: EventSubscribeFn
   unsubscribe: EventSubscribeFn
   getUser: () => Promise<User | null>
@@ -87,6 +87,7 @@ interface OauthClientConfig {
   tokenLeewaySeconds?: number
   authenticationMaxAgeSeconds?: number
   signInSilentlyTimeoutSeconds?: number
+  autoRenewToken?: boolean
   responseMode?: ResponseMode
   metaData?: MetaData
   useNonce?: boolean
@@ -140,6 +141,14 @@ Optional `number`. The maximum allowable elapsed time in seconds since the last 
 #### OauthClientConfig.signInSilentlyTimeoutSeconds
 
 Optional `number`. Defaults to 10. Number of seconds to wait for the silent sign in to return before assuming it has failed or timed out.
+
+#### OauthClientConfig.autoRenewToken
+
+Optional `boolean`. Defaults to `true`. This specifies if a silent signin should be performed before access tokens are expired and removed from the client. The `tokenWillExpireSeconds` option will decide how far in advance this is done.
+
+#### OauthClientConfig.tokenWillExpireSeconds
+
+Optional `number`. Defaults to `60`. This specifies how long before the token expiry the `tokenWillExpire` event will be published. This also controls how far in advance tokens will be auto renewed before they expire.
 
 #### OauthClientConfig.responseMode
 
@@ -238,7 +247,7 @@ Basic example:
 
 ```js
 try {
-  await handleCallback()
+  await oAuthClient.handleCallback()
   location.assign('/') // Set where you want to redirect the user after successful signin
 } catch (error) {
   console.error(error)
@@ -352,6 +361,20 @@ Basic example:
 const accessToken = oAuthClient.getAccessToken()
 ```
 
+### getAccessTokenExpires
+
+```ts
+function getAccessTokenExpires(): number
+```
+
+Get the expires timestamp of the access token in seconds from January 1st, 1970 at UTC. The tokens and the user will be removed from storage at this time if the tokens are not renewed before then.
+
+Basic example:
+
+```js
+const accessTokenExpires = oAuthClient.accessTokenExpires()
+```
+
 ### removeAccessToken
 
 ```ts
@@ -447,7 +470,7 @@ oAuthClient.subscribe('tokenLoaded', () =>
 )
 ```
 
-Unsubscribe from an event, must provide the same function that was passed to `oAuthClient.subscribe`:
+To unsubscribe from an event, you must provide the same function that was passed to `oAuthClient.subscribe`:
 
 ```js
 /** Supported event types: "tokenLoaded", "tokenUnloaded", "userLoaded", "userUnloaded", "tokenWillExpire", "tokenDidExpire" */
