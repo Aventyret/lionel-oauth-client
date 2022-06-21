@@ -278,10 +278,11 @@ export const createOauthClient = (
 }
 
 export const createOidcClient = (configArg: OauthClientConfig): OauthClient => {
-  if (!configArg.metaData && !configArg.useMetaDataDiscovery) {
+  const config = getOidcClientConfig(configArg)
+  if (!config.metaData && !config.useMetaDataDiscovery) {
     throw Error(
       'createOidcClient requires useMetaDataDiscovery to be true if you do not provide metaData in config'
     )
   }
-  return createOauthClient(getOidcClientConfig(configArg))
+  return createOauthClient(config)
 }
