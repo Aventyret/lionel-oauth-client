@@ -276,7 +276,9 @@ export const createOauthClient = (
           'accessTokenExpires',
           tokenResponse.expires.toString()
         )
-        _tokenLoaded(tokenResponse.accessToken)
+        if (callbackType !== 'silent') {
+          _tokenLoaded(tokenResponse.accessToken)
+        }
       }
       let user = null
       if (tokenResponse?.idToken) {
@@ -288,7 +290,9 @@ export const createOauthClient = (
           metaData,
           logger
         )
-        _userLoaded(user)
+        if (callbackType !== 'silent') {
+          _userLoaded(user)
+        }
       }
       if (!tokenResponse?.accessToken && !tokenResponse?.idToken) {
         _callbackFailed('Not signed in')
