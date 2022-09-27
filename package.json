@@ -4,7 +4,7 @@
   "author": "Äventyret Sweden AB",
   "version": "0.4.1",
   "license": "MIT",
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@3.2.2",
   "homepage": "https://github.com/Aventyret/lionel-oauth-client#readme",
   "repository": {
     "type": "git",
