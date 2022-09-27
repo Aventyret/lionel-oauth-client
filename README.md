@@ -26,4 +26,4 @@ If you want to contribute, please check out the [Contribute Section](https://ave
 
 [MIT](https://opensource.org/licenses/MIT)
 
-Copyright (c) 2022-present, Äventyret Sweden AB
+Copyright (c) 2022-present, Äventyret Sweden AB.
