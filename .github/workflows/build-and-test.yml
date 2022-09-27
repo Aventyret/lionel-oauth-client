@@ -18,7 +18,6 @@ jobs:
         with:
           node-version: 16
           cache: 'yarn'
-      - run: yarn install --frozen-lockfile
       - run: npx playwright install-deps
       - run: npx playwright install
       - run: yarn test
