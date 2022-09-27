@@ -18,7 +18,7 @@ jobs:
           node-version: 16
       - name: 'Build docs'
         run: |
-          yarn
+          yarn install --frozen-lockfile
           yarn docs:build
       - name: 'Push docs to gh-pages branch'
         working-directory: ./docs/.vitepress/dist
