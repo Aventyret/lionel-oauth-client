@@ -1,0 +1,1 @@
+import{_ as e,c as r,o as t,a}from"./app.f5eb41e9.js";const u='{"title":"oAuth and OIDC Resources","description":"","frontmatter":{"title":"oAuth and OIDC Resources"},"headers":[],"relativePath":"resources/index.md"}',o={},n=a("",9),s=[n];function p(c,i,d,h,f,_){return t(),r("div",null,s)}var b=e(o,[["render",p]]);export{u as __pageData,b as default};
