@@ -154,7 +154,7 @@ export const validateJwtExpiration = (
       throw Error('jwt token is expired')
     }
     const nbf = new Date(0)
-    nbf.setUTCSeconds(claims.nbf)
+    nbf.setUTCSeconds(claims.nbf - (oauthClientConfig.tokenLeewaySeconds || 0))
     if (now < nbf) {
       throw Error('jwt token is not valid yet')
     }
