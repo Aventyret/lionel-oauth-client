@@ -14,7 +14,7 @@
     "dev": "rollup -c -w",
     "lint": "eslint --ext .ts src/**/*.ts test/**/*.ts",
     "test": "yarn test:unit",
-    "test:unit": "jest"
+    "test:unit": "jest --passWithNoTests"
   },
   "browser": "dist/index.umd.js",
   "main": "dist/index.cjs.js",
