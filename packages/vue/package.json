@@ -49,8 +49,9 @@
     "vue-router": "4.1.6"
   },
   "peerDependencies": {
-    "lionel-oauth-client": "^1.0.0",
-    "vue": "^2.6.0"
+    "lionel-oauth-client": ">= 1.0.0",
+    "vue": ">= 2.6.0",
+    "vue-router": ">= 3.0.0"
   },
   "files": [
     "dist"
