@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "name": "lionel-oauth-client-docs",
+  "description": "Docs for Lionel oAuth client.",
+  "author": "Äventyret Sweden AB",
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://github.com/Aventyret/lionel-oauth-client/packages/docs/#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aventyret/lionel-oauth-client.git"
+  },
+  "scripts": {
+    "dev": "vitepress dev ./",
+    "build": "vitepress build ./",
+    "serve": "vitepress serve ./"
+  },
+  "dependencies": {
+    "@algolia/client-search": "^4.14.3",
+    "vitepress": "^0.22.3",
+    "vue": "^3.2.31"
+  }
+}
