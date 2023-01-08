@@ -1,9 +1,22 @@
 import { ref } from 'vue'
-import type { OauthClientConfig, User } from 'lionel-oauth-client'
+import { useRouter, useRoute } from 'vue-router'
+import type {
+  OauthClientConfig,
+  SignInOptions,
+  User
+} from 'lionel-oauth-client'
 
 import { getOidcClient } from './clientHelpers'
+import signInWithClient from './signIn'
+import handleCallbackWithClient from './handleCallback'
 
-export default function useLionelOidcClient(config: OauthClientConfig) {
+export const useOidcClient = (config: OauthClientConfig) => {
+  const router = useRouter()
+  const route = useRoute()
+
+  if (typeof window === 'undefined') {
+    return {}
+  }
   const oidcClient = getOidcClient(config)
   const accessToken = ref<string | null>(null)
   accessToken.value = oidcClient.getAccessToken()
@@ -26,10 +39,22 @@ export default function useLionelOidcClient(config: OauthClientConfig) {
     user.value = null
   })
 
+  const signIn = (
+    signInOptions: SignInOptions,
+    routePathAfterSignIn: string | null = null
+  ) => signInWithClient(oidcClient, route, signInOptions, routePathAfterSignIn)
+
+  const handleCallback = (defaultRoutePathAfterSignIn = '/') =>
+    handleCallbackWithClient(oidcClient, router, defaultRoutePathAfterSignIn)
+
   return {
     oidcClient,
     accessToken,
     accessTokenExpires,
-    user
+    user,
+    signIn,
+    handleCallback
   }
 }
+
+export default useOidcClient

@@ -9,6 +9,7 @@ import type {
   NavigationGuardNext
 } from 'vue-router'
 
+import { AUTH_REDIRECT_KEY } from './constants'
 import { getOauthClient, getOidcClient } from './clientHelpers'
 
 const clientTypes = <const>['oauth', 'oidc']
@@ -111,7 +112,8 @@ const isAuthenticated = (
   return !!oauthClient.getAccessToken()
 }
 
-export default (
+export const createRouterOauthMiddleware =
+  (
     oauthConfig: OauthClientConfig,
     middleWareSettings: OauthMiddlewareSettings,
     signInOptions: SignInOptions = {}
@@ -153,7 +155,9 @@ export default (
         return next()
       })
       .catch(() => {
-        window.sessionStorage.setItem('authRedirect', to.fullPath)
+        window.sessionStorage.setItem(AUTH_REDIRECT_KEY, to.fullPath)
         client.signIn(signInOptions)
       })
   }
+
+export default createRouterOauthMiddleware
