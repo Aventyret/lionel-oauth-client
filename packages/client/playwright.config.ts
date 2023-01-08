@@ -26,7 +26,7 @@ const config: PlaywrightTestConfig = {
     }
   ],
   webServer: {
-    command: `npm run serve:e2e -p ${PORT}`,
+    command: `yarn serve:e2e -p ${PORT}`,
     port: PORT,
     timeout: 120 * 1000
     // reuseExistingServer: !process.env.CI
