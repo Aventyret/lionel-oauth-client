@@ -17,12 +17,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 18
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 7
-          run_install: false
-      - run: pnpm install --frozen-lockfile
+      - run: npm ci
       - run: npx playwright install-deps
       - run: npx playwright install
-      - run: pnpm run test
-      - run: pnpm run build
+      - run: npm run test
+      - run: npm run build
