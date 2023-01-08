@@ -16,14 +16,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 18
-      - uses: pnpm/action-setup@v2
-        with:
-          version: 7
-          run_install: false
       - name: 'Build docs'
         run: |
-          pnpm install --frozen-lockfile
-          cd ./packages/docs && pnpm run build
+          npm ci
+          cd ./packages/docs && npm run build
       - name: 'Push docs to gh-pages branch'
         working-directory: ./packages/docs/.vitepress/dist
         run: |
