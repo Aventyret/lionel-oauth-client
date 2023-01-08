@@ -14,10 +14,14 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
-          node-version: 16
+          node-version: 18
           registry-url: https://registry.npmjs.org/
-      - run: yarn install --frozen-lockfile
-      - run: yarn build
-      - run: npm publish
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: false
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+      - run: cd ./packages/client && npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
