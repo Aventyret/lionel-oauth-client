@@ -5,15 +5,15 @@
   "version": "1.0.0",
   "description": "Monorepo for Linonel oAuth client",
   "scripts": {
-    "build": "pnpm --stream -r run build",
-    "dev": "pnpm --stream -r run dev",
+    "build": "npm run build --workspaces --if-present",
+    "dev": "npm run dev --workspaces --if-present",
     "tag": "./tag.sh",
-    "lint": "pnpm --stream -r run lint",
+    "lint": "npm run lint --workspaces --if-present",
     "husky": "husky install",
     "pre-commit": "lint-staged",
-    "test": "pnpm --stream -r run test",
-    "test:unit": "pnpm --stream -r run test:unit",
-    "test:e2e": "pnpm --stream -r run test:e2e"
+    "test": "npm run test --workspaces --if-present",
+    "test:unit": "npm run test:unit --workspaces --if-present",
+    "test:e2e": "npm run test:e2e --workspaces --if-present"
   },
   "keywords": [],
   "license": "MIN",
@@ -34,5 +34,10 @@
       "prettier --parser=typescript --write",
       "eslint"
     ]
-  }
+  },
+  "workspaces": [
+    "packages/client",
+    "packages/vue",
+    "packages/docs"
+  ]
 }

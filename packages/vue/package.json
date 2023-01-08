@@ -13,8 +13,8 @@
     "build": "rollup -c --bundleConfigAsCjs",
     "dev": "rollup -c -w --bundleConfigAsCjs",
     "lint": "eslint --ext .ts src/**/*.ts test/**/*.ts",
-    "test": "yarn test:unit",
-    "test:unit": "jest --passWithNoTests"
+    "test": "npm run test:unit",
+    "test:unit": "jest"
   },
   "browser": "dist/index.umd.js",
   "main": "dist/index.cjs.js",
@@ -36,7 +36,6 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.5.1",
-    "lionel-oauth-client": "workspace:*",
     "prettier": "^2.5.1",
     "rollup": "^3.9.1",
     "rollup-plugin-dts": "^5.1.1",

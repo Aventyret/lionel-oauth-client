@@ -13,7 +13,7 @@
     "build": "rollup -c --bundleConfigAsCjs",
     "dev": "rollup -c -w --bundleConfigAsCjs",
     "lint": "eslint --ext .ts src/**/*.ts test/**/*.ts",
-    "test": "yarn test:unit && yarn test:e2e",
+    "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
     "test:e2e": "playwright test --config=playwright.config.ts",
     "serve:e2e": "serve ./"
