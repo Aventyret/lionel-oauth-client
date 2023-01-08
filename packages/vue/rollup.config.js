@@ -1,13 +1,14 @@
-import { terser } from 'rollup-plugin-terser'
+import terser from '@rollup/plugin-terser'
 import pluginTypescript from '@rollup/plugin-typescript'
 import pluginCommonjs from '@rollup/plugin-commonjs'
 import pluginNodeResolve from '@rollup/plugin-node-resolve'
-import dts from 'rollup-plugin-dts'
 import { babel } from '@rollup/plugin-babel'
 import serve from 'rollup-plugin-serve'
 import livereload from 'rollup-plugin-livereload'
 import * as path from 'path'
 import pkg from './package.json'
+
+const dts = require('rollup-plugin-dts')
 
 const production = !process.env.ROLLUP_WATCH
 const moduleName = pkg.name.replace(/^@.*\//, '')
@@ -91,7 +92,7 @@ export default [
     plugins: [
       ...baseConfig.plugins,
       pluginNodeResolve({ browser: false }),
-      dts()
+      dts.default()
     ],
     external
   }
