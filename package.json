@@ -6,7 +6,8 @@
   "description": "Monorepo for Linonel oAuth client",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
-    "dev": "npm run dev --workspaces --if-present",
+    "dev:client": "npm run dev --workspace=packages/client",
+    "dev:docs": "npm run dev --workspace=packages/docs",
     "tag": "./tag.sh",
     "lint": "npm run lint --workspaces --if-present",
     "husky": "husky install",
