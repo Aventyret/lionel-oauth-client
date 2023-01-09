@@ -30,7 +30,7 @@ Build code with watch and serve the main client package:
 npm run dev:client
 ```
 
-Browse the main client implementation at http://localhost:3001/
+Browse the main client implementation at `http://localhost:3001/`
 
 Watch and serve the docs:
 
@@ -38,7 +38,7 @@ Watch and serve the docs:
 npm run dev:docs
 ```
 
-Browse the docs at http://localhost:3000/
+Browse the docs at `http://localhost:3000/`
 
 ## Naming branches
 
