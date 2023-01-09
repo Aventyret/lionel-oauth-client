@@ -16,7 +16,7 @@ const hasAccess = computed(() => route.meta?.isPublic || !!user)
     <router-link to="/">Home</router-link> |
     <router-link to="/protected">Protected</router-link> |
     <a v-if="user" href @click.prevent="oidcClient.signOut">Sign out</a>
-    <a v-else href @click.prevent="signIn">Sign in</a>
+    <a v-else href @click.prevent="signIn(route.path)">Sign in</a>
   </nav>
 </template>
 

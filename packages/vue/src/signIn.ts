@@ -1,18 +1,13 @@
-import type { RouteRecordRaw, RouteLocationNormalized } from 'vue-router'
 import type { OauthClient, SignInOptions } from 'lionel-oauth-client'
 
 import { AUTH_REDIRECT_KEY } from './constants'
 
 export const signIn = (
   oauthClient: OauthClient,
-  route: RouteRecordRaw | RouteLocationNormalized,
   signInOptions: SignInOptions,
-  routePathAfterSignIn: string | null
+  routePathAfterSignIn: string
 ) => {
-  window.sessionStorage.setItem(
-    AUTH_REDIRECT_KEY,
-    routePathAfterSignIn || route.path
-  )
+  window.sessionStorage.setItem(AUTH_REDIRECT_KEY, routePathAfterSignIn)
   oauthClient.signIn(signInOptions)
 }
 

@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import type { Router } from 'vue-router'
 import type { OauthClientConfig, SignInOptions } from 'lionel-oauth-client'
 
 import { getOauthClient } from './clientHelpers'
@@ -7,9 +7,6 @@ import signInWithClient from './signIn'
 import handleCallbackWithClient from './handleCallback'
 
 export const useOauthClient = (config: OauthClientConfig) => {
-  const router = useRouter()
-  const route = useRoute()
-
   if (typeof window === 'undefined') {
     return {}
   }
@@ -29,11 +26,11 @@ export const useOauthClient = (config: OauthClientConfig) => {
   })
 
   const signIn = (
-    signInOptions: SignInOptions,
-    routePathAfterSignIn: string | null = null
-  ) => signInWithClient(oauthClient, route, signInOptions, routePathAfterSignIn)
+    routePathAfterSignIn = '/',
+    signInOptions: SignInOptions = {}
+  ) => signInWithClient(oauthClient, signInOptions, routePathAfterSignIn || '/')
 
-  const handleCallback = (defaultRoutePathAfterSignIn = '/') =>
+  const handleCallback = (router: Router, defaultRoutePathAfterSignIn = '/') =>
     handleCallbackWithClient(oauthClient, router, defaultRoutePathAfterSignIn)
 
   return {

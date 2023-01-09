@@ -14,11 +14,11 @@ import { getOauthClient, getOidcClient } from './clientHelpers'
 
 const clientTypes = <const>['oauth', 'oidc']
 
-type ClientType = typeof clientTypes[number]
+type ClientType = (typeof clientTypes)[number]
 
 const tokenTypes = <const>['accessToken', 'idToken']
 
-type TokenType = typeof tokenTypes[number]
+type TokenType = (typeof tokenTypes)[number]
 
 export type OauthMiddlewareSettings = {
   clientType: ClientType

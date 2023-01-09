@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import type { Router } from 'vue-router'
 import type {
   OauthClientConfig,
   SignInOptions,
@@ -11,9 +11,6 @@ import signInWithClient from './signIn'
 import handleCallbackWithClient from './handleCallback'
 
 export const useOidcClient = (config: OauthClientConfig) => {
-  const router = useRouter()
-  const route = useRoute()
-
   if (typeof window === 'undefined') {
     return {}
   }
@@ -40,11 +37,11 @@ export const useOidcClient = (config: OauthClientConfig) => {
   })
 
   const signIn = (
-    signInOptions: SignInOptions,
-    routePathAfterSignIn: string | null = null
-  ) => signInWithClient(oidcClient, route, signInOptions, routePathAfterSignIn)
+    routePathAfterSignIn = '/',
+    signInOptions: SignInOptions = {}
+  ) => signInWithClient(oidcClient, signInOptions, routePathAfterSignIn || '/')
 
-  const handleCallback = (defaultRoutePathAfterSignIn = '/') =>
+  const handleCallback = (router: Router, defaultRoutePathAfterSignIn = '/') =>
     handleCallbackWithClient(oidcClient, router, defaultRoutePathAfterSignIn)
 
   return {
