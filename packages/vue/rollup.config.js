@@ -1,4 +1,3 @@
-import terser from '@rollup/plugin-terser'
 import pluginTypescript from '@rollup/plugin-typescript'
 import pluginCommonjs from '@rollup/plugin-commonjs'
 import pluginNodeResolve from '@rollup/plugin-node-resolve'
@@ -49,16 +48,6 @@ const external = {
 }
 
 export default [
-  {
-    ...baseConfig,
-    output: {
-      ...baseConfig.output,
-      file: production ? pkg.browser.replace('.js', '.min.js') : pkg.browser,
-      format: 'iife',
-      plugins: [production && terser()]
-    },
-    plugins: [...baseConfig.plugins, pluginNodeResolve({ browser: true })]
-  },
   {
     ...baseConfig,
     output: {
