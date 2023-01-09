@@ -8,7 +8,7 @@ import { MetaData } from './metaData'
 import { Logger } from './logger'
 
 const prompts = <const>['none', 'login', 'consent', 'select_account']
-export type Prompt = typeof prompts[number]
+export type Prompt = (typeof prompts)[number]
 
 export interface SignInOptions {
   idTokenHint?: string

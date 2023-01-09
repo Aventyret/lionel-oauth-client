@@ -20,7 +20,7 @@ interface CallbackParams {
 }
 
 const callbackTypes = <const>['redirect', 'silent']
-export type CallbackType = typeof callbackTypes[number]
+export type CallbackType = (typeof callbackTypes)[number]
 
 export interface TokenResponse {
   accessToken: string

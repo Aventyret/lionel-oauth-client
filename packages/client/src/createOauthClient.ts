@@ -17,10 +17,10 @@ import { User, getUser, getUserInfo, setUser, removeUser } from './user'
 import createTokenExpirationService from './createTokenExpirationService'
 
 const responseModes = <const>['fragment', 'query']
-export type ResponseMode = typeof responseModes[number]
+export type ResponseMode = (typeof responseModes)[number]
 
 const displays = <const>['page', 'popup', 'touch', 'wap']
-export type Display = typeof displays[number]
+export type Display = (typeof displays)[number]
 
 export interface OauthClientConfig {
   issuer: string

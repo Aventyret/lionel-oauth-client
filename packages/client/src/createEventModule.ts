@@ -8,7 +8,7 @@ const eventTypes = <const>[
   'tokenWillExpire',
   'tokenDidExpire'
 ]
-export type EventType = typeof eventTypes[number]
+export type EventType = (typeof eventTypes)[number]
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type EventCallbackFn = (...args: any[]) => any

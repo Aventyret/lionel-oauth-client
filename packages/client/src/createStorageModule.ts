@@ -13,10 +13,10 @@ const storageKeys = <const>[
   'metaData',
   'signoutState'
 ]
-export type StorageKey = typeof storageKeys[number]
+export type StorageKey = (typeof storageKeys)[number]
 
 const storageModuleTypes = <const>['local', 'session']
-export type StorageModuleType = typeof storageModuleTypes[number]
+export type StorageModuleType = (typeof storageModuleTypes)[number]
 
 export interface StorageModule {
   storage: Storage
