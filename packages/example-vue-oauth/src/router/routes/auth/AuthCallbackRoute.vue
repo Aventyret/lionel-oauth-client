@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import { useOidcClient } from 'lionel-oauth-client-vue'
 
-import oidcConfig from '../constants/oidc-config'
+import oidcConfig from '../../../constants/oidc-config'
 
 const router = useRouter()
 const { handleCallback } = useOidcClient(oidcConfig)

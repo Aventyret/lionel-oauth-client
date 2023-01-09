@@ -1,6 +1,8 @@
 <script setup>
 import { useOidcClient } from 'lionel-oauth-client-vue'
 
+import oidcConfig from '../../../constants/oidc-config'
+
 const { signIn } = useOidcClient(oidcConfig)
 </script>
 
