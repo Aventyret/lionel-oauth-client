@@ -47,15 +47,6 @@ const router = createRouter({
       }
     },
     {
-      path: '/signed-out',
-      component: () => import('./routes/auth/AuthPostSignedOutRoute.vue'),
-      meta: {
-        title: 'You have signed out',
-        isPublic: true,
-        signInSilently: false
-      }
-    },
-    {
       path: '/:catchAll(.*)',
       component: () => import('./routes/error/FileNotFoundRoute.vue'),
       meta: {
