@@ -5,13 +5,18 @@ import { useOidcClient } from 'lionel-oauth-client-vue'
 
 import oidcConfig from '../constants/oidc-config'
 
-const { user, oidcClient, accessToken } = useOidcClient(oidcConfig)
+const { user, oidcClient, accessToken, accessTokenExpires } =
+  useOidcClient(oidcConfig)
 
-const userDisplay = computed(() => jsonMarkup(user))
+// const userDisplay = computed(() => jsonMarkup(user))
+
+const userDisplay = ''
+
+console.log({ accessToken, accessTokenExpires, user })
 </script>
 
 <template>
-  <div v-if="user">
+  <div v-if="accessToken">
     <p>You are signed in as:</p>
     <div
       style="
@@ -24,7 +29,7 @@ const userDisplay = computed(() => jsonMarkup(user))
       v-html="userDisplay"
     ></div>
     <p>Access token</p>
-    <p>expires {{ new Date(oidcIdTokenExp).toISOString() }}</p>
+    <p>expires {{ new Date(accessTokenExpires).toISOString() }}</p>
     <textarea
       readonly
       style="

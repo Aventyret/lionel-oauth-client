@@ -18,7 +18,7 @@ export const useOidcClient = (config: OauthClientConfig) => {
   const accessToken = ref<string | null>(null)
   accessToken.value = oidcClient.getAccessToken()
   const accessTokenExpires = ref<number | null>(null)
-  accessTokenExpires.value = oidcClient.getAccessTokenExpires()
+  accessTokenExpires.value = oidcClient.getAccessTokenExpires() * 1000
   const user = ref<User | null>(null)
   oidcClient.getUser().then(u => (user.value = u))
   oidcClient.subscribe('tokenLoaded', token => {
@@ -29,8 +29,8 @@ export const useOidcClient = (config: OauthClientConfig) => {
     accessToken.value = null
     accessTokenExpires.value = null
   })
-  oidcClient.subscribe('userLoaded', user => {
-    user.value = user
+  oidcClient.subscribe('userLoaded', u => {
+    user.value = u
   })
   oidcClient.subscribe('userUnloaded', () => {
     user.value = null

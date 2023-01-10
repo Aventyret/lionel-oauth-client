@@ -58,6 +58,10 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach(createRouterOauthMiddleware(oidcConfig))
+router.beforeEach(
+  createRouterOauthMiddleware(oidcConfig, {
+    clientType: 'oidc'
+  })
+)
 
 export default router
