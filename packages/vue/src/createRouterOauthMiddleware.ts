@@ -102,12 +102,12 @@ const signInSilentlyOnRoute = (
   return !route.meta.disableSignInSilently
 }
 
-const isAuthenticated = (
+const isAuthenticated = async (
   oauthClient: OauthClient,
   middleWareSettings: OauthMiddlewareSettings
-): boolean => {
+): Promise<boolean> => {
   if (middleWareSettings.authenticateWith === 'idToken') {
-    return !!oauthClient.getUser()
+    return !!(await oauthClient.getUser())
   }
   return !!oauthClient.getAccessToken()
 }
@@ -118,7 +118,7 @@ export const createRouterOauthMiddleware =
     middleWareSettings: OauthMiddlewareSettings,
     signInOptions: SignInOptions = {}
   ) =>
-  (
+  async (
     to: RouteLocationNormalized,
     // @ts-ignore
     from: RouteLocationNormalized,
@@ -132,7 +132,7 @@ export const createRouterOauthMiddleware =
       settings.clientType === 'oidc'
         ? getOidcClient(oauthConfig)
         : getOauthClient(oauthConfig)
-    const authenticated = isAuthenticated(client, settings)
+    const authenticated = await isAuthenticated(client, settings)
 
     if (routeIsPublic(to)) {
       if (
@@ -140,7 +140,7 @@ export const createRouterOauthMiddleware =
         settings.signInSilently &&
         signInSilentlyOnRoute(to)
       ) {
-        client.signInSilently(signInOptions)
+        client.signInSilently(signInOptions).catch(() => {}) // eslint-disable-line @typescript-eslint/no-empty-function
       }
       return next()
     }
@@ -150,13 +150,14 @@ export const createRouterOauthMiddleware =
     const signInSilentlyPromise = settings.signInSilently
       ? client.signInSilently(signInOptions)
       : Promise.reject('Sign in silently is not enabled in middleware')
-    signInSilentlyPromise
+    return signInSilentlyPromise
       .then(() => {
         return next()
       })
       .catch(() => {
         window.sessionStorage.setItem(AUTH_REDIRECT_KEY, to.fullPath)
         client.signIn(signInOptions)
+        return
       })
   }
 

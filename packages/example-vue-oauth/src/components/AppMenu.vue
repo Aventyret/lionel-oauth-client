@@ -8,6 +8,8 @@ import oidcConfig from '../constants/oidc-config'
 const route = useRoute()
 const { user, signIn, oidcClient } = useOidcClient(oidcConfig)
 
+console.log(JSON.stringify(user))
+
 const hasAccess = computed(() => route.meta?.isPublic || !!user)
 
 console.log(user)

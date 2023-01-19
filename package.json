@@ -6,9 +6,12 @@
   "description": "Monorepo for Linonel oAuth client",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
+    "build:client": "npm run build -w packages/client",
+    "build:vue": "npm run build -w packages/vue",
     "dev:client": "npm run dev --workspace=packages/client",
     "dev:docs": "npm run dev --workspace=packages/docs",
     "dev:example-vue-oauth": "npm run dev --workspace=packages/example-vue-oauth",
+    "predev:example-vue-oauth": "npm run build:client && npm run build:vue",
     "tag": "./tag.sh",
     "lint": "npm run lint --workspaces --if-present",
     "husky": "husky install",

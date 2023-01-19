@@ -3,5 +3,6 @@ export default {
   authorizationEndpoint: '/connect/authorize',
   tokenEndpoint: '/connect/token',
   clientId: 'interactive.public',
-  redirectUri: 'http://localhost:5173/auth'
+  redirectUri: 'http://localhost:5173/auth',
+  scopes: ['profile']
 }

@@ -5,7 +5,9 @@ import { useOidcClient } from 'lionel-oauth-client-vue'
 
 import oidcConfig from '../constants/oidc-config'
 
-const { user, oidcClient, accessToken, accessTokenExpires } =
+console.log(useOidcClient(oidcConfig))
+
+const { user, accessToken, accessTokenExpires, test, oidcClient } =
   useOidcClient(oidcConfig)
 
 // const userDisplay = computed(() => jsonMarkup(user))
