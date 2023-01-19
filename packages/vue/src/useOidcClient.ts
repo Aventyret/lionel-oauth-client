@@ -17,7 +17,6 @@ type SetupOidcClient = {
   accessToken?: Ref<string | null>
   accessTokenExpires?: Ref<number | null>
   user?: Ref<User | null>
-  test?: Ref<object | null>
   signIn?: (
     routePathAfterSignIn?: string,
     signInOptions?: SignInOptions
@@ -34,6 +33,11 @@ export const useOidcClient = (config: OauthClientConfig): SetupOidcClient => {
   }
   const oidcClient = getOidcClient(config)
   const accessToken = ref<string | null>(null)
+  oidcClient.subscribe('tokenLoaded', token => {
+    console.log('token loaded')
+    accessToken.value = token
+    accessTokenExpires.value = oidcClient.getAccessTokenExpires() * 1000
+  })
   accessToken.value = oidcClient.getAccessToken()
   const accessTokenExpires = ref<number | null>(null)
   accessTokenExpires.value = oidcClient.getAccessTokenExpires() * 1000
@@ -43,16 +47,12 @@ export const useOidcClient = (config: OauthClientConfig): SetupOidcClient => {
     user.value = u
   }
   oidcClient.getUser().then(setUser)
-  oidcClient.subscribe('tokenLoaded', token => {
-    console.log('token loaded')
-    accessToken.value = token
-    accessTokenExpires.value = oidcClient.getAccessTokenExpires() * 1000
-  })
   oidcClient.subscribe('tokenUnloaded', () => {
     console.log('token unloaded')
     accessToken.value = null
     accessTokenExpires.value = null
   })
+
   oidcClient.subscribe('userLoaded', setUser)
   oidcClient.subscribe('userUnloaded', () => setUser(null))
 
@@ -64,19 +64,13 @@ export const useOidcClient = (config: OauthClientConfig): SetupOidcClient => {
   const handleCallback = (router: Router, defaultRoutePathAfterSignIn = '/') =>
     handleCallbackWithClient(oidcClient, router, defaultRoutePathAfterSignIn)
 
-  const test = ref<object | null>({})
-  oidcClient.subscribe('userLoaded', function (u) {
-    test.value = u
-  })
-
   return {
     oidcClient,
     accessToken,
     accessTokenExpires,
     user,
     signIn,
-    handleCallback,
-    test
+    handleCallback
   }
 }
 
