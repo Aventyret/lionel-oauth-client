@@ -1,5 +1,5 @@
-import { ref } from 'vue'
-import type { Ref } from 'vue'
+import { ref } from '@vue/runtime-core'
+import type { Ref } from '@vue/runtime-core'
 import type { Router } from 'vue-router'
 import type {
   OauthClient,
@@ -33,15 +33,15 @@ export const useOidcClient = (config: OauthClientConfig): SetupOidcClient => {
   }
   const oidcClient = getOidcClient(config)
   const accessToken = ref<string | null>(null)
+  const accessTokenExpires = ref<number | null>(null)
+  const user = ref<User | null>(null)
   oidcClient.subscribe('tokenLoaded', token => {
     console.log('token loaded')
     accessToken.value = token
     accessTokenExpires.value = oidcClient.getAccessTokenExpires() * 1000
   })
   accessToken.value = oidcClient.getAccessToken()
-  const accessTokenExpires = ref<number | null>(null)
   accessTokenExpires.value = oidcClient.getAccessTokenExpires() * 1000
-  const user = ref<User | null>(null)
   const setUser = (u: User | null) => {
     console.log('set user', u)
     user.value = u

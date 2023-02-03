@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref } from '@vue/runtime-core'
 import type { Router } from 'vue-router'
 import type { OauthClientConfig, SignInOptions } from 'lionel-oauth-client'
 
