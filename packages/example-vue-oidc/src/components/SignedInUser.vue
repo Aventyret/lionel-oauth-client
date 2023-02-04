@@ -10,7 +10,7 @@ const { accessToken, accessTokenExpires, user, oidcClient } =
 </script>
 
 <template>
-  <div v-if="accessToken">
+  <div v-if="user">
     <p>You are signed in as:</p>
     <div
       style="

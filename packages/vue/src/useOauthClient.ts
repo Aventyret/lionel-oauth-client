@@ -1,4 +1,4 @@
-import { ref } from '@vue/runtime-core'
+import { ref } from 'vue'
 import type { Router } from 'vue-router'
 import type { OauthClientConfig, SignInOptions } from 'lionel-oauth-client'
 
@@ -6,7 +6,7 @@ import { getOauthClient } from './clientHelpers'
 import signInWithClient from './signIn'
 import handleCallbackWithClient from './handleCallback'
 
-export const useOauthClient = (config: OauthClientConfig) => {
+export function useOauthClient(config: OauthClientConfig) {
   if (typeof window === 'undefined') {
     return {}
   }

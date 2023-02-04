@@ -1,5 +1,5 @@
-import { ref } from '@vue/runtime-core'
-import type { Ref } from '@vue/runtime-core'
+import { ref } from 'vue'
+import type { Ref } from 'vue'
 import type { Router } from 'vue-router'
 import type {
   OauthClient,
@@ -27,7 +27,7 @@ type SetupOidcClient = {
   ) => Promise<void>
 }
 
-export const useOidcClient = (config: OauthClientConfig): SetupOidcClient => {
+export function useOidcClient(config: OauthClientConfig): SetupOidcClient {
   if (typeof window === 'undefined') {
     return {}
   }
