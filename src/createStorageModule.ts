@@ -29,12 +29,12 @@ export interface StorageModule {
 export const createStorageModule = (
   config: OauthClientConfig
 ): StorageModule => {
-  const type = config.tokenStorage || 'local'
+  const type = config.tokenStorage || 'session'
 
   if (!storageModuleTypes.includes(type))
     throw Error('Not a valid storage type')
 
-  const storage = 'session' ? sessionStorage : localStorage
+  const storage = type === 'session' ? sessionStorage : localStorage
 
   const _invalidKey = (key: StorageKey): void => {
     if (storageKeys.includes(key)) return
