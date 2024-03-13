@@ -2,7 +2,7 @@
   "name": "lionel-oauth-client",
   "description": "oAuth client with OpenID Connect support for browser based applications.",
   "author": "Äventyret Sweden AB",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "license": "MIT",
   "packageManager": "yarn@3.2.2",
   "homepage": "https://github.com/Aventyret/lionel-oauth-client#readme",
