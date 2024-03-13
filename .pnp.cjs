@@ -35,7 +35,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@babel/core", "npm:7.17.5"],\
             ["@babel/preset-env", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:7.16.11"],\
-            ["@playwright/test", "npm:1.27.0"],\
+            ["@playwright/test", "npm:1.42.1"],\
             ["@rollup/plugin-babel", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:5.3.1"],\
             ["@rollup/plugin-commonjs", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:21.0.2"],\
             ["@rollup/plugin-node-resolve", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:13.1.3"],\
@@ -3349,12 +3349,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@playwright/test", [\
-        ["npm:1.27.0", {\
-          "packageLocation": "./.yarn/cache/@playwright-test-npm-1.27.0-e2f531747d-ee72ba5f00.zip/node_modules/@playwright/test/",\
+        ["npm:1.42.1", {\
+          "packageLocation": "./.yarn/cache/@playwright-test-npm-1.42.1-1e93511e64-a41505f02a.zip/node_modules/@playwright/test/",\
           "packageDependencies": [\
-            ["@playwright/test", "npm:1.27.0"],\
-            ["@types/node", "npm:17.0.21"],\
-            ["playwright-core", "npm:1.27.0"]\
+            ["@playwright/test", "npm:1.42.1"],\
+            ["playwright", "npm:1.42.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -7657,7 +7656,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lionel-oauth-client", "workspace:."],\
             ["@babel/core", "npm:7.17.5"],\
             ["@babel/preset-env", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:7.16.11"],\
-            ["@playwright/test", "npm:1.27.0"],\
+            ["@playwright/test", "npm:1.42.1"],\
             ["@rollup/plugin-babel", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:5.3.1"],\
             ["@rollup/plugin-commonjs", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:21.0.2"],\
             ["@rollup/plugin-node-resolve", "virtual:c59cf5a4edeb55422aad4c6a0fb4dd08f4a776caf9c600bf21a2f10631ef6ff486ebede992810abc7c17d2099e505fa59deca67e4e4581ba8000a3479e25d0f9#npm:13.1.3"],\
@@ -8555,11 +8554,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
-      ["playwright-core", [\
-        ["npm:1.27.0", {\
-          "packageLocation": "./.yarn/unplugged/playwright-core-npm-1.27.0-fba1af4de2/node_modules/playwright-core/",\
+      ["playwright", [\
+        ["npm:1.42.1", {\
+          "packageLocation": "./.yarn/cache/playwright-npm-1.42.1-ad14b1d04e-06c16bcd07.zip/node_modules/playwright/",\
           "packageDependencies": [\
-            ["playwright-core", "npm:1.27.0"]\
+            ["playwright", "npm:1.42.1"],\
+            ["fsevents", "patch:fsevents@npm%3A2.3.2#~builtin<compat/fsevents>::version=2.3.2&hash=18f3a7"],\
+            ["playwright-core", "npm:1.42.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["playwright-core", [\
+        ["npm:1.42.1", {\
+          "packageLocation": "./.yarn/unplugged/playwright-core-npm-1.42.1-9ffc4604de/node_modules/playwright-core/",\
+          "packageDependencies": [\
+            ["playwright-core", "npm:1.42.1"]\
           ],\
           "linkType": "HARD"\
         }]\
