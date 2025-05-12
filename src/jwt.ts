@@ -67,9 +67,6 @@ export const validateJwtHeader = (header: TokenPart) => {
   if (!header.alg) {
     throw Error('Missing alg in jwt header')
   }
-  if (!header.typ) {
-    throw Error('Missing typ in jwt header')
-  }
   if (!allowedSigningAlgs.includes(header.alg)) {
     throw Error(`${header.alg} is not an allowed signing alg`)
   }

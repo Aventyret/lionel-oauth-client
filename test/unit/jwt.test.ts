@@ -27,7 +27,6 @@ describe('parseJwt', (): void => {
   it('should parse an access token and extract correct header and claims', (): void => {
     const parsedAccessToken = parseJwt(accessTokenMock.encoded)
     expect(parsedAccessToken.header.alg).toBe(accessTokenMock.decodedHeader.alg)
-    expect(parsedAccessToken.header.typ).toBe(accessTokenMock.decodedHeader.typ)
     expect(parsedAccessToken.claims.sub).toBe(
       accessTokenMock.decodedPayload.sub
     )
