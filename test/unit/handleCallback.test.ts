@@ -14,6 +14,7 @@ import idTokenResponseMock from './mocks/idTokenResponseMock.json'
 import idTokenMock from './mocks/idTokenMock.json'
 import nonceMock from './mocks/nonceMock.json'
 import { createTokenValidTimeMock } from './mocks/timeMocks'
+import { vi, Mock } from 'vitest'
 
 describe('getCallbackParams', (): void => {
   it('should read state and code params from fragment', (): void => {
@@ -86,13 +87,13 @@ describe('handleCallback', (): void => {
   describe('with access_token', (): void => {
     describe('with correct token response', (): void => {
       beforeAll(() => {
-        jest.spyOn(window, 'fetch').mockImplementation(
-          jest.fn(() => {
+        vi.spyOn(window, 'fetch').mockImplementation(
+          vi.fn(() => {
             return Promise.resolve({
               status: 200,
               json: () => Promise.resolve(tokenResponseMock)
             })
-          }) as jest.Mock
+          }) as Mock
         )
       })
       beforeAll(createTokenValidTimeMock(accessTokenMock.decodedPayload))
@@ -112,23 +113,23 @@ describe('handleCallback', (): void => {
         expect(callbackResponse.callbackType).toBe('redirect')
       })
       afterAll(() => {
-        jest.resetAllMocks()
+        vi.resetAllMocks()
       })
     })
   })
   describe('with id token', (): void => {
     describe('with correct token response', (): void => {
       beforeAll(() => {
-        jest.spyOn(window, 'fetch').mockImplementation(
-          jest.fn(() => {
+        vi.spyOn(window, 'fetch').mockImplementation(
+          vi.fn(() => {
             return Promise.resolve({
               status: 200,
               json: () => Promise.resolve(idTokenResponseMock)
             })
-          }) as jest.Mock
+          }) as Mock
         )
-        jest.spyOn(nonceModule, 'nonceHash').mockImplementation(
-          jest.fn(() => {
+        vi.spyOn(nonceModule, 'nonceHash').mockImplementation(
+          vi.fn(() => {
             return Promise.resolve(nonceMock.hash)
           })
         )
@@ -161,13 +162,13 @@ describe('handleCallback', (): void => {
         } catch {}
       })
       afterAll(() => {
-        jest.resetAllMocks()
+        vi.resetAllMocks()
       })
     })
     describe('with invalid id token in response', (): void => {
       beforeAll(() => {
-        jest.spyOn(window, 'fetch').mockImplementation(
-          jest.fn(() => {
+        vi.spyOn(window, 'fetch').mockImplementation(
+          vi.fn(() => {
             return Promise.resolve({
               status: 200,
               json: () =>
@@ -176,7 +177,7 @@ describe('handleCallback', (): void => {
                   id_token: 'X' + idTokenResponseMock.access_token
                 })
             })
-          }) as jest.Mock
+          }) as Mock
         )
       })
       it('should not set access token or id token in storage', async (): Promise<void> => {
@@ -195,7 +196,7 @@ describe('handleCallback', (): void => {
         expect(() => storageModule.get('idToken')).toThrow('Value not set')
       })
       afterAll(() => {
-        jest.resetAllMocks()
+        vi.resetAllMocks()
       })
     })
   })

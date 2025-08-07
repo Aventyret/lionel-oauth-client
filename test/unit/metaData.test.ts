@@ -3,6 +3,7 @@ import createStorageModule from '../../src/createStorageModule'
 import createLogger from '../../src/logger'
 import { oidcConfig } from './test-config'
 import metaDataMock from './mocks/metaDataMock.json'
+import { vi, Mock } from 'vitest'
 
 describe('validateMetaData', (): void => {
   it('should not throw error with valid meta data', (): void => {
@@ -110,8 +111,8 @@ describe('validateMetaData', (): void => {
 })
 describe('getMetaData', (): void => {
   beforeAll(() => {
-    jest.spyOn(window, 'fetch').mockImplementation(
-      jest.fn(() => {
+    vi.spyOn(window, 'fetch').mockImplementation(
+      vi.fn(() => {
         return Promise.resolve({
           status: 200,
           json: () =>
@@ -123,7 +124,7 @@ describe('getMetaData', (): void => {
               ]
             })
         })
-      }) as jest.Mock
+      }) as Mock
     )
   })
   it('should get metaData from storage if is present there', async (): Promise<void> => {
@@ -191,6 +192,6 @@ describe('getMetaData', (): void => {
     )
   })
   afterAll(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 })

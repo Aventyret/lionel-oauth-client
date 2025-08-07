@@ -1,5 +1,6 @@
 import * as codeChallenge from '../../src/codeChallenge'
 import { TextEncoder, TextDecoder } from 'util'
+import { vi } from 'vitest'
 
 beforeAll(() => {
   Object.defineProperty(window, 'crypto', {
@@ -27,12 +28,12 @@ beforeAll(() => {
   })
   Object.defineProperty(window, 'location', {
     value: {
-      assign: jest.fn(),
+      assign: vi.fn(),
       hash: '#state=mocked_state&code=mocked_code'
     }
   })
   Object.defineProperty(window, 'fetch', {
-    value: jest.fn()
+    value: vi.fn()
   })
   Object.defineProperty(window, 'TextEncoder', {
     value: TextEncoder
@@ -43,7 +44,7 @@ beforeAll(() => {
 })
 
 beforeEach(() => {
-  jest.spyOn(codeChallenge, 'createCodeChallenge').mockReturnValue(
+  vi.spyOn(codeChallenge, 'createCodeChallenge').mockReturnValue(
     Promise.resolve({
       verifier: 'mocked_code_verifier',
       challenge: 'mocked_code_challenge'

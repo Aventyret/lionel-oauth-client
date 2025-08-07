@@ -1,11 +1,12 @@
 import createEventModule from '../../src/createEventModule'
 import createLogger from '../../src/logger'
 import { oauthConfig } from './test-config'
+import { vi } from 'vitest'
 
 describe('createEventModule', () => {
   it('should add subscribe fn to specific event', () => {
     const eventModule = createEventModule(createLogger(oauthConfig))
-    const mockFn = jest.fn().mockName('subscribeCallback')
+    const mockFn = vi.fn().mockName('subscribeCallback')
     eventModule.subscribe('tokenLoaded', mockFn)
     eventModule.publish('tokenLoaded')
     expect(mockFn).toHaveBeenCalled()
@@ -13,7 +14,7 @@ describe('createEventModule', () => {
 
   it('should trigger all subscribe fn for same event when event is published', () => {
     const eventModule = createEventModule(createLogger(oauthConfig))
-    const mockFn = jest.fn().mockName('subscribeCallback')
+    const mockFn = vi.fn().mockName('subscribeCallback')
     eventModule.subscribe('tokenLoaded', mockFn)
     eventModule.subscribe('tokenLoaded', mockFn)
     eventModule.publish('tokenLoaded')
@@ -22,7 +23,7 @@ describe('createEventModule', () => {
 
   it('should remove subscribe fn from specific event', () => {
     const eventModule = createEventModule(createLogger(oauthConfig))
-    const mockFn = jest.fn().mockName('subscribeCallback')
+    const mockFn = vi.fn().mockName('subscribeCallback')
     eventModule.subscribe('tokenLoaded', mockFn)
     eventModule.unsubscribe('tokenLoaded', mockFn)
     eventModule.publish('tokenLoaded')
@@ -33,12 +34,10 @@ describe('createEventModule', () => {
     const eventModule = createEventModule(createLogger(oauthConfig))
     const errorMessage = `Invalid event type: fail`
     //@ts-expect-error throws error if using an invalid event type on subscribe
-    expect(() => eventModule.subscribe('fail', jest.fn())).toThrow(errorMessage)
+    expect(() => eventModule.subscribe('fail', vi.fn())).toThrow(errorMessage)
     //@ts-expect-error throws error if using an invalid event type on unsubscribe
-    expect(() => eventModule.unsubscribe('fail', jest.fn())).toThrow(
-      errorMessage
-    )
+    expect(() => eventModule.unsubscribe('fail', vi.fn())).toThrow(errorMessage)
     //@ts-expect-error throws error if using an invalid event type on publish
-    expect(() => eventModule.publish('fail', jest.fn())).toThrow(errorMessage)
+    expect(() => eventModule.publish('fail', vi.fn())).toThrow(errorMessage)
   })
 })

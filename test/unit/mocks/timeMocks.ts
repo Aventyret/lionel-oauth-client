@@ -1,57 +1,52 @@
 import { TokenPart } from '../../../src/jwt'
 import { OauthClientConfig } from '../../../src/createOauthClient'
+import { vi, Mock } from 'vitest'
 
 export const createTokenValidTimeMock = (tokenClaims: TokenPart) => () =>
-  jest
+  vi
     .spyOn(Date, 'now')
-    .mockImplementation(
-      jest.fn(() => (tokenClaims.nbf + 1) * 1000) as jest.Mock
-    )
+    .mockImplementation(vi.fn(() => (tokenClaims.nbf + 1) * 1000) as Mock)
 
 export const createTokenEarlyTimeWithinLeewayMock =
   (tokenClaims: TokenPart) => () =>
-    jest
+    vi
       .spyOn(Date, 'now')
-      .mockImplementation(
-        jest.fn(() => (tokenClaims.nbf - 1) * 1000) as jest.Mock
-      )
+      .mockImplementation(vi.fn(() => (tokenClaims.nbf - 1) * 1000) as Mock)
 
 export const createTokenEarlyTimeOutsideLeewayMock =
   (tokenClaims: TokenPart, oauthConfig: OauthClientConfig) => () =>
-    jest
+    vi
       .spyOn(Date, 'now')
       .mockImplementation(
-        jest.fn(
+        vi.fn(
           () =>
             (tokenClaims.nbf - (oauthConfig.tokenLeewaySeconds || 0) - 1) * 1000
-        ) as jest.Mock
+        ) as Mock
       )
 
 export const createTokenExpiredTimeWithinLeewayMock =
   (tokenClaims: TokenPart) => () =>
-    jest
+    vi
       .spyOn(Date, 'now')
-      .mockImplementation(
-        jest.fn(() => (tokenClaims.exp + 1) * 1000) as jest.Mock
-      )
+      .mockImplementation(vi.fn(() => (tokenClaims.exp + 1) * 1000) as Mock)
 
 export const createTokenExpiredTimeOutsideLeewayMock =
   (tokenClaims: TokenPart, oauthConfig: OauthClientConfig) => () =>
-    jest
+    vi
       .spyOn(Date, 'now')
       .mockImplementation(
-        jest.fn(
+        vi.fn(
           () =>
             (tokenClaims.exp + (oauthConfig.tokenLeewaySeconds || 0) + 1) * 1000
-        ) as jest.Mock
+        ) as Mock
       )
 
 export const createTokenTimeAfterAuthTimeMock =
   (tokenClaims: TokenPart, secondsAfterAuthTime: number) => () =>
-    jest
+    vi
       .spyOn(Date, 'now')
       .mockImplementation(
-        jest.fn(
+        vi.fn(
           () => (tokenClaims.auth_time + secondsAfterAuthTime) * 1000
-        ) as jest.Mock
+        ) as Mock
       )

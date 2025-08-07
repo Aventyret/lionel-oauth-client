@@ -11,6 +11,7 @@ import {
   createTokenValidTimeMock,
   createTokenExpiredTimeOutsideLeewayMock
 } from './mocks/timeMocks'
+import { vi } from 'vitest'
 
 describe('getAccessToken', (): void => {
   describe('when token is not expired', (): void => {
@@ -39,7 +40,7 @@ describe('getAccessToken', (): void => {
       expect(accessToken).toBe(null)
     })
     afterAll(() => {
-      jest.resetAllMocks()
+      vi.resetAllMocks()
     })
   })
   describe('after token is expired, outside of leeway', (): void => {
@@ -63,7 +64,7 @@ describe('getAccessToken', (): void => {
       expect(accessToken).toBe(null)
     })
     afterAll(() => {
-      jest.resetAllMocks()
+      vi.resetAllMocks()
     })
   })
 })
@@ -91,10 +92,7 @@ describe('removeAccessToken', (): void => {
     const storageModule = createStorageModule(oauthConfig)
     const logger = createLogger(oauthConfig)
     storageModule.set('accessToken', accessTokenMock.encoded)
-    storageModule.set(
-      'accessTokenExpires',
-      accessTokenMock.decodedPayload.exp.toString()
-    )
+    storageModule.set('accessTokenExpires', (Date.now() + 1000).toString())
     let accessToken = getAccessToken(storageModule, logger)
     expect(accessToken).toBe(accessTokenMock.encoded)
     removeAccessToken(storageModule, logger)

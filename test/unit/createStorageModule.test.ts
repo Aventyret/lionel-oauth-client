@@ -1,7 +1,8 @@
 import createStorageModule from '../../src/createStorageModule'
 import { oauthConfig } from './test-config'
+import { vi, Mock } from 'vitest'
 
-const mockedStorage = window.Storage as jest.Mock<Storage>
+const mockedStorage = window.Storage as Mock
 interface MockStorage {
   [key: string]: string
 }
@@ -10,12 +11,12 @@ describe('createStorageModule', (): void => {
   let mockStorage: MockStorage = {}
 
   beforeAll(() => {
-    mockedStorage.prototype.setItem = jest.fn((key, value) => {
+    mockedStorage.prototype.setItem = vi.fn((key, value) => {
       mockStorage[key] = value
     })
-    mockedStorage.prototype.getItem = jest.fn(key => mockStorage[key])
-    mockedStorage.prototype.removeItem = jest.fn(key => delete mockStorage[key])
-    mockedStorage.prototype.clear = jest.fn(() => (mockStorage = {}))
+    mockedStorage.prototype.getItem = vi.fn(key => mockStorage[key])
+    mockedStorage.prototype.removeItem = vi.fn(key => delete mockStorage[key])
+    mockedStorage.prototype.clear = vi.fn(() => (mockStorage = {}))
   })
 
   beforeEach(() => {

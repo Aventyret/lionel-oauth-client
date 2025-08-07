@@ -1,19 +1,19 @@
 export { createOauthClient } from './createOauthClient'
 export { createOidcClient } from './createOauthClient'
 
-export {
+export type {
   OauthClientConfig,
   OauthClient,
   ResponseMode,
   Display
 } from './createOauthClient'
 
-export { SignInOptions, Prompt } from './signIn'
+export type { SignInOptions, Prompt } from './signIn'
 
-export { SignOutOptions } from './signOut'
+export type { SignOutOptions } from './signOut'
 
-export { MetaData } from './metaData'
+export type { MetaData } from './metaData'
 
-export { User } from './user'
+export type { User } from './user'
 
-export { StorageModuleType } from './createStorageModule'
+export type { StorageModuleType } from './createStorageModule'

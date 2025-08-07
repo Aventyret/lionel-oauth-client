@@ -9,17 +9,24 @@ jobs:
   publish-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: webfactory/ssh-agent@v0.5.4
         with:
           ssh-private-key: ${{ secrets.LIONEL_BOT_SSH }}
-      - uses: actions/setup-node@v2
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: 16
+          version: 10
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: 'Build docs'
         run: |
-          yarn install --frozen-lockfile
-          yarn docs:build
+          pnpm i
+          pnpm run docs:build
       - name: 'Push docs to gh-pages branch'
         working-directory: ./docs/.vitepress/dist
         run: |

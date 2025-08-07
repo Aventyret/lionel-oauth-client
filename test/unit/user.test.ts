@@ -5,6 +5,7 @@ import { oidcConfig } from './test-config'
 import idTokenMock from './mocks/idTokenMock.json'
 import metaDataMock from './mocks/metaDataMock.json'
 import { createTokenValidTimeMock } from './mocks/timeMocks'
+import { vi, Mock } from 'vitest'
 
 describe('getUser', (): void => {
   describe('when token is valid', (): void => {
@@ -56,20 +57,20 @@ describe('getUser', (): void => {
       expect(user?.sub).toBe('mocked_user_info_sub')
     })
     afterAll(() => {
-      jest.resetAllMocks()
+      vi.resetAllMocks()
     })
   })
 })
 describe('getUserInfo', (): void => {
   beforeAll(createTokenValidTimeMock(idTokenMock.decodedPayload))
   beforeAll(() => {
-    jest.spyOn(window, 'fetch').mockImplementation(
-      jest.fn(() => {
+    vi.spyOn(window, 'fetch').mockImplementation(
+      vi.fn(() => {
         return Promise.resolve({
           status: 200,
           json: () => Promise.resolve({ sub: 'mocked_user_info_sub' })
         })
-      }) as jest.Mock
+      }) as Mock
     )
   })
   it('should get user info', async (): Promise<void> => {
@@ -94,7 +95,7 @@ describe('getUserInfo', (): void => {
     expect(user?.sub).toBe('mocked_user_info_sub')
   })
   afterAll(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 })
 describe('removeUser', (): void => {
@@ -113,6 +114,6 @@ describe('removeUser', (): void => {
     storageModule.remove('idToken')
   })
   afterAll(() => {
-    jest.resetAllMocks()
+    vi.resetAllMocks()
   })
 })

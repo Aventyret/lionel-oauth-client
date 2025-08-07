@@ -13,19 +13,19 @@ nvm use
 Install dependencies:
 
 ```bash
-yarn && yarn husky
+pnpm && pnpm husky
 ```
 
 Build code into `./dist` directory:
 
 ```bash
-yarn build
+pnpm build
 ```
 
 Build code with watch:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 ## Naming branches
@@ -39,7 +39,7 @@ _Everything should be tested_. The recommended approach is to think what you wan
 Run both **unit** and **e2e** tests _once_:
 
 ```bash
-yarn test
+pnpm test
 ```
 
 ### Unit tests
@@ -50,10 +50,10 @@ Run **unit** tests:
 
 ```bash
 # Once
-yarn test:unit
+pnpm test:unit
 
 # Watch for changes
-yarn test:unit --watch
+pnpm test:unit --watch
 ```
 
 ### e2e tests
@@ -63,10 +63,10 @@ e2e tests should be created in `/test/e2e` and be named to indicate what it is s
 Run **e2e** tests:
 
 ```bash
-yarn test:e2e
+pnpm test:e2e
 ```
 
-Sadly [playwright](https://playwright.dev/) does not currently support a watch mode like [jest](https://jestjs.io/) does so when you want to check if you have broken something or made something work for the very first time you need to rerun `yarn test:e2e`.
+Sadly [playwright](https://playwright.dev/) does not currently support a watch mode like [jest](https://jestjs.io/) does so when you want to check if you have broken something or made something work for the very first time you need to rerun `pnpm test:e2e`.
 
 ## Release
 
@@ -75,8 +75,8 @@ The library is published to npm and the documentation is published to GitHub pag
 To create a new release, create a new branch and set it's upstream origin. Then run:
 
 ```bash
-yarn version patch|minor|major # This bumps the version in the versioned files, e.g. yarn version minor will bump version to the next minor version number
-yarn tag # This will commit the version bump and create a tag in git with the new version. The commit and the tag will be pushed to the origin remote.
+pnpm version patch|minor|major # This bumps the version in the versioned files, e.g. pnpm version minor will bump version to the next minor version number
+pnpm tag # This will commit the version bump and create a tag in git with the new version. The commit and the tag will be pushed to the origin remote.
 ```
 
 Create a pull request for the new branch into main.

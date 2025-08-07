@@ -30,6 +30,10 @@ npm install lionel-oauth-client
 yarn add lionel-oauth-client
 ```
 
+```bash
+pnpm install lionel-oauth-client
+```
+
 ### Initialize and configure client
 
 The library exposes two factory functions – `createOauthClient` for basic oAuth with Authorization Code Grant and the PKCE extension and `createOidcClient` if you want to leverage OIDC (also with code flow + PCKE).
